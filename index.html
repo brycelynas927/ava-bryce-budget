@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#10283b" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-title" content="Our Budget" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <title>Ava & Bryce Budget</title>
+  <style>
+    :root{--panel:rgba(8,26,40,.78);--panel2:rgba(255,255,255,.12);--border:rgba(255,255,255,.22);--text:#fff;--muted:rgba(255,255,255,.78);--green:#8ee7b9;--gold:#ffd978;--red:#ff9c9c;--shadow:0 16px 45px rgba(0,0,0,.28)}
+    *{box-sizing:border-box}html{background:#10283b}body{margin:0;min-height:100%;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--text);background:linear-gradient(rgba(5,17,29,.48),rgba(5,17,29,.68)),url('travel-bg.jpg') center/cover fixed no-repeat;padding:16px 14px 28px}.app{max-width:760px;margin:0 auto;display:grid;gap:14px}.card{background:var(--panel);border:1px solid var(--border);border-radius:22px;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:var(--shadow);padding:16px}.hero h1{font-size:1.55rem;margin:0 0 5px}.hero p,.sub{margin:0;color:var(--muted);line-height:1.4;font-size:.92rem}.input-wrap{display:flex;align-items:center;gap:8px;margin-top:12px;border:1px solid var(--border);background:rgba(255,255,255,.1);border-radius:16px;padding:0 13px}.input-wrap input{width:100%;border:0;outline:none;background:transparent;color:var(--text);font-size:1.35rem;font-weight:700;padding:15px 0}.btn{width:100%;margin-top:10px;border:1px solid var(--border);background:rgba(255,255,255,.22);color:var(--text);font:inherit;font-weight:800;border-radius:14px;padding:13px 14px;min-height:48px}.summary{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.metric{background:var(--panel2);border:1px solid rgba(255,255,255,.14);border-radius:16px;padding:12px}.metric small{display:block;color:var(--muted);font-size:.72rem}.metric strong{display:block;font-size:1.1rem;margin-top:4px}@media(max-width:520px){.summary{grid-template-columns:1fr}.metric strong{font-size:1.35rem}}h2{margin:0 0 4px;font-size:1.05rem}.list{display:grid;gap:9px;margin-top:12px}.row{background:var(--panel2);border:1px solid rgba(255,255,255,.13);border-radius:15px;padding:12px}.row-top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.row-title{font-weight:700}.row-note{font-size:.78rem;color:var(--muted);margin-top:2px}.amount{font-weight:800;white-space:nowrap}.bar{height:6px;background:rgba(255,255,255,.12);border-radius:999px;overflow:hidden;margin-top:9px}.fill{height:100%;width:0;background:var(--green);border-radius:999px}.status{margin-top:12px;border:1px solid var(--border);background:rgba(255,255,255,.08);border-radius:14px;padding:12px;color:var(--muted);line-height:1.4;font-size:.9rem}.good{color:var(--green)}.warn{color:var(--red)}.gold{color:var(--gold)}.bill{display:flex;justify-content:space-between;gap:10px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.12)}.bill:last-child{border-bottom:0}.bill span:last-child{font-weight:700}.tiny{font-size:.76rem;color:var(--muted)}
+  </style>
+</head>
+<body>
+<main class="app">
+  <section class="card hero">
+    <h1>Ava & Bryce Budget</h1>
+    <p>Enter the total you made together. Your pay is automatically split into the bills and goals for this pay cycle.</p>
+    <div class="input-wrap"><span>$</span><input id="combinedPay" inputmode="decimal" type="number" min="0" step="0.01" placeholder="Example: 2900" /></div>
+    <button id="calculateBtn" class="btn" type="button">Calculate plan</button>
+  </section>
+
+  <section class="summary">
+    <div class="metric"><small>Combined pay</small><strong id="sumPay">$0.00</strong></div>
+    <div class="metric"><small>Protected</small><strong id="sumProtected">$0.00</strong></div>
+    <div class="metric"><small>Credit cards</small><strong id="sumDebt">$0.00</strong></div>
+  </section>
+
+  <section class="card">
+    <h2>This paycheque plan</h2>
+    <p class="sub">The most important items are funded first.</p>
+    <div class="list" id="planList"></div>
+    <div class="status" id="status">Enter your combined pay above.</div>
+  </section>
+
+  <section class="card">
+    <h2>Known bills</h2>
+    <div class="bill"><span>Netflix — 3rd</span><span>$9.00</span></div>
+    <div class="bill"><span>Car insurance — 11th</span><span>$461.00</span></div>
+    <div class="bill"><span>Phone — 21st</span><span>$56.50</span></div>
+    <div class="bill"><span>Phone — 28th</span><span>$115.62</span></div>
+    <div class="bill"><span>Spotify + Disney+ — 28th</span><span>$30.00</span></div>
+    <div class="bill"><span>Ava nails — monthly</span><span>$70.00</span></div>
+    <div class="bill"><span>Rent — cash</span><span>$1,300.00</span></div>
+    <p class="tiny">This cycle sets aside $650 toward the next rent payment because October rent is already paid.</p>
+  </section>
+</main>
+<script>
+(function(){
+  var input=document.getElementById('combinedPay');
+  var button=document.getElementById('calculateBtn');
+  var list=document.getElementById('planList');
+  var items=[
+    ['rent','November rent cash','Withdraw for rent envelope',650],
+    ['insurance','Car insurance','Due before next payday',461],
+    ['netflix','Netflix','Early-month bill',9],
+    ['groceries','Groceries','Two-week budget',175],
+    ['gas','Gas','Two-week budget',112.50],
+    ['cats','Cats','Food and litter',55],
+    ['eating','Eating out','Two-week cap',50],
+    ['other','Other regular spending','Nicotine, cannabis, small extras',85],
+    ['wisdom','Wisdom teeth savings','Goal this pay cycle',200],
+    ['debt','Credit-card debt','Everything left after priorities',null]
+  ];
+  function money(n){return '$'+(Math.max(0,Number(n)||0)).toLocaleString('en-CA',{minimumFractionDigits:2,maximumFractionDigits:2});}
+  items.forEach(function(it){
+    var r=document.createElement('div');r.className='row';r.innerHTML='<div class="row-top"><div><div class="row-title">'+it[1]+'</div><div class="row-note">'+it[2]+'</div></div><div class="amount" id="amt-'+it[0]+'">$0.00</div></div><div class="bar"><div class="fill" id="bar-'+it[0]+'"></div></div>';list.appendChild(r);
+  });
+  function safeSave(v){try{localStorage.setItem('ava-bryce-budget-pay',String(v));}catch(e){}}
+  function safeLoad(){try{return localStorage.getItem('ava-bryce-budget-pay')||'';}catch(e){return '';}}
+  function calculate(){
+    var pay=parseFloat(input.value);if(!isFinite(pay)||pay<0)pay=0;
+    var remaining=pay,protectedTotal=0,debt=0,firstShort='';
+    for(var i=0;i<items.length;i++){
+      var it=items[i],target=it[3],amount=0,pct=0;
+      if(target===null){amount=Math.max(0,remaining);debt=amount;remaining=0;pct=amount>0?100:0;}
+      else{amount=Math.min(target,Math.max(0,remaining));remaining-=amount;protectedTotal+=amount;pct=target>0?Math.min(100,(amount/target)*100):0;if(pay>0&&amount<target&&!firstShort)firstShort=it[1];}
+      document.getElementById('amt-'+it[0]).textContent=target===null?money(amount):money(amount)+' / '+money(target);
+      document.getElementById('bar-'+it[0]).style.width=pct+'%';
+    }
+    document.getElementById('sumPay').textContent=money(pay);
+    document.getElementById('sumProtected').textContent=money(protectedTotal);
+    document.getElementById('sumDebt').textContent=money(debt);
+    var totalTarget=1797.5;
+    var status=document.getElementById('status');
+    if(pay===0) status.textContent='Enter your combined pay above.';
+    else if(pay<totalTarget) status.innerHTML='<span class="warn">This pay does not fully cover the full plan.</span> The first item not fully funded is '+firstShort+'.';
+    else status.innerHTML='<span class="good">Your full plan is covered.</span> About <span class="gold">'+money(debt)+'</span> can go toward your credit cards.';
+    safeSave(pay);
+  }
+  button.addEventListener('click',calculate);
+  input.addEventListener('input',calculate);
+  var saved=safeLoad();if(saved){input.value=saved;}
+  calculate();
+  if('serviceWorker' in navigator && location.protocol==='https:'){window.addEventListener('load',function(){navigator.serviceWorker.register('./sw.js').catch(function(){});});}
+})();
+</script>
+</body>
+</html>
