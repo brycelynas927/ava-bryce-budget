@@ -36,6 +36,13 @@
   </section>
 
   <section class="card">
+    <h2>Track spending</h2>
+    <p class="sub">As you spend from your flexible categories, enter the amount here. Your remaining budget updates automatically.</p>
+    <div class="list" id="spendList"></div>
+    <div class="status" id="spendStatus">No spending entered yet.</div>
+  </section>
+
+  <section class="card">
     <h2>Known bills</h2>
     <div class="bill"><span>Netflix — 3rd</span><span>$9.00</span></div>
     <div class="bill"><span>Car insurance — 11th</span><span>$461.00</span></div>
@@ -53,23 +60,32 @@
   var button=document.getElementById('calculateBtn');
   var list=document.getElementById('planList');
   var items=[
-    ['rent','November rent cash','Withdraw for rent envelope',650],
-    ['insurance','Car insurance','Due before next payday',461],
-    ['netflix','Netflix','Early-month bill',9],
-    ['groceries','Groceries','Two-week budget',175],
-    ['gas','Gas','Two-week budget',112.50],
-    ['cats','Cats','Food and litter',55],
-    ['eating','Eating out','Two-week cap',50],
-    ['other','Other regular spending','Nicotine, cannabis, small extras',85],
-    ['wisdom','Wisdom teeth savings','Goal this pay cycle',200],
-    ['debt','Credit-card debt','Everything left after priorities',null]
+    ['rent','November rent cash','Withdraw for rent envelope',650,false],
+    ['insurance','Car insurance','Due before next payday',461,false],
+    ['netflix','Netflix','Early-month bill',9,false],
+    ['groceries','Groceries','Two-week budget',175,true],
+    ['gas','Gas','Two-week budget',112.50,true],
+    ['cats','Cats','Food and litter',55,true],
+    ['eating','Eating out','Two-week cap',50,true],
+    ['other','Other regular spending','Nicotine, cannabis, small extras',85,true],
+    ['wisdom','Wisdom teeth savings','Goal this pay cycle',200,false],
+    ['debt','Credit-card debt','Everything left after priorities',null,false]
   ];
   function money(n){return '$'+(Math.max(0,Number(n)||0)).toLocaleString('en-CA',{minimumFractionDigits:2,maximumFractionDigits:2});}
   items.forEach(function(it){
     var r=document.createElement('div');r.className='row';r.innerHTML='<div class="row-top"><div><div class="row-title">'+it[1]+'</div><div class="row-note">'+it[2]+'</div></div><div class="amount" id="amt-'+it[0]+'">$0.00</div></div><div class="bar"><div class="fill" id="bar-'+it[0]+'"></div></div>';list.appendChild(r);
   });
+
+  items.filter(function(it){return it[4];}).forEach(function(it){
+    var r=document.createElement('div');
+    r.className='row';
+    r.innerHTML='<div class="row-top"><div><div class="row-title">'+it[1]+'</div><div class="row-note">Enter total spent so far</div></div><div class="amount" id="remain-'+it[0]+'">'+money(it[3])+' left</div></div><div class="input-wrap"><span>$</span><input id="spent-'+it[0]+'" type="number" min="0" step="0.01" inputmode="decimal" placeholder="0.00"></div>';
+    spendList.appendChild(r);
+  });
   function safeSave(v){try{localStorage.setItem('ava-bryce-budget-pay',String(v));}catch(e){}}
   function safeLoad(){try{return localStorage.getItem('ava-bryce-budget-pay')||'';}catch(e){return '';}}
+  function safeSaveSpent(key,v){try{localStorage.setItem('ava-bryce-spent-'+key,String(v));}catch(e){}}
+  function safeLoadSpent(key){try{return localStorage.getItem('ava-bryce-spent-'+key)||'';}catch(e){return '';}}
   function calculate(){
     var pay=parseFloat(input.value);if(!isFinite(pay)||pay<0)pay=0;
     var remaining=pay,protectedTotal=0,debt=0,firstShort='';
@@ -89,11 +105,41 @@
     else if(pay<totalTarget) status.innerHTML='<span class="warn">This pay does not fully cover the full plan.</span> The first item not fully funded is '+firstShort+'.';
     else status.innerHTML='<span class="good">Your full plan is covered.</span> About <span class="gold">'+money(debt)+'</span> can go toward your credit cards.';
     safeSave(pay);
+    updateSpending();
   }
+
+  function updateSpending(){
+    var totalBudget=0,totalSpent=0;
+    items.filter(function(it){return it[4];}).forEach(function(it){
+      var el=document.getElementById('spent-'+it[0]);
+      var spent=parseFloat(el.value);
+      if(!isFinite(spent)||spent<0) spent=0;
+      totalBudget += it[3];
+      totalSpent += spent;
+      var remaining=Math.max(0,it[3]-spent);
+      var remEl=document.getElementById('remain-'+it[0]);
+      remEl.textContent=money(remaining)+' left';
+      remEl.className='amount '+(spent>it[3]?'warn':'');
+      safeSaveSpent(it[0],spent);
+    });
+    var s=document.getElementById('spendStatus');
+    if(totalSpent===0) s.textContent='No spending entered yet.';
+    else if(totalSpent<=totalBudget) s.innerHTML='<span class="good">'+money(totalSpent)+' spent</span> • '+money(Math.max(0,totalBudget-totalSpent))+' left across tracked categories.';
+    else s.innerHTML='<span class="warn">You are '+money(totalSpent-totalBudget)+' over the tracked spending budget.</span>';
+  }
+
+  items.filter(function(it){return it[4];}).forEach(function(it){
+    var el=document.getElementById('spent-'+it[0]);
+    var savedSpent=safeLoadSpent(it[0]);
+    if(savedSpent) el.value=savedSpent;
+    el.addEventListener('input',updateSpending);
+  });
+
   button.addEventListener('click',calculate);
   input.addEventListener('input',calculate);
   var saved=safeLoad();if(saved){input.value=saved;}
   calculate();
+  updateSpending();
   if('serviceWorker' in navigator && location.protocol==='https:'){window.addEventListener('load',function(){navigator.serviceWorker.register('./sw.js').catch(function(){});});}
 })();
 </script>
