@@ -1,1 +1,1 @@
-{"name":"Ava & Bryce Budget","short_name":"Our Budget","start_url":"./","display":"standalone","background_color":"#10283b","theme_color":"#10283b"}
+{"id":"./","name":"Ava & Bryce Budget","short_name":"Our Budget","start_url":"./","scope":"./","display":"standalone","background_color":"#10283b","theme_color":"#10283b","description":"Ava and Bryce's biweekly budget and spending tracker."}
