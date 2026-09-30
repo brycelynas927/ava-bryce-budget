@@ -93,7 +93,7 @@ linear-gradient(180deg,transparent 0 72%,rgba(33,100,72,.82) 72% 100%)}
   items.filter(function(it){return it[4];}).forEach(function(it){
     var r=document.createElement('div');
     r.className='row';
-    r.innerHTML='<div class="row-top"><div><div class="row-title">'+it[1]+'</div><div class="row-note"><span id="spenttotal-'+it[0]+'">$0.00 spent</span> • <span id="remain-'+it[0]+'">'+money(it[3])+' left</span></div></div><div class="amount">'+money(it[3])+' budget</div></div><div class="bar"><div class="fill" id="spendbar-'+it[0]+'" style="width:0%"></div></div><div class="input-wrap"><span>$</span><input id="add-'+it[0]+'" type="number" min="0" step="0.01" inputmode="decimal" placeholder="Add purchase"></div><button type="button" class="btn" id="addbtn-'+it[0]+'">Add spent amount</button>';
+    r.innerHTML='<div class="row-top"><div><div class="row-title">'+it[1]+'</div><div class="row-note"><span id="spenttotal-'+it[0]+'">$0.00 spent</span> • <span id="remain-'+it[0]+'">'+money(it[3])+' left</span></div></div><div class="amount">'+money(it[3])+' budget</div></div><div class="bar"><div class="fill" id="spendbar-'+it[0]+'" style="width:0%"></div></div><div class="input-wrap"><span>$</span><input id="add-'+it[0]+'" type="number" min="0" step="0.01" inputmode="decimal" placeholder="Add purchase"></div><button type="button" class="btn" id="addbtn-'+it[0]+'">Add spent amount</button><div class="input-wrap"><span>$</span><input id="edit-'+it[0]+'" type="number" min="0" step="0.01" inputmode="decimal" placeholder="Correct total spent"></div><button type="button" class="btn" id="editbtn-'+it[0]+'">Set total spent</button>';
     spendList.appendChild(r);
   });
   function safeSave(v){try{localStorage.setItem('ava-bryce-budget-pay',String(v));}catch(e){}}
@@ -154,6 +154,19 @@ linear-gradient(180deg,transparent 0 72%,rgba(33,100,72,.82) 72% 100%)}
     });
     inputEl.addEventListener('keydown',function(e){
       if(e.key==='Enter'){e.preventDefault();btn.click();}
+    });
+
+    var editBtn=document.getElementById('editbtn-'+it[0]);
+    var editInput=document.getElementById('edit-'+it[0]);
+    editBtn.addEventListener('click',function(){
+      var corrected=parseFloat(editInput.value);
+      if(!isFinite(corrected)||corrected<0) return;
+      safeSaveSpent(it[0],corrected);
+      editInput.value='';
+      updateSpending();
+    });
+    editInput.addEventListener('keydown',function(e){
+      if(e.key==='Enter'){e.preventDefault();editBtn.click();}
     });
   });
 
