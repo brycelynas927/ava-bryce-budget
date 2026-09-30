@@ -14,7 +14,7 @@
 .page-bg{position:fixed;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;z-index:0;pointer-events:none}
 .page-shade{position:fixed;inset:0;z-index:0;pointer-events:none;background:linear-gradient(rgba(3,17,28,.18),rgba(3,17,28,.32))}
 .app{position:relative;z-index:1;max-width:760px;margin:0 auto;display:grid;gap:14px}
-.card{background:rgba(7,24,38,.72);border:1px solid rgba(255,255,255,.26);border-radius:22px;box-shadow:0 14px 36px rgba(0,0,0,.24);padding:16px}.hero h1{font-size:1.55rem;margin:0 0 5px}.hero p,.sub{margin:0;color:var(--muted);line-height:1.4;font-size:.92rem}.input-wrap{display:flex;align-items:center;gap:8px;margin-top:12px;border:1px solid var(--border);background:rgba(255,255,255,.1);border-radius:16px;padding:0 13px}.input-wrap input{width:100%;border:0;outline:none;background:transparent;color:var(--text);font-size:1.35rem;font-weight:700;padding:15px 0}.btn{width:100%;margin-top:10px;border:1px solid var(--border);background:rgba(255,255,255,.22);color:var(--text);font:inherit;font-weight:800;border-radius:14px;padding:13px 14px;min-height:48px}.summary{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.metric{background:var(--panel2);border:1px solid rgba(255,255,255,.14);border-radius:16px;padding:12px}.metric small{display:block;color:var(--muted);font-size:.72rem}.metric strong{display:block;font-size:1.1rem;margin-top:4px}@media(max-width:520px){.summary{grid-template-columns:1fr}.metric strong{font-size:1.35rem}}h2{margin:0 0 4px;font-size:1.05rem}.list{display:grid;gap:9px;margin-top:12px}.row{background:var(--panel2);border:1px solid rgba(255,255,255,.13);border-radius:15px;padding:12px}.row-top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.row-title{font-weight:700}.row-note{font-size:.78rem;color:var(--muted);margin-top:2px}.amount{font-weight:800;white-space:nowrap}.bar{height:6px;background:rgba(255,255,255,.12);border-radius:999px;overflow:hidden;margin-top:9px}.fill{height:100%;width:0;background:var(--green);border-radius:999px}.status{margin-top:12px;border:1px solid var(--border);background:rgba(255,255,255,.08);border-radius:14px;padding:12px;color:var(--muted);line-height:1.4;font-size:.9rem}.good{color:var(--green)}.warn{color:var(--red)}.gold{color:var(--gold)}.bill{display:flex;justify-content:space-between;gap:10px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.12)}.bill:last-child{border-bottom:0}.bill span:last-child{font-weight:700}.tiny{font-size:.76rem;color:var(--muted)}
+.card{background:rgba(7,24,38,.72);border:1px solid rgba(255,255,255,.26);border-radius:22px;box-shadow:0 14px 36px rgba(0,0,0,.24);padding:16px}.hero h1{font-size:1.55rem;margin:0 0 5px}.hero p,.sub{margin:0;color:var(--muted);line-height:1.4;font-size:.92rem}.input-wrap{display:flex;align-items:center;gap:8px;margin-top:12px;border:1px solid var(--border);background:rgba(255,255,255,.1);border-radius:16px;padding:0 13px}.input-wrap input{width:100%;border:0;outline:none;background:transparent;color:var(--text);font-size:1.35rem;font-weight:700;padding:15px 0}.btn{width:100%;margin-top:10px;border:1px solid var(--border);background:rgba(255,255,255,.22);color:var(--text);font:inherit;font-weight:800;border-radius:14px;padding:13px 14px;min-height:48px}.summary{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.metric{background:var(--panel2);border:1px solid rgba(255,255,255,.14);border-radius:16px;padding:12px}.metric small{display:block;color:var(--muted);font-size:.72rem}.metric strong{display:block;font-size:1.1rem;margin-top:4px}@media(max-width:520px){.summary{grid-template-columns:1fr}.metric strong{font-size:1.35rem}}h2{margin:0 0 4px;font-size:1.05rem}.list{display:grid;gap:9px;margin-top:12px}.row{background:var(--panel2);border:1px solid rgba(255,255,255,.13);border-radius:15px;padding:12px}.row-top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.row-title{font-weight:700}.row-note{font-size:.78rem;color:var(--muted);margin-top:2px}.amount{font-weight:800;white-space:nowrap}.bar{height:6px;background:rgba(255,255,255,.12);border-radius:999px;overflow:hidden;margin-top:9px}.fill{height:100%;width:0;background:var(--green);border-radius:999px}.status{margin-top:12px;border:1px solid var(--border);background:rgba(255,255,255,.08);border-radius:14px;padding:12px;color:var(--muted);line-height:1.4;font-size:.9rem}.good{color:var(--green)}.warn{color:var(--red)}.gold{color:var(--gold)}.bill{display:flex;justify-content:space-between;gap:10px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.12)}.bill:last-child{border-bottom:0}.bill span:last-child{font-weight:700}.tiny{font-size:.76rem;color:var(--muted)}.bill-edit{display:grid;grid-template-columns:1fr 96px 74px;gap:8px;align-items:center}.bill-edit input{width:100%;border:1px solid var(--border);background:rgba(255,255,255,.1);color:#fff;border-radius:10px;padding:9px;font:inherit}.bill-edit label{font-size:.7rem;color:var(--muted)}@media(max-width:520px){.bill-edit{grid-template-columns:1fr 84px 66px}}
   </style>
 </head>
 <body>
@@ -25,6 +25,8 @@
     <h1>Ava & Bryce Budget</h1>
     <p>Enter the total you made together. Your pay is automatically split into the bills and goals for this pay cycle.</p>
     <div class="input-wrap"><span>$</span><input id="combinedPay" inputmode="decimal" type="number" min="0" step="0.01" placeholder="Example: 2900" /></div>
+    <div class="input-wrap"><input id="payDate" type="date" aria-label="Paycheque date" /></div>
+    <p class="tiny" style="margin:8px 4px 0">Choose the date this paycheque lands. The app looks 14 days ahead and adds bills due before the next pay.</p>
     <button id="calculateBtn" class="btn" type="button">Calculate plan</button>
   </section>
 
@@ -49,125 +51,158 @@
   </section>
 
   <section class="card">
-    <h2>Known bills</h2>
-    <div class="bill"><span>Netflix — 3rd</span><span>$9.00</span></div>
-    <div class="bill"><span>Car insurance — 11th</span><span>$461.00</span></div>
-    <div class="bill"><span>Phone — 21st</span><span>$56.50</span></div>
-    <div class="bill"><span>Phone — 28th</span><span>$115.62</span></div>
-    <div class="bill"><span>Spotify + Disney+ — 28th</span><span>$30.00</span></div>
-    <div class="bill"><span>Ava nails — monthly</span><span>$70.00</span></div>
-    <div class="bill"><span>Rent — cash</span><span>$1,300.00</span></div>
-    <p class="tiny">This cycle sets aside $650 toward the next rent payment because October rent is already paid.</p>
+    <h2>Monthly bills & due dates</h2>
+    <p class="sub">These feed the paycheque plan automatically. Change a due day or amount anytime and it will be remembered.</p>
+    <div class="list" id="billSettings"></div>
+    <div class="status" id="billWindowStatus">Choose a pay date to see which bills fall in this pay period.</div>
+    <p class="tiny">Rent is handled separately as $650 from each paycheque so the full $1,300 is ready for the next rent payment.</p>
   </section>
 </main>
 <script>
 (function(){
   var input=document.getElementById('combinedPay');
+  var payDateInput=document.getElementById('payDate');
   var button=document.getElementById('calculateBtn');
   var list=document.getElementById('planList');
   var spendList=document.getElementById('spendList');
-  var items=[
-    ['rent','November rent cash','Withdraw for rent envelope',650,false],
-    ['insurance','Car insurance','Due before next payday',461,false],
-    ['netflix','Netflix','Early-month bill',9,false],
+  var billSettings=document.getElementById('billSettings');
+
+  var baseItems=[
+    ['rent','Rent envelope','Half of the $1,300 monthly rent',650,false],
     ['groceries','Groceries','Two-week budget',175,true],
     ['gas','Gas','Two-week budget',112.50,true],
     ['cats','Cats','Food and litter',55,true],
     ['eating','Eating out','Two-week cap',50,true],
     ['other','Other regular spending','Nicotine, cannabis, small extras',85,true],
-    ['wisdom','Wisdom teeth savings','Goal this pay cycle',200,false],
-    ['debt','Credit-card debt','Everything left after priorities',null,false]
+    ['wisdom','Wisdom teeth savings','Goal this pay cycle',200,false]
   ];
-  function money(n){return '$'+(Math.max(0,Number(n)||0)).toLocaleString('en-CA',{minimumFractionDigits:2,maximumFractionDigits:2});}
-  items.forEach(function(it){
-    var r=document.createElement('div');r.className='row';r.innerHTML='<div class="row-top"><div><div class="row-title">'+it[1]+'</div><div class="row-note">'+it[2]+'</div></div><div class="amount" id="amt-'+it[0]+'">$0.00</div></div><div class="bar"><div class="fill" id="bar-'+it[0]+'"></div></div>';list.appendChild(r);
+
+  var billDefaults=[
+    {id:'insurance',name:'Car insurance',amount:461,due:11},
+    {id:'phone1',name:'Phone bill 1',amount:56.50,due:21},
+    {id:'phone2',name:'Phone bill 2',amount:115.62,due:28},
+    {id:'streaming',name:'Netflix + Disney+ + Spotify',amount:40,due:28},
+    {id:'melaleuca',name:'Melaleuca',amount:160,due:30},
+    {id:'chatgpt',name:'ChatGPT',amount:25,due:30}
+  ];
+
+  function money(n){return '
+<!-- redeploy -->
+</body>
+</html>+(Math.max(0,Number(n)||0)).toLocaleString('en-CA',{minimumFractionDigits:2,maximumFractionDigits:2});}
+  function load(key,fallback){try{var v=localStorage.getItem(key);return v===null?fallback:v;}catch(e){return fallback;}}
+  function save(key,v){try{localStorage.setItem(key,String(v));}catch(e){}}
+  function safeDateValue(d){return d.toISOString().slice(0,10);}
+  function parseLocalDate(s){if(!s)return null;var p=s.split('-').map(Number);if(p.length!==3)return null;return new Date(p[0],p[1]-1,p[2],12,0,0);}
+  function daysInMonth(y,m){return new Date(y,m+1,0).getDate();}
+  function billAmount(b){var v=parseFloat(load('ava-bill-amount-'+b.id,b.amount));return isFinite(v)&&v>=0?v:b.amount;}
+  function billDue(b){var v=parseInt(load('ava-bill-due-'+b.id,b.due),10);return isFinite(v)&&v>=1&&v<=31?v:b.due;}
+  function billName(b){return b.name;}
+  function dueDateForMonth(b,y,m){return new Date(y,m,Math.min(billDue(b),daysInMonth(y,m)),12,0,0);}
+  function billsInWindow(start,end){
+    var found=[];
+    billDefaults.forEach(function(b){
+      for(var offset=-1;offset<=1;offset++){
+        var d=new Date(start.getFullYear(),start.getMonth()+offset,1,12,0,0);
+        var due=dueDateForMonth(b,d.getFullYear(),d.getMonth());
+        if(due>=start && due<end) found.push({bill:b,date:due,amount:billAmount(b)});
+      }
+    });
+    found.sort(function(a,b){return a.date-b.date;});
+    return found;
+  }
+
+  billDefaults.forEach(function(b){
+    var r=document.createElement('div'); r.className='row';
+    r.innerHTML='<div class="bill-edit"><div><div class="row-title">'+billName(b)+'</div><div class="row-note">Monthly bill</div></div><div><label>Amount</label><input id="billamt-'+b.id+'" type="number" min="0" step="0.01" inputmode="decimal" value="'+billAmount(b)+'"></div><div><label>Due day</label><input id="billdue-'+b.id+'" type="number" min="1" max="31" step="1" inputmode="numeric" value="'+billDue(b)+'"></div></div>';
+    billSettings.appendChild(r);
+    var ai=r.querySelector('#billamt-'+b.id), di=r.querySelector('#billdue-'+b.id);
+    ai.addEventListener('change',function(){var v=parseFloat(ai.value);if(isFinite(v)&&v>=0){save('ava-bill-amount-'+b.id,v);calculate();}});
+    di.addEventListener('change',function(){var v=parseInt(di.value,10);if(isFinite(v)&&v>=1&&v<=31){save('ava-bill-due-'+b.id,v);calculate();}});
   });
 
-  items.filter(function(it){return it[4];}).forEach(function(it){
-    var r=document.createElement('div');
-    r.className='row';
+  baseItems.filter(function(it){return it[4];}).forEach(function(it){
+    var r=document.createElement('div'); r.className='row';
     r.innerHTML='<div class="row-top"><div><div class="row-title">'+it[1]+'</div><div class="row-note"><span id="spenttotal-'+it[0]+'">$0.00 spent</span> • <span id="remain-'+it[0]+'">'+money(it[3])+' left</span></div></div><div class="amount">'+money(it[3])+' budget</div></div><div class="bar"><div class="fill" id="spendbar-'+it[0]+'" style="width:0%"></div></div><div class="input-wrap"><span>$</span><input id="add-'+it[0]+'" type="number" min="0" step="0.01" inputmode="decimal" placeholder="Add purchase"></div><button type="button" class="btn" id="addbtn-'+it[0]+'">Add spent amount</button><div class="input-wrap"><span>$</span><input id="edit-'+it[0]+'" type="number" min="0" step="0.01" inputmode="decimal" placeholder="Correct total spent"></div><button type="button" class="btn" id="editbtn-'+it[0]+'">Set total spent</button>';
     spendList.appendChild(r);
   });
-  function safeSave(v){try{localStorage.setItem('ava-bryce-budget-pay',String(v));}catch(e){}}
-  function safeLoad(){try{return localStorage.getItem('ava-bryce-budget-pay')||'';}catch(e){return '';}}
-  function safeSaveSpent(key,v){try{localStorage.setItem('ava-bryce-spent-'+key,String(v));}catch(e){}}
-  function safeLoadSpent(key){try{var v=parseFloat(localStorage.getItem('ava-bryce-spent-'+key));return isFinite(v)&&v>=0?v:0;}catch(e){return 0;}}
-  function calculate(){
-    var pay=parseFloat(input.value);if(!isFinite(pay)||pay<0)pay=0;
+
+  function spent(key){var v=parseFloat(load('ava-bryce-spent-'+key,0));return isFinite(v)&&v>=0?v:0;}
+  function setSpent(key,v){save('ava-bryce-spent-'+key,v);}
+
+  function renderPlan(items,pay){
+    list.innerHTML='';
     var remaining=pay,protectedTotal=0,debt=0,firstShort='';
-    for(var i=0;i<items.length;i++){
-      var it=items[i],target=it[3],amount=0,pct=0;
+    items.concat([['debt','Credit-card debt','Everything left after priorities',null,false]]).forEach(function(it){
+      var target=it[3],amount=0,pct=0;
       if(target===null){amount=Math.max(0,remaining);debt=amount;remaining=0;pct=amount>0?100:0;}
       else{amount=Math.min(target,Math.max(0,remaining));remaining-=amount;protectedTotal+=amount;pct=target>0?Math.min(100,(amount/target)*100):0;if(pay>0&&amount<target&&!firstShort)firstShort=it[1];}
-      document.getElementById('amt-'+it[0]).textContent=target===null?money(amount):money(amount)+' / '+money(target);
-      document.getElementById('bar-'+it[0]).style.width=pct+'%';
-    }
+      var r=document.createElement('div');r.className='row';
+      r.innerHTML='<div class="row-top"><div><div class="row-title">'+it[1]+'</div><div class="row-note">'+it[2]+'</div></div><div class="amount">'+(target===null?money(amount):money(amount)+' / '+money(target))+'</div></div><div class="bar"><div class="fill" style="width:'+pct+'%"></div></div>';
+      list.appendChild(r);
+    });
     document.getElementById('sumPay').textContent=money(pay);
     document.getElementById('sumProtected').textContent=money(protectedTotal);
     document.getElementById('sumDebt').textContent=money(debt);
-    var totalTarget=1797.5;
     var status=document.getElementById('status');
+    var totalTarget=items.reduce(function(s,it){return s+(Number(it[3])||0);},0);
     if(pay===0) status.textContent='Enter your combined pay above.';
     else if(pay<totalTarget) status.innerHTML='<span class="warn">This pay does not fully cover the full plan.</span> The first item not fully funded is '+firstShort+'.';
     else status.innerHTML='<span class="good">Your full plan is covered.</span> About <span class="gold">'+money(debt)+'</span> can go toward your credit cards.';
-    safeSave(pay);
+  }
+
+  function calculate(){
+    var pay=parseFloat(input.value);if(!isFinite(pay)||pay<0)pay=0;
+    var start=parseLocalDate(payDateInput.value);
+    var items=baseItems.slice();
+    var billStatus=document.getElementById('billWindowStatus');
+    if(start){
+      var end=new Date(start);end.setDate(end.getDate()+14);
+      var due=billsInWindow(start,end);
+      due.forEach(function(x){
+        var label=x.bill.name;
+        items.splice(1,0,['bill-'+x.bill.id+'-'+safeDateValue(x.date),label,'Due '+x.date.toLocaleDateString('en-CA',{month:'short',day:'numeric'}),x.amount,false]);
+      });
+      billStatus.innerHTML=due.length?'<span class="good">'+due.length+' bill'+(due.length===1?'':'s')+' due before the next pay.</span> '+due.map(function(x){return x.bill.name+' '+money(x.amount)+' ('+x.date.toLocaleDateString('en-CA',{month:'short',day:'numeric'})+')';}).join(' • '):'<span class="good">No listed monthly bills are due before the next pay.</span>';
+    } else {
+      billStatus.textContent='Choose a pay date to see which bills fall in this pay period.';
+    }
+    renderPlan(items,pay);
+    save('ava-bryce-budget-pay',pay);
+    if(payDateInput.value)save('ava-bryce-pay-date',payDateInput.value);
     updateSpending();
   }
 
   function updateSpending(){
     var totalBudget=0,totalSpent=0;
-    items.filter(function(it){return it[4];}).forEach(function(it){
-      var spent=safeLoadSpent(it[0]);
-      totalBudget+=it[3];
-      totalSpent+=spent;
-      var remaining=Math.max(0,it[3]-spent);
-      var pct=it[3]>0?Math.min(100,(spent/it[3])*100):0;
-      document.getElementById('spenttotal-'+it[0]).textContent=money(spent)+' spent';
+    baseItems.filter(function(it){return it[4];}).forEach(function(it){
+      var s=spent(it[0]); totalBudget+=it[3]; totalSpent+=s;
+      var remaining=Math.max(0,it[3]-s),pct=it[3]>0?Math.min(100,(s/it[3])*100):0;
+      document.getElementById('spenttotal-'+it[0]).textContent=money(s)+' spent';
       document.getElementById('remain-'+it[0]).textContent=money(remaining)+' left';
-      document.getElementById('spendbar-'+it[0]).style.width=pct+'%';
-      document.getElementById('spendbar-'+it[0]).style.background=spent>it[3]?'var(--red)':'var(--green)';
+      var bar=document.getElementById('spendbar-'+it[0]);bar.style.width=pct+'%';bar.style.background=s>it[3]?'var(--red)':'var(--green)';
     });
-    var s=document.getElementById('spendStatus');
-    if(totalSpent===0) s.textContent='No spending entered yet.';
-    else if(totalSpent<=totalBudget) s.innerHTML='<span class="good">'+money(totalSpent)+' spent</span> • '+money(totalBudget-totalSpent)+' left across tracked categories.';
-    else s.innerHTML='<span class="warn">You are '+money(totalSpent-totalBudget)+' over the tracked spending budget.</span>';
+    var sEl=document.getElementById('spendStatus');
+    if(totalSpent===0)sEl.textContent='No spending entered yet.';
+    else if(totalSpent<=totalBudget)sEl.innerHTML='<span class="good">'+money(totalSpent)+' spent</span> • '+money(totalBudget-totalSpent)+' left across tracked categories.';
+    else sEl.innerHTML='<span class="warn">You are '+money(totalSpent-totalBudget)+' over the tracked spending budget.</span>';
   }
 
-  items.filter(function(it){return it[4];}).forEach(function(it){
-    var btn=document.getElementById('addbtn-'+it[0]);
-    var inputEl=document.getElementById('add-'+it[0]);
-    btn.addEventListener('click',function(){
-      var add=parseFloat(inputEl.value);
-      if(!isFinite(add)||add<=0) return;
-      var current=safeLoadSpent(it[0]);
-      safeSaveSpent(it[0],current+add);
-      inputEl.value='';
-      updateSpending();
-    });
-    inputEl.addEventListener('keydown',function(e){
-      if(e.key==='Enter'){e.preventDefault();btn.click();}
-    });
-
-    var editBtn=document.getElementById('editbtn-'+it[0]);
-    var editInput=document.getElementById('edit-'+it[0]);
-    editBtn.addEventListener('click',function(){
-      var corrected=parseFloat(editInput.value);
-      if(!isFinite(corrected)||corrected<0) return;
-      safeSaveSpent(it[0],corrected);
-      editInput.value='';
-      updateSpending();
-    });
-    editInput.addEventListener('keydown',function(e){
-      if(e.key==='Enter'){e.preventDefault();editBtn.click();}
-    });
+  baseItems.filter(function(it){return it[4];}).forEach(function(it){
+    var btn=document.getElementById('addbtn-'+it[0]), inputEl=document.getElementById('add-'+it[0]);
+    btn.addEventListener('click',function(){var add=parseFloat(inputEl.value);if(!isFinite(add)||add<=0)return;setSpent(it[0],spent(it[0])+add);inputEl.value='';updateSpending();});
+    inputEl.addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();btn.click();}});
+    var editBtn=document.getElementById('editbtn-'+it[0]), editInput=document.getElementById('edit-'+it[0]);
+    editBtn.addEventListener('click',function(){var corrected=parseFloat(editInput.value);if(!isFinite(corrected)||corrected<0)return;setSpent(it[0],corrected);editInput.value='';updateSpending();});
+    editInput.addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();editBtn.click();}});
   });
 
   button.addEventListener('click',calculate);
   input.addEventListener('input',calculate);
-  var saved=safeLoad();if(saved){input.value=saved;}
+  payDateInput.addEventListener('change',calculate);
+  var savedPay=load('ava-bryce-budget-pay','');if(savedPay!=='')input.value=savedPay;
+  var savedDate=load('ava-bryce-pay-date','');if(savedDate)payDateInput.value=savedDate;else payDateInput.value=safeDateValue(new Date());
   calculate();
-  updateSpending();
   if('serviceWorker' in navigator && location.protocol==='https:'){window.addEventListener('load',function(){navigator.serviceWorker.register('./sw.js').catch(function(){});});}
 })();
 </script>
