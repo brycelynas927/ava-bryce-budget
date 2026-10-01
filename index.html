@@ -25,8 +25,11 @@
     <h1>Ava & Bryce Budget</h1>
     <p>Enter the total you made together. Your pay is automatically split into the bills and goals for this pay cycle.</p>
     <div class="input-wrap"><span>$</span><input id="combinedPay" inputmode="decimal" type="number" min="0" step="0.01" placeholder="Example: 2900" /></div>
-    <div class="input-wrap"><input id="payDate" type="date" aria-label="Paycheque date" /></div>
-    <p class="tiny" style="margin:8px 4px 0">Choose the date this paycheque lands. The app looks 14 days ahead and adds bills due before the next pay.</p>
+    <details style="margin-top:10px">
+      <summary class="tiny" style="cursor:pointer">Change pay date (optional)</summary>
+      <div class="input-wrap"><input id="payDate" type="date" aria-label="Paycheque date" /></div>
+      <p class="tiny" style="margin:8px 4px 0">The app uses today's date automatically. Change this only if you're entering a past or future paycheque.</p>
+    </details>
     <button id="calculateBtn" class="btn" type="button">Calculate plan</button>
   </section>
 
@@ -213,7 +216,7 @@
   payDateInput.addEventListener('change',calculate);
 
   var savedPay=load('ava-bryce-budget-pay','');if(savedPay!=='')input.value=savedPay;
-  var savedDate=load('ava-bryce-pay-date','');if(savedDate)payDateInput.value=savedDate;else payDateInput.value=localDateValue(new Date());
+  payDateInput.value=localDateValue(new Date());
   calculate();
 
   if('serviceWorker' in navigator && location.protocol==='https:'){
