@@ -55,7 +55,7 @@
 
   <section class="card">
     <h2>How to split the bank accounts</h2>
-    <p class="sub">Bills and shared essentials stay in joint. Only true free-spend money moves to your personal accounts, split 50/50 by default.</p>
+    <p class="sub">First withdraw $650 cash for rent. Bills and shared essentials stay in joint. Only true free-spend money moves to your personal accounts, split 50/50 by default.</p>
     <div class="status" id="bankSplitStatus">Enter your combined pay above.</div>
   </section>
 
@@ -78,7 +78,7 @@
     <p class="sub">The app checks the actual due day and only includes a bill in a pay cycle when it falls before the next pay. Melaleuca is treated as an end-of-month bill. You can edit any amount or due day.</p>
     <div class="list" id="billSettings"></div>
     <div class="status" id="billWindowStatus">Bills due this pay period will appear here.</div>
-    <p class="tiny" style="margin-top:10px">Rent is treated as a $650 set-aside from each pay toward the $1,300 monthly rent.</p>
+    <p class="tiny" style="margin-top:10px">Rent is not counted as joint-account money. Withdraw $650 cash from every pay for rent.</p>
   </section>
 </main>
 
@@ -210,10 +210,11 @@
     var due=billsInWindow(start,end);
     var billsTotal=due.reduce(function(s,x){return s+x.amount},0);
     var essentialTarget=essentialItems.reduce(function(s,x){return s+x.target},0);
-    var jointTarget=rentSetAside+billsTotal+essentialTarget;
+    var jointTarget=billsTotal+essentialTarget;
     var freeSpendTarget=freeSpendItems.reduce(function(s,x){return s+x.target},0);
 
     var remaining=pay;
+    var rentCash=Math.min(rentSetAside,remaining);remaining-=rentCash;
     var joint=Math.min(jointTarget,remaining);remaining-=joint;
     var spending=Math.min(freeSpendTarget,remaining);remaining-=spending;
     var debt=Math.max(0,remaining);
@@ -232,12 +233,12 @@
       summary.textContent='Enter your combined pay above.';
       splitStatus.textContent='Enter your combined pay above.';
     } else {
-      summary.innerHTML='<span class="gold">Leave '+money(joint)+' in the joint account</span> for bills, rent, groceries, gas and cats. Then move <span class="good">'+money(avaSpending)+'</span> to Ava and <span class="good">'+money(bryceSpending)+'</span> to Bryce as true free-spend money. '+(debt>0?'After that, '+money(debt)+' is available for credit cards.':'There is no extra for credit cards in this pay cycle.');
-      splitStatus.innerHTML='<span class="gold">JOINT: keep '+money(joint)+'</span> for rent, bills, groceries, gas and cats.<br><span class="good">AVA FREE SPEND: '+money(avaSpending)+'</span><br><span class="good">BRYCE FREE SPEND: '+money(bryceSpending)+'</span><br><span class="tiny">Money moved to your personal accounts is not needed for bills or shared essentials — it is the amount you can spend freely.</span>';
+      summary.innerHTML='<span class="gold">Withdraw '+money(rentCash)+' cash for rent first.</span> Leave '+money(joint)+' in the joint account for bills, groceries, gas and cats. Then move <span class="good">'+money(avaSpending)+'</span> to Ava and <span class="good">'+money(bryceSpending)+'</span> to Bryce as true free-spend money. '+(debt>0?'After that, '+money(debt)+' is available for credit cards.':'There is no extra for credit cards in this pay cycle.');
+      splitStatus.innerHTML='<span class="gold">RENT: withdraw '+money(rentCash)+' cash from this pay.</span><br><span class="gold">JOINT: keep '+money(joint)+'</span> for bills, groceries, gas and cats.<br><span class="good">AVA FREE SPEND: '+money(avaSpending)+'</span><br><span class="good">BRYCE FREE SPEND: '+money(bryceSpending)+'</span><br><span class="tiny">Rent is taken out separately, so the joint-account number is only money that actually stays in the bank.</span>';
     }
 
     var jointWindow=start.toLocaleDateString('en-CA',{month:'short',day:'numeric'})+'–'+new Date(end.getTime()-86400000).toLocaleDateString('en-CA',{month:'short',day:'numeric'});
-    var rows=[{id:'joint',name:'Joint account — keep here',note:'Rent + bills due '+jointWindow+' + shared essentials',amount:joint}];
+    var rows=[{id:'rent',name:'Withdraw cash for rent',note:'Take this out every pay — do not leave it in the joint account',amount:rentCash},{id:'joint',name:'Joint account — keep here',note:'Bills due '+jointWindow+' + shared essentials',amount:joint}];
     essentialItems.forEach(function(x){rows.push({id:x.id,name:x.name,note:'Shared essential — stays in joint account',amount:x.target})});
     rows.push({id:'other',name:'Transfer to Ava',note:'Free-spend money — safe to use',amount:avaSpending});
     rows.push({id:'other',name:'Transfer to Bryce',note:'Free-spend money — safe to use',amount:bryceSpending});
@@ -246,7 +247,6 @@
 
     var tracker=[{id:'joint',name:'Joint account money kept',target:joint}];
     due.forEach(function(x){tracker.push({id:'bill-'+x.bill.id+'-'+localDateValue(x.date),name:x.bill.name+' paid',target:Math.min(x.amount,joint),note:'Comes out '+x.date.toLocaleDateString('en-CA',{month:'short',day:'numeric'})});});
-    tracker.push({id:'rent',name:'Rent set-aside',target:Math.min(rentSetAside,joint),note:'For next monthly rent payment'});
     essentialItems.forEach(function(x){tracker.push({id:x.id,name:x.name,target:x.target,note:'Spent from joint account'})});
     if(debt>0)tracker.push({id:'debt',name:'Credit-card payment',target:debt});
     renderTracker(tracker.filter(function(x){return x.target>0}));
