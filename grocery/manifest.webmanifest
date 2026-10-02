@@ -6,7 +6,7 @@
   "scope": "./",
   "display": "standalone",
   "background_color": "#090909",
-  "theme_color": "#090909",
+  "theme_color": "#d4af37",
   "description": "Budget-friendly meal planner and automatic grocery list for Ava and Bryce.",
   "icons": [
     {
