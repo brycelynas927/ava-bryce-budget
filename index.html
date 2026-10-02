@@ -189,7 +189,8 @@
     if(pay===0) summary.textContent='Enter your combined pay above.';
     else summary.innerHTML='<span class="gold">Leave '+money(joint)+' in the joint account.</span> Move up to <span class="good">'+money(spending)+'</span> to your spending accounts. Set aside '+money(savings)+' for wisdom teeth. '+(debt>0?'Then '+money(debt)+' is available for credit cards.':'There is no extra for credit cards in this pay cycle.');
 
-    var jointWindow=start.toLocaleDateString('en-CA',{month:'short',day:'numeric'})+'–'+new Date(end.getTime()-86400000).toLocaleDateString('en-CA',{month:'short',day:'numeric'});\n    var rows=[{name:'Joint account — do not move',note:'Covers rent set-aside + bills due '+jointWindow,amount:joint}];
+    var jointWindow=start.toLocaleDateString('en-CA',{month:'short',day:'numeric'})+'–'+new Date(end.getTime()-86400000).toLocaleDateString('en-CA',{month:'short',day:'numeric'});
+    var rows=[{name:'Joint account — do not move',note:'Covers rent set-aside + bills due '+jointWindow,amount:joint}];
     spendingItems.forEach(function(x){rows.push({name:x.name,note:'Move/spend from personal accounts',amount:Math.min(x.target,spending)})});
     rows.push({name:'Wisdom teeth savings',note:'Savings goal',amount:savings});
     rows.push({name:'Credit-card debt',note:'Everything left after priorities',amount:debt});
