@@ -1,1 +1,23 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><rect width="512" height="512" rx="112" fill="#2f5b43"/><path d="M118 150h48l38 188h190l37-126H190" fill="none" stroke="#fffaf1" stroke-width="28" stroke-linecap="round" stroke-linejoin="round"/><circle cx="235" cy="384" r="24" fill="#fffaf1"/><circle cx="374" cy="384" r="24" fill="#fffaf1"/><path d="M273 82c-28 32-27 72 3 98 31-24 36-65 11-99" fill="#bfe0b8"/><path d="M277 178c-41-4-68-31-72-72 38 2 70 28 72 72Z" fill="#d7efcf"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+<defs>
+  <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
+    <stop stop-color="#f5dc7a"/>
+    <stop offset=".5" stop-color="#d4af37"/>
+    <stop offset="1" stop-color="#b88918"/>
+  </linearGradient>
+  <radialGradient id="bg" cx=".28" cy=".18" r=".95">
+    <stop stop-color="#242016"/>
+    <stop offset=".55" stop-color="#10100e"/>
+    <stop offset="1" stop-color="#050505"/>
+  </radialGradient>
+</defs>
+<rect width="512" height="512" rx="112" fill="url(#bg)"/>
+<rect x="18" y="18" width="476" height="476" rx="96" fill="none" stroke="url(#gold)" stroke-width="10"/>
+<path d="M116 150h49l38 187h189l38-126H190" fill="none" stroke="url(#gold)" stroke-width="28" stroke-linecap="round" stroke-linejoin="round"/>
+<circle cx="234" cy="384" r="24" fill="#f5dc7a"/>
+<circle cx="374" cy="384" r="24" fill="#f5dc7a"/>
+<path d="M277 82c-27 31-26 70 3 96 31-24 35-63 12-97" fill="#d4af37"/>
+<path d="M278 178c-40-4-67-30-71-70 38 2 69 27 71 70Z" fill="#f5dc7a"/>
+<circle cx="403" cy="113" r="8" fill="#f5dc7a"/>
+<path d="M403 82v62M372 113h62" stroke="#d4af37" stroke-width="6" stroke-linecap="round"/>
+</svg>
