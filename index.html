@@ -50,7 +50,6 @@
     <div class="metric move"><small>Free spend to personal</small><strong id="sumSpending">$0.00</strong></div>
     <div class="metric move"><small>Move to Ava</small><strong id="sumAva">$0.00</strong></div>
     <div class="metric move"><small>Move to Bryce</small><strong id="sumBryce">$0.00</strong></div>
-    <div class="metric save"><small>Wisdom teeth</small><strong id="sumSavings">$0.00</strong></div>
     <div class="metric"><small>Credit cards</small><strong id="sumDebt">$0.00</strong></div>
   </section>
 
@@ -76,7 +75,7 @@
 
   <section class="card">
     <h2>Monthly bills & due dates</h2>
-    <p class="sub">These stay in the joint account when they are due before the next pay. You can edit any amount or due day.</p>
+    <p class="sub">The app checks the actual due day and only includes a bill in a pay cycle when it falls before the next pay. Melaleuca is treated as an end-of-month bill. You can edit any amount or due day.</p>
     <div class="list" id="billSettings"></div>
     <div class="status" id="billWindowStatus">Bills due this pay period will appear here.</div>
     <p class="tiny" style="margin-top:10px">Rent is treated as a $650 set-aside from each pay toward the $1,300 monthly rent.</p>
@@ -102,10 +101,10 @@
     {id:'phone1',name:'Phone bill 1',amount:56.50,due:21},
     {id:'phone2',name:'Phone bill 2',amount:115.62,due:28},
     {id:'streaming',name:'Netflix + Disney+ + Spotify',amount:40,due:28},
-    {id:'melaleuca',name:'Melaleuca',amount:160,due:30},
+    {id:'melaleuca',name:'Melaleuca',amount:160,due:31},
     {id:'chatgpt',name:'ChatGPT',amount:25,due:30}
   ];
-  var rentSetAside=650, wisdomTarget=50, activeTrackerItems=[];
+  var rentSetAside=650, activeTrackerItems=[];
   var categoryColors={
     joint:'#ffd978', rent:'#ffd978',
     insurance:'#ffd978', phone1:'#ffd978', phone2:'#ffd978', streaming:'#ffd978', melaleuca:'#ffd978', chatgpt:'#ffd978',
@@ -142,7 +141,9 @@
 
   function billsInWindow(start,end){
     var found=[];
-    billDefaults.forEach(function(b){
+    try{if(load('ava-bill-due-melaleuca','30')==='30')save('ava-bill-due-melaleuca',31)}catch(e){}
+
+  billDefaults.forEach(function(b){
       for(var o=-1;o<=1;o++){
         var ref=new Date(start.getFullYear(),start.getMonth()+o,1,12);
         var due=dueDateForMonth(b,ref.getFullYear(),ref.getMonth());
@@ -214,7 +215,6 @@
 
     var remaining=pay;
     var joint=Math.min(jointTarget,remaining);remaining-=joint;
-    var savings=Math.min(wisdomTarget,remaining);remaining-=savings;
     var spending=Math.min(freeSpendTarget,remaining);remaining-=spending;
     var debt=Math.max(0,remaining);
     var avaSpending=Math.round((spending/2)*100)/100;
@@ -224,7 +224,6 @@
     document.getElementById('sumSpending').textContent=money(spending);
     document.getElementById('sumAva').textContent=money(avaSpending);
     document.getElementById('sumBryce').textContent=money(bryceSpending);
-    document.getElementById('sumSavings').textContent=money(savings);
     document.getElementById('sumDebt').textContent=money(debt);
 
     var summary=document.getElementById('actionSummary');
@@ -233,7 +232,7 @@
       summary.textContent='Enter your combined pay above.';
       splitStatus.textContent='Enter your combined pay above.';
     } else {
-      summary.innerHTML='<span class="gold">Leave '+money(joint)+' in the joint account</span> for bills, rent, groceries, gas and cats. Set aside '+money(savings)+' for wisdom teeth. Then move <span class="good">'+money(avaSpending)+'</span> to Ava and <span class="good">'+money(bryceSpending)+'</span> to Bryce as true free-spend money. '+(debt>0?'After that, '+money(debt)+' is available for credit cards.':'There is no extra for credit cards in this pay cycle.');
+      summary.innerHTML='<span class="gold">Leave '+money(joint)+' in the joint account</span> for bills, rent, groceries, gas and cats. Then move <span class="good">'+money(avaSpending)+'</span> to Ava and <span class="good">'+money(bryceSpending)+'</span> to Bryce as true free-spend money. '+(debt>0?'After that, '+money(debt)+' is available for credit cards.':'There is no extra for credit cards in this pay cycle.');
       splitStatus.innerHTML='<span class="gold">JOINT: keep '+money(joint)+'</span> for rent, bills, groceries, gas and cats.<br><span class="good">AVA FREE SPEND: '+money(avaSpending)+'</span><br><span class="good">BRYCE FREE SPEND: '+money(bryceSpending)+'</span><br><span class="tiny">Money moved to your personal accounts is not needed for bills or shared essentials — it is the amount you can spend freely.</span>';
     }
 
@@ -242,7 +241,6 @@
     essentialItems.forEach(function(x){rows.push({id:x.id,name:x.name,note:'Shared essential — stays in joint account',amount:x.target})});
     rows.push({id:'other',name:'Transfer to Ava',note:'Free-spend money — safe to use',amount:avaSpending});
     rows.push({id:'other',name:'Transfer to Bryce',note:'Free-spend money — safe to use',amount:bryceSpending});
-    rows.push({id:'wisdom',name:'Wisdom teeth savings',note:'Savings goal',amount:savings});
     rows.push({id:'debt',name:'Credit-card debt',note:'Everything left after priorities',amount:debt});
     renderPlan(rows);
 
@@ -250,7 +248,6 @@
     due.forEach(function(x){tracker.push({id:'bill-'+x.bill.id+'-'+localDateValue(x.date),name:x.bill.name+' paid',target:Math.min(x.amount,joint),note:'Comes out '+x.date.toLocaleDateString('en-CA',{month:'short',day:'numeric'})});});
     tracker.push({id:'rent',name:'Rent set-aside',target:Math.min(rentSetAside,joint),note:'For next monthly rent payment'});
     essentialItems.forEach(function(x){tracker.push({id:x.id,name:x.name,target:x.target,note:'Spent from joint account'})});
-    tracker.push({id:'wisdom',name:'Wisdom teeth savings',target:savings});
     if(debt>0)tracker.push({id:'debt',name:'Credit-card payment',target:debt});
     renderTracker(tracker.filter(function(x){return x.target>0}));
 
