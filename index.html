@@ -47,9 +47,17 @@
 
   <section class="summary">
     <div class="metric keep"><small>Leave in joint</small><strong id="sumJoint">$0.00</strong></div>
-    <div class="metric move"><small>Move to spending</small><strong id="sumSpending">$0.00</strong></div>
+    <div class="metric move"><small>Total move to personal</small><strong id="sumSpending">$0.00</strong></div>
+    <div class="metric move"><small>Move to Ava</small><strong id="sumAva">$0.00</strong></div>
+    <div class="metric move"><small>Move to Bryce</small><strong id="sumBryce">$0.00</strong></div>
     <div class="metric save"><small>Wisdom teeth</small><strong id="sumSavings">$0.00</strong></div>
     <div class="metric"><small>Credit cards</small><strong id="sumDebt">$0.00</strong></div>
+  </section>
+
+  <section class="card">
+    <h2>How to split the bank accounts</h2>
+    <p class="sub">All bill money stays in joint. Only everyday spending moves out. Personal spending is split 50/50 by default.</p>
+    <div class="status" id="bankSplitStatus">Enter your combined pay above.</div>
   </section>
 
   <section class="card">
@@ -206,19 +214,31 @@
     var spending=Math.min(spendingTarget,remaining);remaining-=spending;
     var savings=Math.min(wisdomTarget,remaining);remaining-=savings;
     var debt=Math.max(0,remaining);
+    var avaSpending=Math.round((spending/2)*100)/100;
+    var bryceSpending=Math.round((spending-avaSpending)*100)/100;
 
     document.getElementById('sumJoint').textContent=money(joint);
     document.getElementById('sumSpending').textContent=money(spending);
+    document.getElementById('sumAva').textContent=money(avaSpending);
+    document.getElementById('sumBryce').textContent=money(bryceSpending);
     document.getElementById('sumSavings').textContent=money(savings);
     document.getElementById('sumDebt').textContent=money(debt);
 
     var summary=document.getElementById('actionSummary');
-    if(pay===0) summary.textContent='Enter your combined pay above.';
-    else summary.innerHTML='<span class="gold">Leave '+money(joint)+' in the joint account.</span> Move up to <span class="good">'+money(spending)+'</span> to your spending accounts. Set aside '+money(savings)+' for wisdom teeth. '+(debt>0?'Then '+money(debt)+' is available for credit cards.':'There is no extra for credit cards in this pay cycle.');
+    var splitStatus=document.getElementById('bankSplitStatus');
+    if(pay===0){
+      summary.textContent='Enter your combined pay above.';
+      splitStatus.textContent='Enter your combined pay above.';
+    } else {
+      summary.innerHTML='<span class="gold">Leave '+money(joint)+' in the joint account.</span> Move <span class="good">'+money(avaSpending)+'</span> to Ava and <span class="good">'+money(bryceSpending)+'</span> to Bryce for everyday spending. Set aside '+money(savings)+' for wisdom teeth. '+(debt>0?'Then '+money(debt)+' is available for credit cards.':'There is no extra for credit cards in this pay cycle.');
+      splitStatus.innerHTML='<span class="gold">JOINT: keep '+money(joint)+'</span> for rent and bills due before the next pay.<br><span class="good">AVA: move '+money(avaSpending)+'</span> to Ava\'s account.<br><span class="good">BRYCE: move '+money(bryceSpending)+'</span> to Bryce\'s account.<br><span class="tiny">The personal-account amounts together equal the '+money(spending)+' everyday spending budget. Categories below show what that spending money is meant to cover.</span>';
+    }
 
     var jointWindow=start.toLocaleDateString('en-CA',{month:'short',day:'numeric'})+'–'+new Date(end.getTime()-86400000).toLocaleDateString('en-CA',{month:'short',day:'numeric'});
     var rows=[{id:'joint',name:'Joint account — do not move',note:'Covers rent set-aside + bills due '+jointWindow,amount:joint}];
-    spendingItems.forEach(function(x){rows.push({id:x.id,name:x.name,note:'Move/spend from personal accounts',amount:Math.min(x.target,spending)})});
+    rows.push({id:'other',name:'Transfer to Ava',note:'50% of the everyday spending money',amount:avaSpending});
+    rows.push({id:'other',name:'Transfer to Bryce',note:'50% of the everyday spending money',amount:bryceSpending});
+    spendingItems.forEach(function(x){rows.push({id:x.id,name:x.name,note:'Category guide for the money in your personal accounts',amount:Math.min(x.target,spending)})});
     rows.push({id:'wisdom',name:'Wisdom teeth savings',note:'Savings goal',amount:savings});
     rows.push({id:'debt',name:'Credit-card debt',note:'Everything left after priorities',amount:debt});
     renderPlan(rows);
