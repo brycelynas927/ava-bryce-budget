@@ -95,7 +95,7 @@
     {id:'melaleuca',name:'Melaleuca',amount:160,due:30},
     {id:'chatgpt',name:'ChatGPT',amount:25,due:30}
   ];
-  var rentSetAside=650, wisdomTarget=200, activeTrackerItems=[];
+  var rentSetAside=650, wisdomTarget=50, activeTrackerItems=[];
 
   function money(n){return '$'+(Math.max(0,Number(n)||0)).toLocaleString('en-CA',{minimumFractionDigits:2,maximumFractionDigits:2});}
   function load(k,f){try{var v=localStorage.getItem(k);return v===null?f:v}catch(e){return f}}
@@ -196,7 +196,7 @@
     renderPlan(rows);
 
     var tracker=[{id:'joint',name:'Joint account money kept',target:joint}];
-    due.forEach(function(x){tracker.push({id:'bill-'+x.bill.id+'-'+localDateValue(x.date),name:x.bill.name+' paid',target:Math.min(x.amount,joint)})});
+    due.forEach(function(x){tracker.push({id:'bill-'+x.bill.id+'-'+localDateValue(x.date),name:x.bill.name+' paid',target:Math.min(x.amount,joint),note:'Comes out '+x.date.toLocaleDateString('en-CA',{month:'short',day:'numeric'})});});
     tracker.push({id:'rent',name:'Rent set-aside',target:Math.min(rentSetAside,joint),note:'For next monthly rent payment'});
     spendingItems.forEach(function(x){tracker.push({id:x.id,name:x.name,target:x.target})});
     tracker.push({id:'wisdom',name:'Wisdom teeth savings',target:savings});
