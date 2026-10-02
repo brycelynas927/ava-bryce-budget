@@ -1,4 +1,4 @@
-const CACHE='ava-bryce-budget-v13';
+const CACHE='ava-bryce-budget-v14';
 const ASSETS=['./','./index.html','./manifest.webmanifest','./city-skyline.svg'];
 self.addEventListener('install',event=>{
   event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(ASSETS)).then(()=>self.skipWaiting()));
