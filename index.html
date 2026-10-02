@@ -145,7 +145,7 @@
     trackerList.innerHTML='';
     items.forEach(function(it){
       var r=document.createElement('div');r.className='row';r.id='track-'+it.id;
-      r.innerHTML='<div class="row-top"><div><div class="row-title">'+it.name+'</div><div class="row-note"><span id="logged-'+it.id+'">$0.00 logged</span> • <span id="left-'+it.id+'">'+money(it.target)+' left</span></div></div><div class="amount">'+money(it.target)+' budgeted</div></div><div class="bar"><div class="fill" id="bar-'+it.id+'" style="width:0%"></div></div><div class="tracker-grid"><div class="input-wrap"><span>$</span><input id="add-'+it.id+'" type="number" min="0" step="0.01" inputmode="decimal" placeholder="Add moved / spent"></div><button class="btn" id="addbtn-'+it.id+'" type="button">Add amount</button><div class="input-wrap"><span>$</span><input id="set-'+it.id+'" type="number" min="0" step="0.01" inputmode="decimal" placeholder="Correct total"></div><button class="btn" id="setbtn-'+it.id+'" type="button">Set total</button></div>';
+      r.innerHTML='<div class="row-top"><div><div class="row-title">'+it.name+'</div>'+(it.note?'<div class="row-note">'+it.note+'</div>':'')+'<div class="row-note"><span id="logged-'+it.id+'">$0.00 logged</span> • <span id="left-'+it.id+'">'+money(it.target)+' left</span></div></div><div class="amount">'+money(it.target)+' budgeted</div></div><div class="bar"><div class="fill" id="bar-'+it.id+'" style="width:0%"></div></div><div class="tracker-grid"><div class="input-wrap"><span>$</span><input id="add-'+it.id+'" type="number" min="0" step="0.01" inputmode="decimal" placeholder="Add moved / spent"></div><button class="btn" id="addbtn-'+it.id+'" type="button">Add amount</button><div class="input-wrap"><span>$</span><input id="set-'+it.id+'" type="number" min="0" step="0.01" inputmode="decimal" placeholder="Correct total"></div><button class="btn" id="setbtn-'+it.id+'" type="button">Set total</button></div>';
       trackerList.appendChild(r);
       r.querySelector('#addbtn-'+it.id).addEventListener('click',function(){var el=r.querySelector('#add-'+it.id),v=parseFloat(el.value);if(isFinite(v)&&v>0){setLogged(it.id,logged(it.id)+v);el.value='';updateTracker()}});
       r.querySelector('#setbtn-'+it.id).addEventListener('click',function(){var el=r.querySelector('#set-'+it.id),v=parseFloat(el.value);if(isFinite(v)&&v>=0){setLogged(it.id,v);el.value='';updateTracker()}});
@@ -189,7 +189,7 @@
     if(pay===0) summary.textContent='Enter your combined pay above.';
     else summary.innerHTML='<span class="gold">Leave '+money(joint)+' in the joint account.</span> Move up to <span class="good">'+money(spending)+'</span> to your spending accounts. Set aside '+money(savings)+' for wisdom teeth. '+(debt>0?'Then '+money(debt)+' is available for credit cards.':'There is no extra for credit cards in this pay cycle.');
 
-    var rows=[{name:'Joint account — do not move',note:'Rent set-aside + bills due before the next pay',amount:joint}];
+    var jointWindow=start.toLocaleDateString('en-CA',{month:'short',day:'numeric'})+'–'+new Date(end.getTime()-86400000).toLocaleDateString('en-CA',{month:'short',day:'numeric'});\n    var rows=[{name:'Joint account — do not move',note:'Covers rent set-aside + bills due '+jointWindow,amount:joint}];
     spendingItems.forEach(function(x){rows.push({name:x.name,note:'Move/spend from personal accounts',amount:Math.min(x.target,spending)})});
     rows.push({name:'Wisdom teeth savings',note:'Savings goal',amount:savings});
     rows.push({name:'Credit-card debt',note:'Everything left after priorities',amount:debt});
@@ -197,7 +197,7 @@
 
     var tracker=[{id:'joint',name:'Joint account money kept',target:joint}];
     due.forEach(function(x){tracker.push({id:'bill-'+x.bill.id+'-'+localDateValue(x.date),name:x.bill.name+' paid',target:Math.min(x.amount,joint)})});
-    tracker.push({id:'rent',name:'Rent set-aside',target:Math.min(rentSetAside,joint)});
+    tracker.push({id:'rent',name:'Rent set-aside',target:Math.min(rentSetAside,joint),note:'For next monthly rent payment'});
     spendingItems.forEach(function(x){tracker.push({id:x.id,name:x.name,target:x.target})});
     tracker.push({id:'wisdom',name:'Wisdom teeth savings',target:savings});
     if(debt>0)tracker.push({id:'debt',name:'Credit-card payment',target:debt});
