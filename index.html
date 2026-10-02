@@ -47,7 +47,7 @@
 
   <section class="summary">
     <div class="metric keep"><small>Leave in joint</small><strong id="sumJoint">$0.00</strong></div>
-    <div class="metric move"><small>Total move to personal</small><strong id="sumSpending">$0.00</strong></div>
+    <div class="metric move"><small>Free spend to personal</small><strong id="sumSpending">$0.00</strong></div>
     <div class="metric move"><small>Move to Ava</small><strong id="sumAva">$0.00</strong></div>
     <div class="metric move"><small>Move to Bryce</small><strong id="sumBryce">$0.00</strong></div>
     <div class="metric save"><small>Wisdom teeth</small><strong id="sumSavings">$0.00</strong></div>
@@ -56,7 +56,7 @@
 
   <section class="card">
     <h2>How to split the bank accounts</h2>
-    <p class="sub">All bill money stays in joint. Only everyday spending moves out. Personal spending is split 50/50 by default.</p>
+    <p class="sub">Bills and shared essentials stay in joint. Only true free-spend money moves to your personal accounts, split 50/50 by default.</p>
     <div class="status" id="bankSplitStatus">Enter your combined pay above.</div>
   </section>
 
@@ -88,12 +88,14 @@
   var input=document.getElementById('combinedPay'), payDateInput=document.getElementById('payDate');
   var planList=document.getElementById('planList'), trackerList=document.getElementById('trackerList'), billSettings=document.getElementById('billSettings');
 
-  var spendingItems=[
+  var essentialItems=[
     {id:'groceries',name:'Groceries',target:175},
     {id:'gas',name:'Gas',target:112.50},
-    {id:'cats',name:'Cats',target:55},
+    {id:'cats',name:'Cats',target:55}
+  ];
+  var freeSpendItems=[
     {id:'eating',name:'Eating out',target:50},
-    {id:'other',name:'Other regular spending',target:85}
+    {id:'other',name:'Other free spending',target:85}
   ];
   var billDefaults=[
     {id:'insurance',name:'Car insurance',amount:461,due:11},
@@ -206,13 +208,14 @@
     var start=parseLocalDate(payDateInput.value)||new Date(), end=new Date(start);end.setDate(end.getDate()+14);
     var due=billsInWindow(start,end);
     var billsTotal=due.reduce(function(s,x){return s+x.amount},0);
-    var jointTarget=rentSetAside+billsTotal;
-    var spendingTarget=spendingItems.reduce(function(s,x){return s+x.target},0);
+    var essentialTarget=essentialItems.reduce(function(s,x){return s+x.target},0);
+    var jointTarget=rentSetAside+billsTotal+essentialTarget;
+    var freeSpendTarget=freeSpendItems.reduce(function(s,x){return s+x.target},0);
 
     var remaining=pay;
     var joint=Math.min(jointTarget,remaining);remaining-=joint;
-    var spending=Math.min(spendingTarget,remaining);remaining-=spending;
     var savings=Math.min(wisdomTarget,remaining);remaining-=savings;
+    var spending=Math.min(freeSpendTarget,remaining);remaining-=spending;
     var debt=Math.max(0,remaining);
     var avaSpending=Math.round((spending/2)*100)/100;
     var bryceSpending=Math.round((spending-avaSpending)*100)/100;
@@ -230,15 +233,15 @@
       summary.textContent='Enter your combined pay above.';
       splitStatus.textContent='Enter your combined pay above.';
     } else {
-      summary.innerHTML='<span class="gold">Leave '+money(joint)+' in the joint account.</span> Move <span class="good">'+money(avaSpending)+'</span> to Ava and <span class="good">'+money(bryceSpending)+'</span> to Bryce for everyday spending. Set aside '+money(savings)+' for wisdom teeth. '+(debt>0?'Then '+money(debt)+' is available for credit cards.':'There is no extra for credit cards in this pay cycle.');
-      splitStatus.innerHTML='<span class="gold">JOINT: keep '+money(joint)+'</span> for rent and bills due before the next pay.<br><span class="good">AVA: move '+money(avaSpending)+'</span> to Ava\'s account.<br><span class="good">BRYCE: move '+money(bryceSpending)+'</span> to Bryce\'s account.<br><span class="tiny">The personal-account amounts together equal the '+money(spending)+' everyday spending budget. Categories below show what that spending money is meant to cover.</span>';
+      summary.innerHTML='<span class="gold">Leave '+money(joint)+' in the joint account</span> for bills, rent, groceries, gas and cats. Set aside '+money(savings)+' for wisdom teeth. Then move <span class="good">'+money(avaSpending)+'</span> to Ava and <span class="good">'+money(bryceSpending)+'</span> to Bryce as true free-spend money. '+(debt>0?'After that, '+money(debt)+' is available for credit cards.':'There is no extra for credit cards in this pay cycle.');
+      splitStatus.innerHTML='<span class="gold">JOINT: keep '+money(joint)+'</span> for rent, bills, groceries, gas and cats.<br><span class="good">AVA FREE SPEND: '+money(avaSpending)+'</span><br><span class="good">BRYCE FREE SPEND: '+money(bryceSpending)+'</span><br><span class="tiny">Money moved to your personal accounts is not needed for bills or shared essentials — it is the amount you can spend freely.</span>';
     }
 
     var jointWindow=start.toLocaleDateString('en-CA',{month:'short',day:'numeric'})+'–'+new Date(end.getTime()-86400000).toLocaleDateString('en-CA',{month:'short',day:'numeric'});
-    var rows=[{id:'joint',name:'Joint account — do not move',note:'Covers rent set-aside + bills due '+jointWindow,amount:joint}];
-    rows.push({id:'other',name:'Transfer to Ava',note:'50% of the everyday spending money',amount:avaSpending});
-    rows.push({id:'other',name:'Transfer to Bryce',note:'50% of the everyday spending money',amount:bryceSpending});
-    spendingItems.forEach(function(x){rows.push({id:x.id,name:x.name,note:'Category guide for the money in your personal accounts',amount:Math.min(x.target,spending)})});
+    var rows=[{id:'joint',name:'Joint account — keep here',note:'Rent + bills due '+jointWindow+' + shared essentials',amount:joint}];
+    essentialItems.forEach(function(x){rows.push({id:x.id,name:x.name,note:'Shared essential — stays in joint account',amount:x.target})});
+    rows.push({id:'other',name:'Transfer to Ava',note:'Free-spend money — safe to use',amount:avaSpending});
+    rows.push({id:'other',name:'Transfer to Bryce',note:'Free-spend money — safe to use',amount:bryceSpending});
     rows.push({id:'wisdom',name:'Wisdom teeth savings',note:'Savings goal',amount:savings});
     rows.push({id:'debt',name:'Credit-card debt',note:'Everything left after priorities',amount:debt});
     renderPlan(rows);
@@ -246,7 +249,7 @@
     var tracker=[{id:'joint',name:'Joint account money kept',target:joint}];
     due.forEach(function(x){tracker.push({id:'bill-'+x.bill.id+'-'+localDateValue(x.date),name:x.bill.name+' paid',target:Math.min(x.amount,joint),note:'Comes out '+x.date.toLocaleDateString('en-CA',{month:'short',day:'numeric'})});});
     tracker.push({id:'rent',name:'Rent set-aside',target:Math.min(rentSetAside,joint),note:'For next monthly rent payment'});
-    spendingItems.forEach(function(x){tracker.push({id:x.id,name:x.name,target:x.target})});
+    essentialItems.forEach(function(x){tracker.push({id:x.id,name:x.name,target:x.target,note:'Spent from joint account'})});
     tracker.push({id:'wisdom',name:'Wisdom teeth savings',target:savings});
     if(debt>0)tracker.push({id:'debt',name:'Credit-card payment',target:debt});
     renderTracker(tracker.filter(function(x){return x.target>0}));
