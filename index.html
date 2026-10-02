@@ -96,6 +96,29 @@
     {id:'chatgpt',name:'ChatGPT',amount:25,due:30}
   ];
   var rentSetAside=650, wisdomTarget=50, activeTrackerItems=[];
+  var categoryColors={
+    joint:'#ffd978', rent:'#ffd978',
+    insurance:'#ffd978', phone1:'#ffd978', phone2:'#ffd978', streaming:'#ffd978', melaleuca:'#ffd978', chatgpt:'#ffd978',
+    groceries:'#95e5b8', gas:'#9bd7ff', cats:'#c8a8ff', eating:'#ffb08a', other:'#c6ced8',
+    wisdom:'#83e6d2', debt:'#ff9c9c'
+  };
+  function categoryColor(id){
+    if(id&&id.indexOf('bill-')===0){
+      var parts=id.split('-');
+      return categoryColors[parts[1]]||categoryColors.joint;
+    }
+    return categoryColors[id]||'#ffffff';
+  }
+  function applyCategoryStyle(row,id){
+    var color=categoryColor(id);
+    row.style.borderColor=color;
+    row.style.boxShadow='inset 4px 0 0 '+color;
+    var title=row.querySelector('.row-title'), amount=row.querySelector('.amount');
+    if(title)title.style.color=color;
+    if(amount)amount.style.color=color;
+    row.querySelectorAll('.btn').forEach(function(btn){btn.style.borderColor=color});
+    return color;
+  }
 
   function money(n){return '$'+(Math.max(0,Number(n)||0)).toLocaleString('en-CA',{minimumFractionDigits:2,maximumFractionDigits:2});}
   function load(k,f){try{var v=localStorage.getItem(k);return v===null?f:v}catch(e){return f}}
@@ -122,6 +145,7 @@
   billDefaults.forEach(function(b){
     var r=document.createElement('div');r.className='row';
     r.innerHTML='<div class="bill-edit"><div><div class="row-title">'+b.name+'</div><div class="row-note">Joint account bill</div></div><div><label>Amount</label><input id="amt-'+b.id+'" type="number" min="0" step="0.01" value="'+billAmount(b)+'"></div><div><label>Due day</label><input id="due-'+b.id+'" type="number" min="1" max="31" value="'+billDue(b)+'"></div></div>';
+    applyCategoryStyle(r,b.id);
     billSettings.appendChild(r);
     r.querySelector('#amt-'+b.id).addEventListener('change',function(e){var v=parseFloat(e.target.value);if(isFinite(v)&&v>=0){save('ava-bill-amount-'+b.id,v);calculate()}});
     r.querySelector('#due-'+b.id).addEventListener('change',function(e){var v=parseInt(e.target.value,10);if(isFinite(v)&&v>=1&&v<=31){save('ava-bill-due-'+b.id,v);calculate()}});
@@ -136,6 +160,7 @@
     rows.forEach(function(x){
       var r=document.createElement('div');r.className='row';
       r.innerHTML='<div class="row-top"><div><div class="row-title">'+x.name+'</div><div class="row-note">'+x.note+'</div></div><div class="amount">'+money(x.amount)+'</div></div>';
+      applyCategoryStyle(r,x.id||'other');
       planList.appendChild(r);
     });
   }
@@ -146,6 +171,8 @@
     items.forEach(function(it){
       var r=document.createElement('div');r.className='row';r.id='track-'+it.id;
       r.innerHTML='<div class="row-top"><div><div class="row-title">'+it.name+'</div>'+(it.note?'<div class="row-note">'+it.note+'</div>':'')+'<div class="row-note"><span id="logged-'+it.id+'">$0.00 logged</span> • <span id="left-'+it.id+'">'+money(it.target)+' left</span></div></div><div class="amount">'+money(it.target)+' budgeted</div></div><div class="bar"><div class="fill" id="bar-'+it.id+'" style="width:0%"></div></div><div class="tracker-grid"><div class="input-wrap"><span>$</span><input id="add-'+it.id+'" type="number" min="0" step="0.01" inputmode="decimal" placeholder="Add moved / spent"></div><button class="btn" id="addbtn-'+it.id+'" type="button">Add amount</button><div class="input-wrap"><span>$</span><input id="set-'+it.id+'" type="number" min="0" step="0.01" inputmode="decimal" placeholder="Correct total"></div><button class="btn" id="setbtn-'+it.id+'" type="button">Set total</button></div>';
+      var trackerColor=applyCategoryStyle(r,it.id);
+      r.setAttribute('data-category-color',trackerColor);
       trackerList.appendChild(r);
       r.querySelector('#addbtn-'+it.id).addEventListener('click',function(){var el=r.querySelector('#add-'+it.id),v=parseFloat(el.value);if(isFinite(v)&&v>0){setLogged(it.id,logged(it.id)+v);el.value='';updateTracker()}});
       r.querySelector('#setbtn-'+it.id).addEventListener('click',function(){var el=r.querySelector('#set-'+it.id),v=parseFloat(el.value);if(isFinite(v)&&v>=0){setLogged(it.id,v);el.value='';updateTracker()}});
@@ -160,7 +187,7 @@
       total+=v;target+=it.target;
       var a=document.getElementById('logged-'+it.id),b=document.getElementById('left-'+it.id),bar=document.getElementById('bar-'+it.id);
       if(a)a.textContent=money(v)+' logged';if(b)b.textContent=money(left)+' left';
-      if(bar){bar.style.width=pct+'%';bar.style.background=v>it.target?'var(--red)':'var(--green)'}
+      if(bar){bar.style.width=pct+'%';bar.style.background=v>it.target?'var(--red)':categoryColor(it.id)}
     });
     var s=document.getElementById('trackerStatus');
     s.innerHTML=total===0?'Nothing logged yet. Your bars will stay empty until you add an amount.':'<span class="good">'+money(total)+' logged</span> out of '+money(target)+' budgeted for this pay cycle.';
@@ -190,10 +217,10 @@
     else summary.innerHTML='<span class="gold">Leave '+money(joint)+' in the joint account.</span> Move up to <span class="good">'+money(spending)+'</span> to your spending accounts. Set aside '+money(savings)+' for wisdom teeth. '+(debt>0?'Then '+money(debt)+' is available for credit cards.':'There is no extra for credit cards in this pay cycle.');
 
     var jointWindow=start.toLocaleDateString('en-CA',{month:'short',day:'numeric'})+'–'+new Date(end.getTime()-86400000).toLocaleDateString('en-CA',{month:'short',day:'numeric'});
-    var rows=[{name:'Joint account — do not move',note:'Covers rent set-aside + bills due '+jointWindow,amount:joint}];
-    spendingItems.forEach(function(x){rows.push({name:x.name,note:'Move/spend from personal accounts',amount:Math.min(x.target,spending)})});
-    rows.push({name:'Wisdom teeth savings',note:'Savings goal',amount:savings});
-    rows.push({name:'Credit-card debt',note:'Everything left after priorities',amount:debt});
+    var rows=[{id:'joint',name:'Joint account — do not move',note:'Covers rent set-aside + bills due '+jointWindow,amount:joint}];
+    spendingItems.forEach(function(x){rows.push({id:x.id,name:x.name,note:'Move/spend from personal accounts',amount:Math.min(x.target,spending)})});
+    rows.push({id:'wisdom',name:'Wisdom teeth savings',note:'Savings goal',amount:savings});
+    rows.push({id:'debt',name:'Credit-card debt',note:'Everything left after priorities',amount:debt});
     renderPlan(rows);
 
     var tracker=[{id:'joint',name:'Joint account money kept',target:joint}];
