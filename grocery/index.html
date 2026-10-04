@@ -92,28 +92,130 @@ const fallbackPhotos={
 "Quick & Breakfast":"https://images.unsplash.com/photo-1533089860892-a7c6f0a88666?auto=format&fit=crop&w=900&q=82",
 "Soups":"https://images.unsplash.com/photo-1547592166-23ac45744acd?auto=format&fit=crop&w=900&q=82"
 };
-function photoTerms(r){
-  let s=(r.name||"meal").toLowerCase()
-    .replace(/&/g," and ")
-    .replace(/easy|simple|one pot|sheet pan|slow cooker/g," ")
-    .replace(/[^a-z0-9 ]+/g," ")
-    .replace(/\s+/g," ")
-    .trim();
-  return s.split(" ").slice(0,6).join(",");
-}
-const exactPhotos={
-  "Honey Garlic Chicken & Rice":"./images/honey-garlic-chicken.webp",
-  "Creamy Chicken Pasta":"./images/creamy-chicken-pasta.webp",
-  "Chicken Fajitas":"./images/chicken-fajitas.webp",
-  "BBQ Chicken Sandwiches":"./images/bbq-chicken-sandwich.webp",
-  "Cheesy Chicken & Rice Bake":"./images/cheesy-chicken-rice.webp",
-  "Easy Beef Stroganoff":"./images/beef-stroganoff.webp",
-  "Beef Tacos":"./images/beef-tacos.webp"
+const photoOverrides={
+"Sloppy Joes":"sloppy,joe,sandwich",
+"Easy Beef Stroganoff":"beef,stroganoff,noodles",
+"Beef Tacos":"beef,tacos",
+"Cheeseburger Rice Skillet":"cheeseburger,rice,skillet",
+"Beef & Broccoli Rice":"beef,broccoli,rice",
+"Beef Taco Rice":"beef,taco,rice",
+"Beef & Cabbage Skillet":"beef,cabbage,skillet",
+"Meatball Subs":"meatball,sub,sandwich",
+"Beef Enchilada Skillet":"beef,enchilada",
+"Spaghetti with Meat Sauce":"spaghetti,meat,sauce",
+"Sweet Soy Ground Beef Bowls":"ground,beef,rice,bowl",
+"Simple Beef Chili":"beef,chili",
+"Beef & Potato Hash":"beef,potato,hash",
+"Hamburger Soup":"hamburger,soup",
+"Cheeseburger Mac":"cheeseburger,macaroni",
+"Honey Garlic Chicken & Rice":"honey,garlic,chicken,rice",
+"Creamy Chicken Pasta":"creamy,chicken,pasta",
+"Chicken Fajitas":"chicken,fajitas",
+"BBQ Chicken Sandwiches":"barbecue,chicken,sandwich",
+"Chicken Fried Rice":"chicken,fried,rice",
+"Sheet Pan Chicken & Potatoes":"chicken,potatoes",
+"Salsa Chicken Tacos":"chicken,tacos",
+"Cheesy Chicken & Rice Bake":"cheesy,chicken,rice,casserole",
+"Teriyaki Chicken Rice Bowls":"teriyaki,chicken,rice",
+"Lemon Herb Chicken & Potatoes":"lemon,chicken,potatoes",
+"Chicken Quesadillas":"chicken,quesadilla",
+"Chicken Parmesan Pasta Skillet":"chicken,parmesan,pasta",
+"Chicken Noodle Soup":"chicken,noodle,soup",
+"Buffalo Chicken Wraps":"buffalo,chicken,wrap",
+"Greek Chicken Rice Bowls":"greek,chicken,rice",
+"Chicken Alfredo Bake":"chicken,alfredo,pasta",
+"Chicken Taco Soup":"chicken,taco,soup",
+"Sweet Chili Chicken Stir Fry":"sweet,chili,chicken,stirfry",
+"Chicken Caesar Wraps":"chicken,caesar,wrap",
+"Chicken & Veggie Gravy Bowls":"chicken,gravy,potatoes",
+"Creamy Tomato Spinach Pasta":"tomato,spinach,pasta",
+"Easy Baked Ziti":"baked,ziti",
+"One Pot Taco Pasta":"taco,pasta",
+"Garlic Parmesan Pasta":"garlic,parmesan,pasta",
+"Tuna Pasta Salad":"tuna,pasta,salad",
+"Veggie Pasta Primavera":"pasta,primavera",
+"Sausage Tomato Pasta":"sausage,tomato,pasta",
+"Pesto Chicken Pasta":"pesto,chicken,pasta",
+"Broccoli Mac & Cheese":"broccoli,macaroni,cheese",
+"Lemon Butter Pasta with Peas":"lemon,butter,pasta,peas",
+"Pizza Pasta Bake":"pizza,pasta,casserole",
+"Tomato Basil Orzo":"tomato,basil,orzo",
+"Cheesy Sausage Gnocchi":"sausage,gnocchi",
+"Easy Spaghetti Carbonara":"spaghetti,carbonara",
+"Creamy Cajun Pasta":"cajun,pasta,sausage",
+"Black Bean Quesadillas":"black,bean,quesadilla",
+"Chickpea Coconut Curry":"chickpea,coconut,curry",
+"Lentil Tacos":"lentil,tacos",
+"Bean & Cheese Burritos":"bean,cheese,burrito",
+"Sweet Potato Black Bean Bowls":"sweet,potato,black,bean,bowl",
+"Vegetarian Chili":"vegetarian,chili",
+"Red Lentil Soup":"red,lentil,soup",
+"White Bean Tomato Pasta":"white,bean,tomato,pasta",
+"Chickpea Salad Wraps":"chickpea,salad,wrap",
+"Loaded Baked Potatoes":"loaded,baked,potato",
+"Vegetable Fried Rice":"vegetable,fried,rice",
+"Egg Fried Rice":"egg,fried,rice",
+"Black Bean Enchiladas":"black,bean,enchilada",
+"Peanut Noodles":"peanut,noodles",
+"Bean & Rice Bowls":"bean,rice,bowl",
+"Sausage Pepper Rice":"sausage,pepper,rice",
+"Egg Roll in a Bowl":"egg,roll,bowl",
+"Mexican Rice & Beans":"mexican,rice,beans",
+"Tuna Rice Bowls":"tuna,rice,bowl",
+"Taco Rice Casserole":"taco,rice,casserole",
+"BBQ Chickpea Rice Bowls":"barbecue,chickpea,rice",
+"Teriyaki Tofu Bowls":"teriyaki,tofu,rice",
+"Chicken Burrito Bowls":"chicken,burrito,bowl",
+"Turkey Meatball Rice Bowls":"turkey,meatball,rice",
+"Breakfast Burrito Bowls":"breakfast,burrito,bowl",
+"Mediterranean Chickpea Rice":"mediterranean,chickpea,rice",
+"Ham & Pea Fried Rice":"ham,pea,fried,rice",
+"Curry Chicken Rice":"curry,chicken,rice",
+"Tomato Rice with Eggs":"tomato,rice,eggs",
+"Cajun Sausage Rice":"cajun,sausage,rice",
+"Slow Cooker Honey Garlic Chicken":"honey,garlic,chicken",
+"Slow Cooker Salsa Chicken":"salsa,chicken",
+"Slow Cooker Chicken & Gravy":"chicken,gravy",
+"Slow Cooker Beef & Potatoes":"beef,potatoes,stew",
+"Slow Cooker Taco Soup":"taco,soup",
+"Slow Cooker White Chicken Chili":"white,chicken,chili",
+"Slow Cooker Lentil Soup":"lentil,soup",
+"Slow Cooker BBQ Chicken":"barbecue,pulled,chicken,sandwich",
+"Slow Cooker Sausage & Peppers":"sausage,peppers",
+"Slow Cooker Chicken Noodle Soup":"chicken,noodle,soup",
+"Breakfast Quesadillas":"breakfast,quesadilla",
+"Pancakes & Eggs for Dinner":"pancakes,eggs",
+"Egg & Potato Tacos":"egg,potato,tacos",
+"French Toast & Fruit":"french,toast,fruit",
+"Cheesy Egg Toasts":"egg,cheese,toast",
+"Tomato Tortellini Soup":"tomato,tortellini,soup",
+"Creamy Potato Soup":"potato,soup",
+"Easy Minestrone":"minestrone,soup",
+"Creamy Chicken Rice Soup":"chicken,rice,soup",
+"Pinto Bean Soup":"pinto,bean,soup"
 };
-function photoFor(r){
-  return exactPhotos[r.name] || ("https://loremflickr.com/960/720/"+photoTerms(r)+"?lock="+r.id);
+function photoTerms(r){
+  if(photoOverrides[r.name])return photoOverrides[r.name];
+  return (r.name||"meal").toLowerCase()
+    .replace(/&/g," ")
+    .replace(/easy|simple|one pot|sheet pan|slow cooker|for dinner/g," ")
+    .replace(/[^a-z0-9 ]+/g," ")
+    .replace(/\bjoes\b/g,"joe")
+    .replace(/\s+/g," ")
+    .trim()
+    .split(" ")
+    .slice(0,4)
+    .join(",");
 }
-function fallbackPhoto(r){return fallbackPhotos[r.cat]||"https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=900&q=82";}
+function photoFor(r){
+  return "https://loremflickr.com/960/720/"+photoTerms(r)+"/all?lock="+(r.id+1000);
+}
+function fallbackPhoto(r){
+  const label=(r.name||"Meal").replace(/&/g,"and");
+  const emoji=emojis[r.cat]||"🍽️";
+  const svg='<svg xmlns="http://www.w3.org/2000/svg" width="960" height="720" viewBox="0 0 960 720"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop stop-color="%23110f0b"/><stop offset="1" stop-color="%23261f0e"/></linearGradient></defs><rect width="960" height="720" fill="url(%23g)"/><circle cx="480" cy="270" r="125" fill="%232d2616" stroke="%23d4af37" stroke-width="8"/><text x="480" y="305" text-anchor="middle" font-size="120">'+emoji+'</text><text x="480" y="500" text-anchor="middle" fill="%23f6d76e" font-family="Arial,sans-serif" font-weight="700" font-size="46">'+label+'</text><text x="480" y="560" text-anchor="middle" fill="%23cbbf9e" font-family="Arial,sans-serif" font-size="28">Recipe photo unavailable</text></svg>';
+  return "data:image/svg+xml;charset=UTF-8,"+encodeURIComponent(svg);
+}
 const cats=["All","Under 30 min","Chicken","Beef","Pasta","Vegetarian","Rice & Bowls","Slow Cooker","Quick & Breakfast","Soups"];
 const sectionOrder=["Produce","Meat","Dairy","Bakery","Frozen","Pantry","Other"];
 const recipes=rawRecipes.map((r,i)=>({id:i+1,name:r[0],cat:r[1],time:r[2],method:r[3],tier:r[4],leftovers:!!r[5],keys:r[6].split(",")}));
