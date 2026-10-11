@@ -222,7 +222,7 @@ function photoFor(r){
  if(verifiedPhotos[r.name])return verifiedPhotos[r.name];
  const visible=recipeItems(r).filter(it=>!it.seasoning).slice(0,7).map(it=>it.name.toLowerCase()).join(", ");
  const prompt="Realistic natural-light food photograph of the finished homemade dish '"+r.name+"'. It must visibly match this exact recipe and show the correct type of meal. Main ingredients: "+visible+". No unrelated foods, no text, no labels, no people. Plated exactly as a home cook would serve this dish, appetizing but realistic.";
- return "https://image.pollinations.ai/prompt/"+encodeURIComponent(prompt)+"?width=960&height=720&model=flux&seed="+(4300+r.id)+"&nologo=true&safe=true&enhance=true";
+ return "https://gen.pollinations.ai/image/"+encodeURIComponent(prompt)+"?width=960&height=720&model=flux&seed="+(4300+r.id)+"&safe=true";
 }
 function fallbackPhoto(r){
   const label=(r.name||"Meal").replace(/&/g,"and");
