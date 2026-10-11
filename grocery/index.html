@@ -216,30 +216,8 @@ const verifiedPhotos={
 "Slow Cooker BBQ Chicken":"./images/bbq-chicken-sandwich.webp",
 "Cheesy Chicken & Rice Bake":"./images/cheesy-chicken-rice.webp",
 "Easy Beef Stroganoff":"./images/beef-stroganoff.webp",
-"Beef Tacos":"./images/beef-tacos.webp",
-"Chicken Fried Rice":"https://www.fuddo.in/assets/images/data/SVS_Food_court.png",
-"Sheet Pan Chicken & Potatoes":"https://www.qfc.com/content/v2/binary/image/imageset/sheet_pan_garlic_chicken--6_sheet-pan-garlic-chicken_a_thanksgiving-ms-recipe-photo_p_23-tkc-0125-copy.jpg",
-"Salsa Chicken Tacos":"https://data.thefeedfeed.com/static/2023/04/17/1681786382643e060e7a585.jpg",
-"Teriyaki Chicken Rice Bowls":"https://thefoodbarrel.com/cdn/shop/files/Savory_Teriyaki_Chicken_Delight.jpg?v=1722599095&width=1500",
-"Lemon Herb Chicken & Potatoes":"https://dashnosh.com/cdn-cgi/image/fit%3Dcontain%2Cwidth%3D768%2Cquality%3D80%2Cformat%3Dauto/assets/images/1760426127514-uI-_7KUz.webp",
-"Chicken Quesadillas":"https://simplerecetas.com/assets/images/1735313160822-4qrfvrgc.webp",
-"Chicken Parmesan Pasta Skillet":"https://lodgecastiron.co.nz/cdn/shop/articles/046a66a4-ba95-4e79-ae10-ca03941f7d42_ed4be20a-e47e-4462-accc-b40657ceb7a0_1200x1200.jpg?v=1746572585",
-"Chicken Noodle Soup":"https://cook-room.com/_next/image?q=75&url=https%3A%2F%2Fcook-room.com%2Fuploads%2Frecipe%2Fbig%2F1770492606786_recipe-1770492606506.jpeg&w=3840",
-"Buffalo Chicken Wraps":"https://embersprig.com/assets/images/1766528399949-ebyx8m1p.webp",
-"Greek Chicken Rice Bowls":"https://d2aq0yf1s46hyj.cloudfront.net/therandomrecipe/202.png",
-"Chicken Alfredo Bake":"https://recipesbyclare.com/assets/images/1747079223368-a08jyvg5.webp",
-"Chicken Taco Soup":"https://v.cdn.ww.com/media/system/wine/63615298e18f54001169d15e/31844d2e-a43f-4976-bd17-4f53ae1ffd5d/cpaqdfeoek3ge6cihumn.jpg?auto=webp&enable=upscale&fit=crop&height=800&optimize=medium&quality=80&width=800",
-"Sweet Chili Chicken Stir Fry":"https://cdn.southerndishes.com/images/featured_image_row_8_848b5d4c-84.jpg",
-"Chicken Caesar Wraps":"https://www.therandomrecipe.com/_next/image?q=75&url=https%3A%2F%2Fd2aq0yf1s46hyj.cloudfront.net%2Ftherandomrecipe%2F205.png&w=828",
-"Cheeseburger Rice Skillet":"https://d1yfn1dfres2va.cloudfront.net/012/42/34/4234e37f8371e3d215c1e6c1d3b11e0a_640m.jpg",
-"Beef & Broccoli Rice":"https://shop.creekstonefarms.com/cdn/shop/files/PremiumBeefSlices_StirFry.jpg?v=1741886267",
-"Sloppy Joes":"https://goldenimik.com/assets/images/1768322952580-jyrybb5a.webp",
-"Beef Taco Rice":"https://recipesbylena.com/assets/images/1749552188095-bkxhruec.webp",
-"Beef & Cabbage Skillet":"https://d3s8tbcesxr4jm.cloudfront.net/recipe-images/ic-1/one-pan-caramelized-onion-and-beef-cabbage-skillet.jpg",
-"Meatball Subs":"https://quickierecipe.com/assets/images/1735312305127-7bg1pnuo.webp",
-"Beef Enchilada Skillet":"https://cocinadefiesta.com/assets/images/1743457142271-70kjva5r.webp",
-"Spaghetti with Meat Sauce":"https://myhomemaderecipe.com/assets/images/Rich-Skillet-Spaghetti-with-Classic-Meat-Sauce-hero.jpg"
-};
+"Beef Tacos":"./images/beef-tacos.webp"
+}
 function photoFor(r){
  if(verifiedPhotos[r.name])return verifiedPhotos[r.name];
  const visible=recipeItems(r).filter(it=>!it.seasoning).slice(0,7).map(it=>it.name.toLowerCase()).join(", ");
