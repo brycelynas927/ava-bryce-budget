@@ -1,4 +1,4 @@
-const CACHE='our-grocery-plan-v5';
+const CACHE='our-grocery-plan-v6';
 const ASSETS=['./','./index.html','./manifest.webmanifest','./icon.svg','./images/honey-garlic-chicken.webp','./images/creamy-chicken-pasta.webp','./images/chicken-fajitas.webp','./images/bbq-chicken-sandwich.webp','./images/cheesy-chicken-rice.webp','./images/beef-stroganoff.webp','./images/beef-tacos.webp'];
 self.addEventListener('install',e=>e.waitUntil(caches.open(CACHE).then(c=>c.addAll(ASSETS)).then(()=>self.skipWaiting())));
 self.addEventListener('activate',e=>e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim())));
