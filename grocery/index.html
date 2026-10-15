@@ -27,6 +27,8 @@ button,input,select{font:inherit}.app{max-width:860px;margin:auto}.hero{position
 .source-recipe-info a{color:#f2d175;font-weight:700;display:inline-block;margin-left:7px}
 .source-recipe-info p{font-size:.77rem;line-height:1.4;color:#cec29c;margin:7px 0 0}
 .source-pill{color:#ead495;font-weight:650}
+
+.recipe-source-label{font-size:.73rem;color:#e4c576;font-weight:650;margin:8px 0 2px}
 </style>
 <style id="black-gold-refresh">
 :root{--green:#d4af37;--green2:#f4d979;--cream:#11100d;--white:#171612;--text:#fff8df;--muted:#cbbf9e;--line:rgba(212,175,55,.30);--pale:#211e14;--peach:#2c2112;--yellow:#f1cf63;--red:#f09a91;--shadow:0 16px 38px rgba(0,0,0,.38)}
@@ -237,7 +239,7 @@ function fallbackPhoto(r){
   const svg='<svg xmlns="http://www.w3.org/2000/svg" width="960" height="720" viewBox="0 0 960 720"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop stop-color="%23110f0b"/><stop offset="1" stop-color="%23261f0e"/></linearGradient></defs><rect width="960" height="720" fill="url(%23g)"/><circle cx="480" cy="270" r="125" fill="%232d2616" stroke="%23d4af37" stroke-width="8"/><text x="480" y="305" text-anchor="middle" font-size="120">'+emoji+'</text><text x="480" y="500" text-anchor="middle" fill="%23f6d76e" font-family="Arial,sans-serif" font-weight="700" font-size="46">'+label+'</text><text x="480" y="560" text-anchor="middle" fill="%23cbbf9e" font-family="Arial,sans-serif" font-size="28">Recipe photo unavailable</text></svg>';
   return "data:image/svg+xml;charset=UTF-8,"+encodeURIComponent(svg);
 }
-const cats=["All","Under 30 min","Chicken","Beef","Pasta","Vegetarian","Rice & Bowls","Slow Cooker","Quick & Breakfast","Soups"];
+const cats=["📖 Published (20)","All","Under 30 min","Chicken","Beef","Pasta","Vegetarian","Rice & Bowls","Slow Cooker","Quick & Breakfast","Soups"];
 const sectionOrder=["Produce","Meat","Dairy","Bakery","Frozen","Pantry","Other"];
 const publishedById=window.publishedRecipes||{};
 const recipes=rawRecipes.map((r,i)=>{
@@ -250,7 +252,7 @@ Object.values(publishedById).forEach(pub=>pub.items.forEach(it=>{
  if(!I[key])I[key]=[it.name,it.q,it.u,it.section||"Pantry",false];
 }));
 let selected=loadJSON("ogp-selected",{}), checked=loadJSON("ogp-checked",{}), pantry=loadJSON("ogp-pantry",{}), favs=loadJSON("ogp-favs",{}), custom=loadJSON("ogp-custom",[]);
-let includeBasics=localStorage.getItem("ogp-basics")==="1", currentCat="All", currentSearch="", currentRecipe=null;
+let includeBasics=localStorage.getItem("ogp-basics")==="1", currentCat=new URLSearchParams(location.search).has("published")?"📖 Published (20)":"All", currentSearch="", currentRecipe=null;
 
 function loadJSON(k,f){try{let v=localStorage.getItem(k);return v?JSON.parse(v):f}catch(e){return f}}
 function persist(){localStorage.setItem("ogp-selected",JSON.stringify(selected));localStorage.setItem("ogp-checked",JSON.stringify(checked));localStorage.setItem("ogp-pantry",JSON.stringify(pantry));localStorage.setItem("ogp-favs",JSON.stringify(favs));localStorage.setItem("ogp-custom",JSON.stringify(custom));localStorage.setItem("ogp-basics",includeBasics?"1":"0");updateStats()}
@@ -664,7 +666,7 @@ function renderChips(){const el=document.getElementById("chips");el.innerHTML=""
 function filtered(){
  const sort=document.getElementById("sort").value, ff=document.getElementById("favFilter").value;
  let out=recipes.filter(r=>{
-   const catOK=currentCat==="All"||(currentCat==="Under 30 min"?r.time<=30:r.cat===currentCat);
+   const catOK=currentCat==="All"||(currentCat==="📖 Published (20)"?!!r.published:(currentCat==="Under 30 min"?r.time<=30:r.cat===currentCat));
    const favOK=ff==="all"||(ff==="fav"&&favs[r.id])||(ff==="leftovers"&&r.leftovers);
    const hay=(r.name+" "+r.cat+" "+(r.published?r.published.items.map(x=>x.name).join(" "):r.keys.map(k=>meta(k)[0]).join(" "))).toLowerCase();
    return catOK&&favOK&&hay.includes(currentSearch.toLowerCase());
@@ -677,6 +679,7 @@ function renderRecipes(){
  if(!list.length){grid.innerHTML='<div class="empty">No recipes match that filter.</div>';return}
  list.forEach(r=>{const card=document.createElement("article");card.className="recipe";
  card.innerHTML='<button class="fav">'+(favs[r.id]?"★":"☆")+'</button><div class="recipe-photo-wrap"><img class="recipe-photo" loading="lazy" src="'+photoFor(r)+'" data-fallback="'+fallbackPhoto(r)+'" onerror="this.onerror=null;this.src=this.dataset.fallback" alt="'+r.name+'"></div><div class="recipe-top"><div class="emoji">'+(emojis[r.cat]||"🍽️")+'</div><h3>'+r.name+'</h3><div class="meta"><span class="tag">'+timeText(r.time)+'</span><span class="tag cost">'+tierText(r.tier)+'</span>'+(r.leftovers?'<span class="tag left">leftovers</span>':'')+'</div><div class="need">'+needCount(r)+' main ingredient'+(needCount(r)===1?"":"s")+' to buy</div></div><div class="recipe-actions"><button class="btn details">View</button><button class="btn '+(chosen(r.id)?"remove":"primary")+' add">'+(chosen(r.id)?"Remove":"Add meal")+'</button></div>';
+ if(r.published){card.querySelector(".recipe-top").insertAdjacentHTML("beforeend",'<div class="recipe-source-label">📖 Real recipe · '+r.published.source+'</div>')}
  card.querySelector(".fav").onclick=()=>toggleFav(r.id);card.querySelector(".details").onclick=()=>openRecipe(r);card.querySelector(".add").onclick=()=>toggleMeal(r.id,r.published?r.published.servings:4);grid.appendChild(card)});
 }
 function openRecipe(r){currentRecipe=r;document.getElementById("modalEmoji").textContent=emojis[r.cat]||"🍽️";document.getElementById("modalTitle").textContent=r.name;document.getElementById("modalPhoto").onerror=function(){this.onerror=null;this.src=fallbackPhoto(r)};document.getElementById("modalPhoto").src=photoFor(r);document.getElementById("modalPhoto").alt=r.name;document.getElementById("modalMeta").innerHTML='<span class="tag">'+timeText(r.time)+'</span><span class="tag cost">'+tierText(r.tier)+'</span>'+(r.leftovers?'<span class="tag left">good leftovers</span>':'');document.getElementById("modalServings").value=chosen(r.id)?selected[r.id]:(r.published?r.published.servings:4);renderModalIngredients();document.getElementById("modalSteps").innerHTML=stepsFor(r).map(x=>"<li>"+x+"</li>").join("");updateModalButton();renderSourceDetails(r);document.getElementById("modal").classList.remove("hidden")}
