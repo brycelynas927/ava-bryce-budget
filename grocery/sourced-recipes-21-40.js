@@ -29,7 +29,7 @@
  "Heat oven to 350°F / 175°C if using crunchy shells. Warm them on a tray for about 5 minutes. Soft tortillas can be warmed in a skillet.",
  "Divide seasoned beef between the shells and add lettuce, tomatoes, grated cheese or other toppings you choose. Optional toppings are not fixed amounts in the publisher's original."
  ],"Spend With Pennies","Original topping choices are flexible; the photo shows tacos topped with lettuce, cheese and tomatoes."),
-23:R("Cheeseburger Rice","https://www.kraftheinz.com/heinz/recipes/502013-cheeseburger-rice","",4,20,[
+23:R("Cheeseburger Rice","https://www.kraftheinz.com/heinz/recipes/502013-cheeseburger-rice","https://res.cloudinary.com/kraft-heinz-whats-cooking-ca/image/upload/f_auto/q_auto/c_limit%2Cw_3840/v1/dxp-images/brands/Recipes/all-recipe-assets/cheeseburger-rice/a9e2cd86c59d43c583d4830ba71f4df6_ebsvvp",4,20,[
  M("Lean ground beef",1,"lb","Meat"),M("Water",1.75,"cups"),M("Instant white rice, uncooked",2,"cups"),M("Shredded cheddar cheese",1,"cup","Dairy"),
  S("Tomato ketchup",0.667,"cup"),S("Yellow mustard",1,"tbsp")],[
  "Place lean ground beef in a large skillet over medium-high heat. Break up the meat and cook until completely browned; drain any grease.",
@@ -127,7 +127,7 @@
  "Warm corn tortillas to keep them pliable. Put roughly three tablespoons filling in each, roll up and place seam-side down in a 9x13 baking dish with a little sauce on the bottom.",
  "Pour remaining sauce over rolled enchiladas and bake about 30 minutes until sauce bubbles and tortilla edges are lightly crisp."
  ],"Budget Bytes","These published enchiladas contain pineapple and black beans and have a homemade chili-red sauce; not a generic skillet."),
-30:R("Spaghetti with Weeknight Meat Sauce","https://www.budgetbytes.com/wp-content/uploads/2020/03/Budget-Bytes-Pantry-Meal-Plan.pdf","https://www.budgetbytes.com/wp-content/uploads/2018/04/weeknight-pasta-pot-500x500.jpg",4,40,[
+30:R("Spaghetti with Weeknight Meat Sauce","https://www.budgetbytes.com/wp-content/uploads/2020/03/Budget-Bytes-Pantry-Meal-Plan.pdf","",4,40,[
  M("Ground beef",0.5,"lb","Meat"),M("Yellow onion",1,"whole","Produce","finely diced"),
  M("Crushed tomatoes",28,"oz"),M("Spaghetti, dry",1,"lb"),
  S("Olive oil",1,"tbsp"),S("Butter",2,"tbsp"),S("Italian seasoning",0.5,"tsp"),
