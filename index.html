@@ -7,9 +7,9 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="Our Budget" />
-  <link rel="manifest" href="manifest.webmanifest?v=22" />
-  <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png?v=22" />
-  <link rel="icon" href="./budget-icon.svg?v=22" type="image/svg+xml" />
+  <link rel="manifest" href="manifest.webmanifest?v=23" />
+  <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png?v=23" />
+  <link rel="icon" href="./budget-icon.svg?v=23" type="image/svg+xml" />
   <title>Ava & Bryce Budget</title>
   <style>
     :root{--panel:rgba(8,24,38,.76);--panel2:rgba(255,255,255,.10);--border:rgba(255,255,255,.22);--text:#fff;--muted:rgba(255,255,255,.78);--green:#95e5b8;--gold:#ffd978;--red:#ff9c9c;--blue:#9bd7ff}
@@ -38,7 +38,7 @@
 <main class="app">
   <section class="card hero">
     <h1>Ava & Bryce Budget</h1>
-    <p>Enter your combined biweekly pay. The app tells you exactly what must stay in the joint account, what can move to spending, and what is left for goals.</p>
+    <p>Enter your combined biweekly pay. The app budgets $100 each for Ava and Bryce, covers shared expenses, and shows what is left for credit cards.</p>
     <div class="input-wrap"><span>$</span><input id="combinedPay" inputmode="decimal" type="number" min="0" step="0.01" placeholder="Combined take-home pay"></div>
     <details style="margin-top:10px">
       <summary class="tiny" style="cursor:pointer">Change pay date</summary>
@@ -57,7 +57,7 @@
 
   <section class="card">
     <h2>How to split the bank accounts</h2>
-    <p class="sub">First withdraw $650 cash for rent. Bills and shared essentials stay in joint. Only true free-spend money moves to your personal accounts, split 50/50 by default.</p>
+    <p class="sub">First withdraw $650 cash for rent. Bills and shared essentials stay in joint. Then move $100 each to your personal accounts whenever the pay allows. If money is short, the app shows what is available.</p>
     <div class="status" id="bankSplitStatus">Enter your combined pay above.</div>
   </section>
 
@@ -94,10 +94,7 @@
     {id:'gas',name:'Gas',target:80},
     {id:'cats',name:'Cats',target:55}
   ];
-  var freeSpendItems=[
-    {id:'eating',name:'Eating out',target:50},
-    {id:'other',name:'Other free spending',target:85}
-  ];
+  var personalAllowance=100; // Each person per biweekly pay cycle
   var billDefaults=[
     {id:'insurance',name:'Car insurance',amount:461,due:11},
     {id:'phone1',name:'Phone bill 1',amount:56.50,due:21},
@@ -111,6 +108,7 @@
     joint:'#ffd978', rent:'#ffd978',
     insurance:'#ffd978', phone1:'#ffd978', phone2:'#ffd978', streaming:'#ffd978', melaleuca:'#ffd978', chatgpt:'#ffd978',
     groceries:'#95e5b8', gas:'#9bd7ff', cats:'#c8a8ff', eating:'#ffb08a', other:'#c6ced8',
+    'ava-transfer':'#95e5b8', 'bryce-transfer':'#9bd7ff',
     wisdom:'#83e6d2', debt:'#ff9c9c'
   };
   function categoryColor(id){
@@ -213,12 +211,13 @@
     var billsTotal=due.reduce(function(s,x){return s+x.amount},0);
     var essentialTarget=essentialItems.reduce(function(s,x){return s+x.target},0);
     var jointTarget=billsTotal+essentialTarget;
-    var freeSpendTarget=freeSpendItems.reduce(function(s,x){return s+x.target},0);
+    var freeSpendTarget=personalAllowance*2;
 
     var remaining=pay;
     var rentCash=Math.min(rentSetAside,remaining);remaining-=rentCash;
     var joint=Math.min(jointTarget,remaining);remaining-=joint;
     var spending=Math.min(freeSpendTarget,remaining);remaining-=spending;
+    var allowanceShortfall=Math.max(0,freeSpendTarget-spending);
     var debt=Math.max(0,remaining);
     var avaSpending=Math.round((spending/2)*100)/100;
     var bryceSpending=Math.round((spending-avaSpending)*100)/100;
@@ -235,21 +234,23 @@
       summary.textContent='Enter your combined pay above.';
       splitStatus.textContent='Enter your combined pay above.';
     } else {
-      summary.innerHTML='<span class="gold">Withdraw '+money(rentCash)+' cash for rent first.</span> Leave '+money(joint)+' in the joint account for bills, groceries, gas and cats. Then move <span class="good">'+money(avaSpending)+'</span> to Ava and <span class="good">'+money(bryceSpending)+'</span> to Bryce as true free-spend money. '+(debt>0?'After that, '+money(debt)+' is available for credit cards.':'There is no extra for credit cards in this pay cycle.');
-      splitStatus.innerHTML='<span class="gold">RENT: withdraw '+money(rentCash)+' cash from this pay.</span><br><span class="gold">JOINT: keep '+money(joint)+'</span> for bills, groceries, gas and cats.<br><span class="good">AVA FREE SPEND: '+money(avaSpending)+'</span><br><span class="good">BRYCE FREE SPEND: '+money(bryceSpending)+'</span><br><span class="tiny">Rent is taken out separately, so the joint-account number is only money that actually stays in the bank.</span>';
+      summary.innerHTML='<span class="gold">Withdraw '+money(rentCash)+' cash for rent first.</span> Leave '+money(joint)+' in the joint account for bills, groceries, gas and cats. Then move <span class="good">'+money(avaSpending)+'</span> to Ava and <span class="good">'+money(bryceSpending)+'</span> to Bryce for personal spending (goal: $100 each). '+(allowanceShortfall>0?'<span class="warn">The combined personal allowance is short by '+money(allowanceShortfall)+' this pay.</span> ':'')+(debt>0?'After that, '+money(debt)+' is available for credit cards.':'There is no extra for credit cards in this pay cycle.');
+      splitStatus.innerHTML='<span class="gold">RENT: withdraw '+money(rentCash)+' cash from this pay.</span><br><span class="gold">JOINT: keep '+money(joint)+'</span> for bills, groceries, gas and cats.<br><span class="good">AVA PERSONAL: '+money(avaSpending)+' (goal $100)</span><br><span class="good">BRYCE PERSONAL: '+money(bryceSpending)+' (goal $100)</span>'+(allowanceShortfall>0?'<br><span class="warn">Not enough money for the full $100 each this pay.</span>':'')+'<br><span class="tiny">Rent is taken out separately, so the joint-account number is only money that actually stays in the bank. Record each personal transfer after you make it.</span>';
     }
 
     var jointWindow=start.toLocaleDateString('en-CA',{month:'short',day:'numeric'})+'–'+new Date(end.getTime()-86400000).toLocaleDateString('en-CA',{month:'short',day:'numeric'});
     var rows=[{id:'rent',name:'Withdraw cash for rent',note:'Take this out every pay — do not leave it in the joint account',amount:rentCash},{id:'joint',name:'Joint account — keep here',note:'Bills due '+jointWindow+' + shared essentials',amount:joint}];
     essentialItems.forEach(function(x){rows.push({id:x.id,name:x.name,note:'Shared essential — stays in joint account',amount:x.target})});
-    rows.push({id:'other',name:'Transfer to Ava',note:'Free-spend money — safe to use',amount:avaSpending});
-    rows.push({id:'other',name:'Transfer to Bryce',note:'Free-spend money — safe to use',amount:bryceSpending});
+    rows.push({id:'ava-transfer',name:'Transfer to Ava',note:'Personal spending allowance — $100 goal per pay',amount:avaSpending});
+    rows.push({id:'bryce-transfer',name:'Transfer to Bryce',note:'Personal spending allowance — $100 goal per pay',amount:bryceSpending});
     rows.push({id:'debt',name:'Credit-card debt',note:'Everything left after priorities',amount:debt});
     renderPlan(rows);
 
     var tracker=[{id:'joint',name:'Joint account money kept',target:joint}];
     due.forEach(function(x){tracker.push({id:'bill-'+x.bill.id+'-'+localDateValue(x.date),name:x.bill.name+' paid',target:Math.min(x.amount,joint),note:'Comes out '+x.date.toLocaleDateString('en-CA',{month:'short',day:'numeric'})});});
     essentialItems.forEach(function(x){tracker.push({id:x.id,name:x.name,target:x.target,note:'Spent from joint account'})});
+    tracker.push({id:'ava-transfer',name:'Transfer to Ava completed',target:avaSpending,note:'Log only after transferring to Ava’s personal account'});
+    tracker.push({id:'bryce-transfer',name:'Transfer to Bryce completed',target:bryceSpending,note:'Log only after transferring to Bryce’s personal account'});
     if(debt>0)tracker.push({id:'debt',name:'Credit-card payment',target:debt});
     renderTracker(tracker.filter(function(x){return x.target>0}));
 
