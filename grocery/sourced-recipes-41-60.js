@@ -265,4 +265,25 @@
  "Fill each of the eight potato skins with the mixture, top with the remaining cheddar and bake another 15–20 minutes until heated through and melted."
  ],"Spend With Pennies")
 });
+const sourcePhotos={
+ "44": "https://www.budgetbytes.com/wp-content/uploads/2017/05/One-Pot-Bacon-Broccoli-Mac-and-Cheese-above-500x500.jpg",
+ "45": "https://www.budgetbytes.com/wp-content/uploads/2022/06/Lemon-Ricotta-Pasta-bowl-500x500.jpg",
+ "46": "https://www.budgetbytes.com/wp-content/uploads/2026/07/Skillet-Pizza-Casserole-Overhead-Wide-500x500.jpg",
+ "47": "https://www.howsweeteats.com/wp-content/uploads/2022/05/baked-tomato-basil-orzo-10.jpg",
+ "48": "https://www.budgetbytes.com/wp-content/uploads/2026/09/Gnocchi-With-Sausage-and-Fall-Vegetables-Overhead-Wide-500x500.jpg",
+ "49": "https://www.budgetbytes.com/wp-content/uploads/2016/05/Spaghetti-Carbonara-Plated-300x300.jpg",
+ "50": "https://cookingwithcasey.com/assets/images/1737402697831-uwnayknz.webp",
+ "51": "https://www.budgetbytes.com/wp-content/uploads/2012/02/Hearty-Black-Bean-Quesadillas-stack-500x500.jpg",
+ "52": "https://www.budgetbytes.com/wp-content/uploads/2023/08/Coconut-Curry-Chickpeas-Overhead-Plated-500x500.jpg",
+ "53": "https://www.budgetbytes.com/wp-content/uploads/2012/04/LentilTacosclose.jpg",
+ "54": "https://www.budgetbytes.com/wp-content/uploads/2018/07/Make-Ahead-Bean-and-Cheese-Burritos-front-500x500.jpg",
+ "55": "https://www.budgetbytes.com/wp-content/uploads/2017/05/Sweet-Potato-Grain-Bowls-with-Green-Tahini-Sauce-prep-500x500.jpg",
+ "56": "https://www.budgetbytes.com/wp-content/uploads/2025/10/Overhead-in-Bowl-With-Spoon-Vegetarian-Chili-500x500.jpg",
+ "57": "https://www.budgetbytes.com/wp-content/uploads/2012/11/RedLentilStewabove.jpg",
+ "58": "https://www.budgetbytes.com/wp-content/uploads/2010/06/Tuscan-White-Bean-Pasta-bowl-500x500.jpg",
+ "59": "https://www.budgetbytes.com/wp-content/uploads/2019/01/Open-Sriracha-Chickpea-Salad-Wrap-500x500.jpg",
+ "60": "https://www.spendwithpennies.com/wp-content/uploads/2022/10/1200-Loaded-Baked-Potatoes-SpendWithPennies-500x500.jpg"
+};
+Object.entries(sourcePhotos).forEach(([id,url])=>{if(window.publishedRecipes[id])window.publishedRecipes[id].photo=url});
+
 })();
