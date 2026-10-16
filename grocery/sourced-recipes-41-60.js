@@ -78,7 +78,7 @@
  "Cover and simmer gently 10–12 minutes, stirring occasionally, until rotini is nearly tender.",
  "Scatter mozzarella, pepperoni and black olives over the top. Bake uncovered 10–15 minutes until cheese is melted and bubbling. Rest five minutes before serving."
  ]),
-47:R("Cheesy Tomato Basil Baked Orzo","https://www.howsweeteats.com/2022/05/tomato-basil-baked-orzo/","",6,35,[
+47:R("Cheesy Tomato Basil Baked Orzo","https://www.howsweeteats.com/2022/05/tomato-basil-baked-orzo/","",6,45,[
  M("Orzo pasta, dry",16,"oz"),M("Garlic",2,"cloves","Produce","minced"),M("Chicken or vegetable stock",2,"cups"),
  M("Marinara sauce",1,"cup"),M("Shredded mozzarella or Italian cheese blend",1.5,"cups","Dairy"),
  M("Fresh basil, for serving",0.25,"cup","Produce"),M("Parmesan for serving",0.25,"cup","Dairy"),
