@@ -89,7 +89,7 @@ async function alternateCandidates(){
 function groupFitness(entry,candidate){
  const c=candidate.sourceCategory,n=candidate.strMeal.toLowerCase(),g=entry.group;
  const relevant=g==="Vegetarian"?["Vegetarian","Vegan","Side"].includes(c):
-  g==="Rice"?/rice|bowl|risotto|curry|pilaf|paella|noodle|casserole/i.test(n):
+  g==="Rice"?(/rice|bowl|risotto|curry|pilaf|paella|noodle|casserole/i.test(n)&&(!["Chicken","Beef"].includes(c)||/rice|bowl|risotto|pilaf|paella/i.test(n))):
   g==="Chicken"?["Chicken","Beef"].includes(c):
   g==="Breakfast"?c==="Breakfast":
   /soup|stew|chowder|broth/i.test(n);
