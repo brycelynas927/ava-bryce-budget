@@ -42,17 +42,18 @@ function instructions(str){
  for(const line of lines){if(!line.trim())continue;if(steps.length&&steps[steps.length-1].length<85&&steps[steps.length-1].length+line.length<max)steps[steps.length-1]+=" "+line;else steps.push(line);}
  return steps;
 }
-function category(raw){
+function category(raw,name){
  const x=String(raw||"").toLowerCase();
+ if(/soup|stew|chowder/i.test(name))return "Soups";
  if(x==="chicken")return "Chicken";
  if(x==="beef"||x==="lamb"||x==="pork"||x==="goat")return "Beef";
  if(x==="pasta")return "Pasta";
  if(x==="vegetarian"||x==="vegan"||x==="side")return "Vegetarian";
- if(x==="breakfast"||x==="starter")return "Quick & Breakfast";
+ if(x==="breakfast")return "Quick & Breakfast";
  return "Rice & Bowls";
 }
 function normalize(meal){
- if(!meal?.idMeal||!meal.strMeal?.trim()||!meal.strMealThumb||!meal.strInstructions?.trim())return null;
+ if(!meal?.idMeal||!meal.strMeal?.trim()||!meal.strMealThumb||!meal.strInstructions?.trim()||String(meal.strCategory||"").toLowerCase()==="dessert")return null;
  const items=[];
  for(let i=1;i<=20;i++){
    const name=String(meal["strIngredient"+i]||"").trim();
@@ -64,7 +65,7 @@ function normalize(meal){
  const steps=instructions(meal.strInstructions);
  if(!steps.length)return null;
  return {name:meal.strMeal.trim(),photo:meal.strMealThumb,url:meal.strSource||"https://www.themealdb.com/meal/"+meal.idMeal,
-  source:"TheMealDB",originalId:String(meal.idMeal),items,steps,cat:category(meal.strCategory),
+  source:"TheMealDB",originalId:String(meal.idMeal),items,steps,cat:category(meal.strCategory,meal.strMeal),
   time:null,servings:4,sourceHasNoYield:true,
   note:"The recipe, photo and measured ingredient list come from the same published source. The source does not provide servings or preparation time. Four portions is used as an approximate grocery-list baseline."};
 }
@@ -76,42 +77,49 @@ async function fetchId(id){
 function tokens(s){return String(s).toLowerCase().replace(/[^a-z ]/g," ").split(/\s+/).filter(x=>x.length>2&&!["with","and","easy","slow","cooker"].includes(x));}
 function similarity(a,b){const t=tokens(a),s=tokens(b);return t.filter(x=>s.includes(x)).length;}
 async function alternateCandidates(){
- const categories=["Vegetarian","Vegan","Pasta","Chicken","Beef","Breakfast","Starter","Miscellaneous"];
- const data=await Promise.all(categories.map(x=>api("filter.php?c="+encodeURIComponent(x)).then(r=>r.meals||[]).catch(()=>[])));
- const all=new Map();
- data.flat().forEach(x=>{if(x.idMeal)all.set(String(x.idMeal),x);});
- return Array.from(all.values());
+ const cats=["Vegetarian","Vegan","Pasta","Chicken","Beef","Breakfast","Starter","Miscellaneous","Side"];
+ const batches=await Promise.all(cats.map(async category=>{
+   try{const result=await api("filter.php?c="+encodeURIComponent(category));return (result.meals||[]).map(x=>({...x,sourceCategory:category}));}
+   catch(e){return [];}
+ }));
+ const candidates=new Map();
+ batches.flat().forEach(x=>{if(x.idMeal)candidates.set(String(x.idMeal),x);});
+ return Array.from(candidates.values());
+}
+function groupFitness(entry,candidate){
+ const c=candidate.sourceCategory,n=candidate.strMeal.toLowerCase(),g=entry.group;
+ const relevant=g==="Vegetarian"?["Vegetarian","Vegan","Side"].includes(c):
+  g==="Rice"?/rice|bowl|risotto|curry|pilaf|paella|noodle|casserole/i.test(n):
+  g==="Chicken"?["Chicken","Beef"].includes(c):
+  g==="Breakfast"?c==="Breakfast":
+  /soup|stew|chowder|broth/i.test(n);
+ return (relevant?20:0)+3*similarity(entry.desiredName,candidate.strMeal);
 }
 window.fetchSourcedRecipes61to100=async function(onBatch){
- const occupied=new Set();
- const completed=new Set();
+ const occupied=new Set(),completed=new Set();
  function publish(slot,pub){
    if(!pub||occupied.has(pub.originalId)||completed.has(slot))return false;
    occupied.add(pub.originalId);completed.add(slot);cache[slot]=pub;
    onBatch([{slot,pub}]);return true;
  }
- // Cached and already-published recipes render immediately without a fresh network request.
+ // Previously fetched photos and original ingredient data are reusable offline.
  catalog.forEach(entry=>{
    const saved=cache[entry.slot];
    if(saved?.originalId&&saved?.photo&&saved?.steps?.length&&saved?.items?.length)publish(entry.slot,saved);
  });
- // Each lookup gives a real food photograph paired with its original ingredient list.
- const pending=catalog.filter(x=>!completed.has(x.slot));
- for(let i=0;i<pending.length;i+=5){
-   const result=await Promise.all(pending.slice(i,i+5).map(async x=>{try{return {slot:x.slot,pub:await fetchId(x.seedId)};}catch(e){return {slot:x.slot,pub:null};}}));
-   result.forEach(({slot,pub})=>publish(slot,pub));save();
- }
- // API IDs occasionally disappear. Fill any such slots from real published category entries,
- // preferring names similar to the original meal rather than inventing a replacement dish.
- if(completed.size<catalog.length){
-   const choices=await alternateCandidates();
-   const missing=catalog.filter(x=>!completed.has(x.slot));
-   for(const x of missing){
-     let options=choices.filter(v=>!occupied.has(String(v.idMeal))).sort((a,b)=>similarity(x.desiredName,b.strMeal)-similarity(x.desiredName,a.strMeal));
-     for(const possible of options.slice(0,12)){
-       try{const pub=await fetchId(possible.idMeal);if(publish(x.slot,pub))break;}catch(e){}
-     }
+ const candidates=await alternateCandidates();
+ // Choose an appropriate publisher-supplied dish for each open slot, with preference
+ // for recipes similar to the old titles. No AI-made recipes or generic photos.
+ for(const entry of catalog.filter(x=>!completed.has(x.slot))){
+   const options=candidates.filter(c=>!occupied.has(String(c.idMeal)))
+     .sort((a,b)=>groupFitness(entry,b)-groupFitness(entry,a)||a.strMeal.localeCompare(b.strMeal));
+   let success=false;
+   for(const candidate of options.slice(0,16)){
+     if(groupFitness(entry,candidate)<20)break;
+     try{if(publish(entry.slot,await fetchId(candidate.idMeal))){success=true;break;}}catch(e){}
    }
+   // Fallback to a fixed real meal ID only if category browsing was unavailable.
+   if(!success&&!candidates.length){try{publish(entry.slot,await fetchId(entry.seedId));}catch(e){}}
    save();
  }
  return completed.size;
