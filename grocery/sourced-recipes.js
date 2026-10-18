@@ -174,7 +174,7 @@
  "Toss chopped romaine, halved tomatoes, cooked chicken, toasted crumbs, remaining Parmesan and Caesar dressing together.",
  "Warm tortillas briefly, divide chicken Caesar salad among them, roll with sides tucked in, and slice before serving."
  ]),
- 20:r("Crockpot Chicken and Gravy","https://www.spendwithpennies.com/crockpot-chicken-and-gravy/","",4,360,[
+ 20:r("Crockpot Chicken and Gravy","https://www.spendwithpennies.com/crockpot-chicken-and-gravy/","https://www.spendwithpennies.com/wp-content/uploads/2025/12/Crockpot-Chicken-and-Gravy-SpendWithPennies-7-500x500.jpg",4,360,[
  M("Boneless skinless chicken breasts",1.5,"lb","Meat"),M("Evaporated milk",1.25,"cups","Dairy"),M("Chicken broth",0.75,"cup"),M("Chicken bouillon",1,"cube"),
  S("Poultry seasoning",0.75,"tsp"),S("Onion powder",0.5,"tsp"),S("Garlic powder",0.25,"tsp"),S("Black pepper",0.25,"tsp"),S("Cornstarch",2,"tbsp"),S("Butter",1,"tbsp")],[
  "In a bowl whisk evaporated milk, chicken broth, bouillon, poultry seasoning, onion powder, garlic powder and black pepper.",
