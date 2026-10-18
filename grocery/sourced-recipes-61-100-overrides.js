@@ -95,4 +95,25 @@
  "In a separate small saucepan, melt butter, whisk in flour and cook two minutes. Slowly stir in milk and bring to a simmer until slightly thickened.",
  "Shred the cooked chicken in the soup. Stir in the white sauce and fresh parsley, remove bay leaf and season with salt."],"Soups")
  });
+ Object.assign(window.publishedRecipes,{
+67:R("Egg Roll in a Bowl",B+"egg-roll-in-a-bowl/","https://www.budgetbytes.com/wp-content/uploads/2026/02/Egg-Roll-in-a-Bowl-Overhead-Macro-in-Pan-500x500.jpg",4,30,[
+ M("Onion",1,"cup","Produce","diced"),M("Mushrooms",8,"oz","Produce","finely minced"),M("Garlic",2,"cloves","Produce","minced"),M("Water chestnuts",1,"5oz can","Pantry","drained and chopped"),M("Green onions",2,"stalks","Produce","sliced"),M("Fresh ginger",1,"tbsp","Produce","grated"),M("Ground turkey",1,"lb","Meat"),M("Bagged coleslaw mix",16,"oz","Produce"),S("Vegetable oil",2,"tbsp"),S("Soy sauce",0.25,"cup"),S("Rice vinegar",1,"tbsp"),S("Brown sugar",2,"tbsp"),S("Toasted sesame oil",1,"tsp"),S("Black pepper",0.5,"tsp"),S("Red pepper flakes",0.125,"tsp")],[
+ "Dice onion, mince mushrooms, garlic and ginger, drain and chop water chestnuts, and slice the green onions.",
+ "Heat cooking oil over medium-high in a large skillet. Brown ground turkey, breaking apart with a spoon.",
+ "Add onion, garlic, ginger and mushrooms. Cook until the mushrooms are soft and most of their liquid has evaporated.",
+ "Stir in coleslaw mix and cook for 6–8 minutes, until the cabbage becomes tender but still has crunch.",
+ "Whisk soy sauce, rice vinegar, brown sugar, sesame oil, black pepper and red pepper flakes in a small bowl.",
+ "Pour the sauce into the turkey and cabbage mixture with water chestnuts, then cook until everything is hot and coated. Finish with green onions."
+ ],"Rice & Bowls"),
+80:R("Cajun Sausage and Rice Skillet",B+"cajun-sausage-and-rice-skillet/","https://www.budgetbytes.com/wp-content/uploads/2020/09/Cajun-Sausage-and-Rice-Skillet-front-500x500.jpg",4,45,[
+ M("Smoked Andouille sausage",14,"oz","Meat","sliced into rounds"),M("Bell pepper",1,"whole","Produce","diced"),M("Fire-roasted diced tomatoes",1,"15oz can"),M("Uncooked long-grain white rice",1,"cup"),M("Chicken broth",1.5,"cups"),M("Green onions",2,"stalks","Produce","sliced"),S("Cooking oil",1,"tbsp"),S("Smoked paprika",1,"tsp"),S("Dried oregano",0.5,"tsp"),S("Dried thyme",0.5,"tsp"),S("Garlic powder",0.25,"tsp"),S("Onion powder",0.25,"tsp"),S("Cayenne pepper",0.125,"tsp"),S("Black pepper",0.125,"tsp")],[
+ "Cut smoked sausage into ¼–½-inch slices. Heat cooking oil over medium in a covered deep skillet and brown sausage on both sides.",
+ "Dice bell pepper and add it to the skillet with the sausage. Sauté for one more minute.",
+ "Add smoked paprika, oregano, thyme, garlic powder, onion powder, cayenne and black pepper. Cook one minute to toast the spices.",
+ "Add the canned tomatoes and juices, raw white rice and chicken broth. Stir up browned bits from the bottom.",
+ "Cover, bring to a boil, then reduce heat to low. Simmer gently around 20 minutes without uncovering or stirring.",
+ "Remove the skillet from heat and leave it covered for five minutes. Fluff the rice, distribute the sausage and finish with chopped green onions."
+ ],"Rice & Bowls")
+ });
+
 })();
