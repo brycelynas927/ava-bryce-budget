@@ -299,4 +299,38 @@
  ],"Rice & Bowls")
  });
 
+ Object.assign(window.publishedRecipes,{
+75:R("Breakfast Burrito Bowls","https://homecookedliving.com/breakfast-burrito-bowls/","https://homecookedliving.com/wp-content/uploads/2026/05/Breakfast-Burrito-Bowls-Home-Cooked-Living-800x530.jpg",6,35,[
+ M("Jasmine white rice, dry",1,"cup"),
+ M("Chicken or vegetable broth",2,"cups"),
+ M("Ground breakfast sausage",1,"lb","Meat"),
+ M("Black beans",1,"can","Pantry","rinsed and drained"),
+ M("Large eggs",10,"whole","Dairy"),
+ M("Avocado for topping (optional)",3,"small","Produce","diced"),
+ M("Salsa (optional)",1,"cup"),
+ M("Sour cream (optional)",0.5,"cup","Dairy"),
+ M("Shredded cheese (optional)",1,"cup","Dairy"),
+ M("Cilantro (optional)",0.25,"cup","Produce","chopped"),
+ S("Salt to taste",0.5,"tsp")
+ ],[
+ "Rinse the jasmine rice until the water runs nearly clear. Combine with two cups broth, bring to a boil, cover, and cook over low heat for 15 minutes. Remove from heat and rest, covered, 10 more minutes.",
+ "Drain and rinse the black beans, dice the optional avocado, shred cheese if needed and chop cilantro.",
+ "Heat a large frying pan over medium-high. Brown and crumble the breakfast sausage for about eight minutes until cooked through.",
+ "Beat the ten eggs with salt to taste. Scramble over medium-low heat in a separate pan, or remove the sausage and cook the eggs in its pan, until set.",
+ "Warm the black beans and fluff the cooked rice.",
+ "For each of six bowls, divide rice, sausage, scrambled eggs and beans evenly. Finish with optional avocado, salsa, sour cream, shredded cheese or cilantro. Refrigerate leftovers promptly."
+ ],"Rice & Bowls","Home-Cooked Living"),
+95:R("Cheesy Eggs on Toast","https://www.mrbreakfast.com/superdisplay.asp?recipeid=661","https://www.mrbreakfast.com/images/661_eggs_on_toast.jpg",1,10,[
+ M("Bread",1,"slice","Bakery"),
+ M("Large eggs",2,"whole","Dairy"),
+ M("Grated cheese",2,"tbsp","Dairy")
+ ],[
+ "Warm a small nonstick skillet over medium-low heat while you prepare the ingredients.",
+ "Break the two eggs into a bowl and beat with a fork. Fold the grated cheese through the eggs.",
+ "Pour the egg-cheese mixture into the warm nonstick skillet and gently push the eggs toward the centre as they set. Continue cooking until softly scrambled.",
+ "Toast the slice of bread while the eggs cook.",
+ "Spoon the hot cheesy scrambled eggs over the toast and serve immediately. Salt, pepper or a dash of milk are optional, not part of the source's three measured ingredients."
+ ],"Quick & Breakfast","MrBreakfast.com")
+ });
+
 })();
