@@ -5,7 +5,7 @@
 "use strict";
 const catalog=[{"slot":61,"seedId":53541,"desiredName":"Vegetable Fried Rice","group":"Vegetarian"},{"slot":62,"seedId":52871,"desiredName":"Egg Fried Rice","group":"Vegetarian"},{"slot":63,"seedId":52870,"desiredName":"Black Bean Enchiladas","group":"Vegetarian"},{"slot":64,"seedId":52771,"desiredName":"Peanut Noodles","group":"Vegetarian"},{"slot":65,"seedId":53506,"desiredName":"Bean & Rice Bowls","group":"Vegetarian"},{"slot":66,"seedId":53161,"desiredName":"Sausage Pepper Rice","group":"Rice"},{"slot":67,"seedId":53367,"desiredName":"Egg Roll in a Bowl","group":"Rice"},{"slot":68,"seedId":53352,"desiredName":"Mexican Rice & Beans","group":"Rice"},{"slot":69,"seedId":53027,"desiredName":"Tuna Rice Bowls","group":"Rice"},{"slot":70,"seedId":52765,"desiredName":"Taco Rice Casserole","group":"Rice"},{"slot":71,"seedId":53011,"desiredName":"BBQ Chickpea Rice Bowls","group":"Rice"},{"slot":72,"seedId":53369,"desiredName":"Teriyaki Tofu Bowls","group":"Rice"},{"slot":73,"seedId":53358,"desiredName":"Chicken Burrito Bowls","group":"Rice"},{"slot":74,"seedId":52772,"desiredName":"Turkey Meatball Rice Bowls","group":"Rice"},{"slot":75,"seedId":53025,"desiredName":"Breakfast Burrito Bowls","group":"Rice"},{"slot":76,"seedId":53357,"desiredName":"Mediterranean Chickpea Rice","group":"Rice"},{"slot":77,"seedId":52956,"desiredName":"Ham & Pea Fried Rice","group":"Rice"},{"slot":78,"seedId":52868,"desiredName":"Curry Chicken Rice","group":"Rice"},{"slot":79,"seedId":53067,"desiredName":"Tomato Rice with Eggs","group":"Rice"},{"slot":80,"seedId":52937,"desiredName":"Cajun Sausage Rice","group":"Rice"},{"slot":81,"seedId":52830,"desiredName":"Slow Cooker Honey Garlic Chicken","group":"Chicken"},{"slot":82,"seedId":52846,"desiredName":"Slow Cooker Salsa Chicken","group":"Chicken"},{"slot":83,"seedId":52940,"desiredName":"Slow Cooker Chicken & Gravy","group":"Chicken"},{"slot":84,"seedId":53162,"desiredName":"Slow Cooker Beef & Potatoes","group":"Chicken"},{"slot":85,"seedId":52920,"desiredName":"Slow Cooker Taco Soup","group":"Chicken"},{"slot":86,"seedId":53530,"desiredName":"Slow Cooker White Chicken Chili","group":"Chicken"},{"slot":87,"seedId":52795,"desiredName":"Slow Cooker Lentil Soup","group":"Chicken"},{"slot":88,"seedId":53181,"desiredName":"Slow Cooker BBQ Chicken","group":"Chicken"},{"slot":89,"seedId":52934,"desiredName":"Slow Cooker Sausage & Peppers","group":"Chicken"},{"slot":90,"seedId":52879,"desiredName":"Slow Cooker Chicken Noodle Soup","group":"Chicken"},{"slot":91,"seedId":52872,"desiredName":"Breakfast Quesadillas","group":"Breakfast"},{"slot":92,"seedId":53160,"desiredName":"Pancakes & Eggs for Dinner","group":"Breakfast"},{"slot":93,"seedId":52963,"desiredName":"Egg & Potato Tacos","group":"Breakfast"},{"slot":94,"seedId":53372,"desiredName":"French Toast & Fruit","group":"Breakfast"},{"slot":95,"seedId":53142,"desiredName":"Cheesy Egg Toasts","group":"Breakfast"},{"slot":96,"seedId":53078,"desiredName":"Tomato Tortellini Soup","group":"Soup"},{"slot":97,"seedId":53077,"desiredName":"Creamy Potato Soup","group":"Soup"},{"slot":98,"seedId":52811,"desiredName":"Easy Minestrone","group":"Soup"},{"slot":99,"seedId":53207,"desiredName":"Creamy Chicken Rice Soup","group":"Soup"},{"slot":100,"seedId":53486,"desiredName":"Pinto Bean Soup","group":"Soup"}];
 const base="https://www.themealdb.com/api/json/v1/1/";
-const cacheKey="ogp-real-meals-61-100-v2";
+const cacheKey="ogp-real-meals-61-100-v3";
 let cache={};
 try { cache=JSON.parse(localStorage.getItem(cacheKey)||"{}")||{}; }catch(e){cache={};}
 function save(){try{localStorage.setItem(cacheKey,JSON.stringify(cache));}catch(e){}}
@@ -46,7 +46,9 @@ function category(raw,name){
  const x=String(raw||"").toLowerCase();
  if(/soup|stew|chowder/i.test(name))return "Soups";
  if(x==="chicken")return "Chicken";
- if(x==="beef"||x==="lamb"||x==="pork"||x==="goat")return "Beef";
+ if(x==="beef"||x==="lamb"||x==="goat")return "Beef";
+ if(x==="pork")return "Pork & Sausage";
+ if(x==="seafood")return "Seafood";
  if(x==="pasta")return "Pasta";
  if(x==="vegetarian"||x==="vegan"||x==="side")return "Vegetarian";
  if(x==="breakfast")return "Quick & Breakfast";
@@ -77,7 +79,7 @@ async function fetchId(id){
 function tokens(s){return String(s).toLowerCase().replace(/[^a-z ]/g," ").split(/\s+/).filter(x=>x.length>2&&!["with","and","easy","slow","cooker"].includes(x));}
 function similarity(a,b){const t=tokens(a),s=tokens(b);return t.filter(x=>s.includes(x)).length;}
 async function alternateCandidates(){
- const cats=["Vegetarian","Vegan","Pasta","Chicken","Beef","Breakfast","Starter","Miscellaneous","Side"];
+ const cats=["Vegetarian","Vegan","Pasta","Chicken","Beef","Pork","Seafood","Breakfast","Starter","Miscellaneous","Side"];
  const batches=await Promise.all(cats.map(async category=>{
    try{const result=await api("filter.php?c="+encodeURIComponent(category));return (result.meals||[]).map(x=>({...x,sourceCategory:category}));}
    catch(e){return [];}
@@ -87,46 +89,69 @@ async function alternateCandidates(){
  return Array.from(candidates.values());
 }
 function groupFitness(entry,candidate){
- const c=candidate.sourceCategory,n=candidate.strMeal.toLowerCase(),g=entry.group;
- const relevant=g==="Vegetarian"?["Vegetarian","Vegan","Side"].includes(c):
-  g==="Rice"?(/rice|bowl|risotto|curry|pilaf|paella|noodle|casserole/i.test(n)&&(!["Chicken","Beef"].includes(c)||/rice|bowl|risotto|pilaf|paella/i.test(n))):
-  g==="Chicken"?["Chicken","Beef"].includes(c):
-  g==="Breakfast"?c==="Breakfast":
-  /soup|stew|chowder|broth/i.test(n);
- return (relevant?20:0)+3*similarity(entry.desiredName,candidate.strMeal);
+ const n=String(candidate.strMeal||"").toLowerCase();
+ const cat=candidate.sourceCategory||"";
+ const desired=entry.desiredName.toLowerCase(),group=entry.group;
+ let compatible=false;
+ if(group==="Vegetarian")compatible=["Vegetarian","Vegan","Side"].includes(cat);
+ else if(group==="Rice")compatible=/rice|bowl|risotto|pilaf|paella|biryani|noodle|casserole/i.test(n) || 
+   ((cat==="Seafood"||cat==="Chicken"||cat==="Vegetarian")&&/fried|stir|curry/i.test(n));
+ else if(group==="Chicken"){
+   if(/lentil|bean.*soup/.test(desired))compatible=["Vegan","Vegetarian","Starter","Miscellaneous"].includes(cat)&&/soup|stew|lentil|chili/i.test(n);
+   else if(/beef/.test(desired))compatible=cat==="Beef"||(/beef/i.test(n)&&cat==="Miscellaneous");
+   else if(/sausage/.test(desired))compatible=["Pork","Beef"].includes(cat)&&/sausage|pork|bratwurst/i.test(n);
+   else if(/taco soup/.test(desired))compatible=/soup|chili|taco|enchilada/i.test(n)&&["Chicken","Beef","Starter","Miscellaneous"].includes(cat);
+   else compatible=cat==="Chicken"||/chicken/.test(n);
+ } else if(group==="Breakfast")compatible=cat==="Breakfast"||/pancake|egg|french toast|breakfast|quesadilla|frittata|omelette/i.test(n);
+ else if(group==="Soup")compatible=/soup|stew|chowder|broth|minestrone/i.test(n);
+ if(!compatible)return -1000;
+ const overlap=similarity(entry.desiredName,candidate.strMeal);
+ const exact=desired===n?80:0;
+ const primary=tokens(entry.desiredName).filter(x=>!["rice","bowls","soup","chicken","beef"].includes(x));
+ return 20+overlap*9+exact+primary.filter(x=>n.includes(x)).length*4;
 }
 window.fetchSourcedRecipes61to100=async function(onBatch){
  const occupied=new Set(),completed=new Set();
- function publish(slot,pub){
-   if(!pub||occupied.has(pub.originalId)||completed.has(slot))return false;
-   occupied.add(pub.originalId);completed.add(slot);cache[slot]=pub;
-   onBatch([{slot,pub}]);return true;
+ function publish(entry,pub){
+   if(!pub||occupied.has(pub.originalId)||completed.has(entry.slot))return false;
+   occupied.add(pub.originalId);completed.add(entry.slot);cache[entry.slot]=pub;
+   if(similarity(entry.desiredName,pub.name)<1)pub.note=
+    "A source-backed alternative replaces the original unverified recipe. The displayed title, ingredients, method and photo all describe the publisher's actual dish. The source does not provide a verified cooking time or serving yield.";
+   onBatch([{slot:entry.slot,pub}]);return true;
  }
- // Previously fetched photos and original ingredient data are reusable offline.
  catalog.forEach(entry=>{
    const saved=cache[entry.slot];
-   if(saved?.originalId&&saved?.photo&&saved?.steps?.length&&saved?.items?.length)publish(entry.slot,saved);
+   if(saved?.originalId&&saved?.photo&&saved?.steps?.length&&saved?.items?.length){
+     publish(entry,saved);
+   }
  });
  if(completed.size===catalog.length)return completed.size;
  const candidates=await alternateCandidates();
- // Choose an appropriate publisher-supplied dish for each open slot, with preference
- // for recipes similar to the old titles. No AI-made recipes or generic photos.
- for(const entry of catalog.filter(x=>!completed.has(x.slot))){
-   const options=candidates.filter(c=>!occupied.has(String(c.idMeal)))
-     .sort((a,b)=>groupFitness(entry,b)-groupFitness(entry,a)||a.strMeal.localeCompare(b.strMeal));
+ const remaining=catalog.filter(x=>!completed.has(x.slot));
+ const ranked=new Map(remaining.map(entry=>[entry.slot,candidates.filter(c=>groupFitness(entry,c)>=20)
+   .sort((a,b)=>groupFitness(entry,b)-groupFitness(entry,a)||a.strMeal.localeCompare(b.strMeal))]));
+ // Assign real publisher records, and never substitute a food item outside the
+ // requested food group just to make the total reach 100.
+ for(const entry of remaining){
+   const options=ranked.get(entry.slot)||[];
    let success=false;
-   for(const candidate of options.slice(0,16)){
-     if(groupFitness(entry,candidate)<20)break;
-     try{if(publish(entry.slot,await fetchId(candidate.idMeal))){success=true;break;}}catch(e){}
+   for(const choice of options){
+     if(occupied.has(String(choice.idMeal)))continue;
+     try{
+       const fetched=await fetchId(choice.idMeal);
+       if(fetched&&publish(entry,fetched)){success=true;break;}
+     }catch(e){ /* Try another matching published recipe. */ }
    }
-   // If the close category matches run out, try a preselected real recipe ID.
-   // The app always displays the fetched name and its own photo, ingredients and steps.
-   if(!success){try{success=publish(entry.slot,await fetchId(entry.seedId));}catch(e){}}
-   // A source may withdraw a recipe. Prefer another published dish to a fake entry.
-   if(!success){
-     for(const alternate of candidates.filter(x=>!occupied.has(String(x.idMeal))).slice(0,15)){
-       try{if(publish(entry.slot,await fetchId(alternate.idMeal))){success=true;break;}}catch(e){}
-     }
+   // Only retry a pinned source ID if its published title and food category match.
+   if(!success && entry.seedId){
+     try{
+       const fetched=await fetchId(entry.seedId);
+       const candidate=fetched?{strMeal:fetched.name,sourceCategory:(
+         fetched.cat==="Chicken"?"Chicken":fetched.cat==="Beef"?"Beef":
+         fetched.cat==="Vegetarian"?"Vegetarian":fetched.cat==="Quick & Breakfast"?"Breakfast":
+         fetched.cat==="Pork & Sausage"?"Pork":fetched.cat==="Seafood"?"Seafood":"Miscellaneous")}:null;
+       if(candidate&&groupFitness(entry,candidate)>=20)publish(entry,fetched);
+     }catch(e){}
    }
    save();
  }
