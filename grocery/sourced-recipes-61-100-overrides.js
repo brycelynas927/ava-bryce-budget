@@ -278,4 +278,25 @@
  ],"Quick & Breakfast","Food Network")
  });
 
+ Object.assign(window.publishedRecipes,{
+69:R("Spicy Tuna Guacamole Rice Bowls",B+"spicy-tuna-guacamole-bowls/","https://www.budgetbytes.com/wp-content/uploads/2014/07/Spicy-Tuna-Guacamole-Bowls-fork-500x500.jpg",4,15,[
+ M("Frozen shelled edamame",1,"cup","Frozen"),
+ M("Cucumber",1,"medium","Produce","diced"),
+ M("Carrot",1,"medium","Produce","shredded"),
+ M("Canned light tuna in water",2,"5oz cans","Pantry","drained"),
+ M("Guacamole",8,"oz"),
+ M("Cooked rice",3,"cups","Pantry","cooled"),
+ M("Fresh cilantro",0.25,"bunch","Produce","chopped"),
+ S("Sriracha hot sauce",4,"tbsp"),
+ S("Sesame seeds",1,"tbsp")
+ ],[
+ "Cook frozen edamame according to its package directions (about five minutes in the microwave for many brands), then allow it to cool.",
+ "Peel and shred the carrot, dice the cucumber, and roughly chop cilantro leaves.",
+ "Open and fully drain both cans of tuna.",
+ "Divide three cups of prepared rice into four serving bowls, about three quarters of a cup per bowl.",
+ "Arrange edamame, diced cucumber, shredded carrot, half a can of tuna and about two tablespoons of guacamole over each portion of rice.",
+ "Drizzle each bowl with one tablespoon sriracha and sprinkle with sesame seeds and fresh cilantro. Keep refrigerated until serving if making ahead."
+ ],"Rice & Bowls")
+ });
+
 })();
