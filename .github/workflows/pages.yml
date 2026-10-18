@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
   pages: write
   id-token: write
 
@@ -23,6 +23,32 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v6
+      - name: Create verified recipe snapshot
+        run: |
+          set -euo pipefail
+          python3 grocery/build_sourced_recipes.py
+          test -s grocery/sourced-recipes-61-100-static.js
+          python3 - <<'PY'
+          import json,re,pathlib
+          p=pathlib.Path('grocery/sourced-recipes-61-100-static.js')
+          s=p.read_text()
+          data=json.loads(s.split('Object.assign(window.publishedRecipes||{},',1)[1].rsplit(');',1)[0])
+          assert len(data)==40, f"Expected 40, got {len(data)}"
+          ids=[v['originalId'] for v in data.values()]
+          assert len(set(ids))==40
+          assert all(v.get('name') and v.get('photo') and v.get('url') and len(v.get('items',[]))>=4 and len(v.get('steps',[]))>=2 for v in data.values())
+          print("Validated 40 distinct source-backed recipes with original images, ingredients and instructions")
+          PY
+      - name: Save recipe snapshot in repository
+        run: |
+          set -euo pipefail
+          if ! git ls-files --error-unmatch grocery/sourced-recipes-61-100-static.js >/dev/null 2>&1; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add grocery/sourced-recipes-61-100-static.js
+            git commit -m "Freeze 40 source-backed recipes and exact matching photos"
+            git push origin HEAD:main
+          fi
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Upload site
