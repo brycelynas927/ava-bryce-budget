@@ -1,4 +1,4 @@
-const CACHE='our-grocery-plan-v13';
+const CACHE='our-grocery-plan-v14';
 const ASSETS=['./','./index.html','./sourced-recipes.js','./sourced-recipes-21-40.js','./sourced-recipes-41-60.js','./sourced-recipes-61-100.js','./sourced-recipes-61-100-static.js','./sourced-recipes-61-100-overrides.js','./manifest.webmanifest','./icon.svg','./images/honey-garlic-chicken.webp','./images/creamy-chicken-pasta.webp','./images/chicken-fajitas.webp','./images/bbq-chicken-sandwich.webp','./images/cheesy-chicken-rice.webp','./images/beef-stroganoff.webp','./images/beef-tacos.webp'];
 self.addEventListener('install',e=>e.waitUntil(
  caches.open(CACHE).then(c=>c.addAll(ASSETS)).then(()=>self.skipWaiting())
