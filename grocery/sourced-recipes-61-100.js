@@ -119,8 +119,15 @@ window.fetchSourcedRecipes61to100=async function(onBatch){
      if(groupFitness(entry,candidate)<20)break;
      try{if(publish(entry.slot,await fetchId(candidate.idMeal))){success=true;break;}}catch(e){}
    }
-   // Fallback to a fixed real meal ID only if category browsing was unavailable.
-   if(!success&&!candidates.length){try{publish(entry.slot,await fetchId(entry.seedId));}catch(e){}}
+   // If the close category matches run out, try a preselected real recipe ID.
+   // The app always displays the fetched name and its own photo, ingredients and steps.
+   if(!success){try{success=publish(entry.slot,await fetchId(entry.seedId));}catch(e){}}
+   // A source may withdraw a recipe. Prefer another published dish to a fake entry.
+   if(!success){
+     for(const alternate of candidates.filter(x=>!occupied.has(String(x.idMeal))).slice(0,15)){
+       try{if(publish(entry.slot,await fetchId(alternate.idMeal))){success=true;break;}}catch(e){}
+     }
+   }
    save();
  }
  return completed.size;
