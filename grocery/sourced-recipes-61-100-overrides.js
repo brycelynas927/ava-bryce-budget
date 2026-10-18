@@ -219,4 +219,27 @@
  ],"Quick & Breakfast")
  });
 
+ Object.assign(window.publishedRecipes,{
+87:R("Slow Cooker Lentil Soup","https://www.spendwithpennies.com/slow-cooker-lentil-soup/","https://www.spendwithpennies.com/wp-content/uploads/2026/03/Slow-Cooker-Lentil-Soup-SpendWithPennies-8-500x500.jpg",6,270,[
+ M("Russet or sweet potato",1,"medium","Produce","peeled and diced"),M("Chicken or vegetable broth",6,"cups"),M("Celery",4,"ribs","Produce","sliced"),M("Carrots",3,"whole","Produce","sliced"),M("Dry green lentils",1,"cup","Pantry","rinsed; avoid red lentils"),M("Garlic",3,"cloves","Produce","minced"),M("Diced tomatoes with juice",1,"14.5oz can"),S("Italian seasoning",1,"tsp"),S("Red wine vinegar",1,"tsp"),S("Salt and pepper to taste",1,"pinch")
+ ],[
+ "Peel and chop the potato into small cubes. Slice the celery and carrots, mince garlic, rinse the dried green lentils and pick out any debris.",
+ "Add potato, celery, carrots, lentils and garlic to a six-quart slow cooker.",
+ "Pour the measured broth over everything, season with Italian seasoning, and stir.",
+ "Cover and cook HIGH four to six hours or LOW six to eight hours, until lentils and vegetables are completely tender.",
+ "Stir in canned diced tomatoes with juices and red wine vinegar, cover and cook about 15 minutes more.",
+ "For thicker soup, briefly pulse the mixture with an immersion blender so some potato and lentils become creamy while most stay chunky. Taste and season."
+ ],"Soups","Spend With Pennies"),
+89:R("Slow Cooker Sausage and Peppers","https://www.spendwithpennies.com/crock-pot-sausage-and-peppers/","https://www.spendwithpennies.com/wp-content/uploads/2026/02/Slow-Cooker-Sausage-and-Peppers-SpendWithPennies-11-500x500.jpg",4,245,[
+ M("Bell peppers",4,"whole","Produce","thickly sliced"),M("Yellow onion",1,"large","Produce","thickly sliced"),M("Garlic",2,"cloves","Produce","minced"),M("Marinara sauce",24,"oz"),M("Italian sausage links",19,"oz","Meat","hot or mild"),S("Olive oil",1,"tbsp"),S("Italian seasoning",1,"tsp"),S("Salt",0.25,"tsp")
+ ],[
+ "Slice the four bell peppers and onion into thick strips and spread them across the bottom of a six-quart slow cooker.",
+ "Toss the peppers and onions with olive oil, minced garlic, Italian seasoning and salt.",
+ "Pour marinara sauce evenly over the prepared vegetables.",
+ "Optional: brown the Italian sausage links about two minutes per side in a skillet for extra colour. Place sausage links on top of the vegetables and sauce.",
+ "Cover and slow-cook LOW three to four hours or HIGH two to three hours until sausages are cooked through and the vegetables are tender.",
+ "Serve the finished sausages with peppers and marinara over rice, pasta, or in hoagie rolls bought separately; the linked publisher picture shows the sandwich serving."
+ ],"Slow Cooker","Spend With Pennies")
+ });
+
 })();
