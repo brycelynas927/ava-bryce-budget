@@ -107,6 +107,7 @@ window.fetchSourcedRecipes61to100=async function(onBatch){
    const saved=cache[entry.slot];
    if(saved?.originalId&&saved?.photo&&saved?.steps?.length&&saved?.items?.length)publish(entry.slot,saved);
  });
+ if(completed.size===catalog.length)return completed.size;
  const candidates=await alternateCandidates();
  // Choose an appropriate publisher-supplied dish for each open slot, with preference
  // for recipes similar to the old titles. No AI-made recipes or generic photos.
