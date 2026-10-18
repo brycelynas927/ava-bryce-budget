@@ -116,4 +116,33 @@
  ],"Rice & Bowls")
  });
 
+ Object.assign(window.publishedRecipes,{
+91:R("Green Chile Breakfast Quesadillas",B+"green-chile-breakfast-quesadillas/","https://www.budgetbytes.com/wp-content/uploads/2015/02/Green-Chile-Breakfast-Quesadillas-stack-1.jpg",4,20,[
+ M("Monterey Jack or Pepper Jack cheese",4,"oz","Dairy","shredded"),M("Mild diced green chiles",1,"4oz can","Pantry","drained"),M("Fresh cilantro",0.25,"bunch","Produce","chopped"),M("Eggs",4,"large","Dairy"),M("8-inch flour tortillas",4,"tortillas","Bakery")],[
+ "Thoroughly drain the can of green chiles and chop the cilantro.",
+ "Mix shredded cheese, green chiles and cilantro in a small bowl.",
+ "Cook the four eggs in a skillet over medium heat, over-easy or another preferred method.",
+ "Place one quarter of the cheese mixture on half of each tortilla, top it with a cooked egg, then fold each tortilla over.",
+ "Toast the filled tortillas in a dry skillet over medium heat until the outsides are golden and the cheese has melted. Slice into triangles."
+ ],"Quick & Breakfast"),
+98:R("Easy Vegetarian Minestrone Soup",B+"easy-vegetarian-minestrone/","https://www.budgetbytes.com/wp-content/uploads/2021/03/Vegetarian-Minestrone-bowl-500x500.jpg",6,45,[
+ M("Yellow onion",1,"whole","Produce","diced"),M("Garlic",2,"cloves","Produce","minced"),M("Carrots",4,"whole","Produce","sliced"),M("Diced tomatoes",1,"28oz can","Pantry","with juice"),M("Kidney beans",1,"15oz can","Pantry","drained and rinsed"),M("Chickpeas",1,"15oz can","Pantry","drained and rinsed"),M("Vegetable broth",4,"cups"),M("Zucchini",1,"whole","Produce","chopped"),M("Frozen green beans",1,"cup","Frozen"),M("Lemon juice",1,"tbsp"),M("Fresh parsley, optional",1,"tbsp","Produce","chopped"),S("Olive oil",2,"tbsp"),S("Tomato paste",2,"tbsp"),S("Italian seasoning",1,"tbsp")],[
+ "Dice onion, mince garlic and slice carrots into small coins.",
+ "Heat olive oil in a soup pot and sauté onion, garlic and carrots until the onions soften.",
+ "Stir in tomato paste and canned tomatoes with their juice, and add Italian seasoning.",
+ "Pour in vegetable broth and add drained kidney beans and chickpeas. Bring to a gentle simmer.",
+ "Chop zucchini and add it with frozen green beans. Continue cooking until all vegetables are tender.",
+ "Stir in lemon juice, taste for salt and top with chopped fresh parsley if desired. The published vegetarian version has chickpeas instead of pasta."
+ ],"Soups"),
+100:R("Pinto Bean Soup",B+"pinto-bean-soup/","https://www.budgetbytes.com/wp-content/uploads/2023/05/Pinto-Bean-Soup-bowl-500x500.jpg",4,25,[
+ M("Pinto beans",3,"15oz cans","Pantry","one can with its liquid; two cans drained"),M("Garlic",4,"cloves","Produce","minced"),M("Vegetable broth",2,"cups"),S("Olive oil",2,"tbsp"),S("Chili powder",0.5,"tsp"),S("Ground cumin",0.25,"tsp"),S("Dried oregano",0.25,"tsp"),S("Cayenne pepper",0.125,"tsp")],[
+ "Pour one entire can of pinto beans, including its liquid, into a blender and puree until mostly smooth.",
+ "Mince four cloves of garlic and sauté them in olive oil in a soup pot over medium heat for about a minute.",
+ "Stir in chili powder, ground cumin, oregano and cayenne. Heat another minute to release the spices.",
+ "Drain and rinse the other two cans of beans. Add the whole beans, blended beans and vegetable broth to the pot.",
+ "Bring to a boil, lower heat and simmer uncovered 15 minutes, stirring occasionally.",
+ "Mash a few more beans against the side of the pot for thickness and adjust salt or spice before serving."
+ ],"Soups")
+ });
+
 })();
