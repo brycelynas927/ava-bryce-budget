@@ -145,4 +145,42 @@
  ],"Soups")
  });
 
+ Object.assign(window.publishedRecipes,{
+73:R("BBQ Chicken Burrito Bowls",B+"bbq-chicken-burrito-bowls/","https://www.budgetbytes.com/wp-content/uploads/2016/04/Build-BBQ-Chicken-Burrito-Bowl-1.jpg",4,20,[
+ M("Cooked chicken breast",1,"whole","Meat","shredded"),M("Cooked rice",4,"cups"),M("Black beans",1,"15oz can","Pantry","rinsed and drained"),M("Frozen corn",1,"cup","Frozen","thawed"),M("Zucchini",1,"small","Produce","diced"),M("Pepper Jack cheese",4,"oz","Dairy","shredded"),M("Green onions",2,"stalks","Produce","sliced"),M("Avocado",1,"small","Produce","sliced"),S("BBQ sauce",0.5,"cup")],[
+ "Start with already cooked chicken breast and four cups of cooked rice. Chop or shred the chicken.",
+ "Toss cooked chicken with two to three tablespoons of BBQ sauce until coated.",
+ "Drain black beans; thaw corn, dice zucchini, shred cheese, slice green onions and cut avocado.",
+ "Divide cooked rice among four bowls and arrange BBQ chicken, beans, corn, zucchini and cheese over each.",
+ "Finish with green onions and avocado and drizzle with remaining BBQ sauce. Serve immediately or refrigerate for packed lunches."
+ ],"Rice & Bowls"),
+85:R("Slow Cooker Taco Soup",B+"taco-soup/","https://www.budgetbytes.com/wp-content/uploads/2023/03/Taco-Soup-Bowls-300x300.jpg",6,370,[
+ M("Ground beef",1,"lb","Meat"),M("Yellow onion",1,"whole","Produce","diced"),M("Garlic",4,"cloves","Produce","minced"),M("Frozen corn",1,"cup","Frozen"),M("Diced tomatoes with green chiles",2,"10oz cans"),M("Pinto beans",1,"15oz can","Pantry","drained"),M("Black beans",1,"15oz can","Pantry","drained"),M("Water",2,"cups"),S("Olive oil",1,"tbsp"),S("Taco seasoning",1,"packet"),S("Ranch seasoning",1,"packet"),S("Tomato paste",3,"tbsp")],[
+ "In a skillet over medium heat, heat olive oil and brown the ground beef, draining extra fat.",
+ "Add the chopped onion and minced garlic and sauté until fragrant and softened.",
+ "Transfer cooked beef mixture into slow cooker. Add corn, canned tomatoes with juices, drained pinto beans and black beans.",
+ "Mix in taco seasoning, ranch seasoning, tomato paste and two cups water.",
+ "Cover and cook LOW about six hours or HIGH about three hours according to the original publisher's slow-cooker option.",
+ "Stir, taste and serve hot. Cheese and sour cream can be added separately but are not included in the base published ingredient quantities."
+ ],"Slow Cooker"),
+96:R("Creamy Spinach Tortellini Soup",B+"spinach-tortellini-soup/","https://www.budgetbytes.com/wp-content/uploads/2023/01/Creamy-Tortellini-Soup-bowl-500x500.jpg",8,40,[
+ M("Yellow onion",1,"whole","Produce","diced"),M("Carrots",2,"whole","Produce","diced"),M("Celery",2,"ribs","Produce","diced"),M("Garlic",4,"cloves","Produce","minced"),M("Crushed tomatoes",1,"28oz can"),M("Vegetable broth",4,"cups"),M("Frozen cheese tortellini",19,"oz","Frozen"),M("Heavy cream",0.5,"cup","Dairy"),M("Fresh spinach",4,"oz","Produce"),S("Olive oil",2,"tbsp"),S("Tomato paste",4,"tbsp"),S("Italian seasoning",1.5,"tsp"),S("Salt",0.75,"tsp"),S("Black pepper",0.25,"tsp")],[
+ "Dice onion, carrots and celery, mince garlic, and sauté them in olive oil in a large soup pot until onions are soft.",
+ "Stir in tomato paste and cook approximately three more minutes.",
+ "Pour in canned crushed tomatoes, Italian seasoning and vegetable broth and mix thoroughly.",
+ "Bring the soup to a gentle simmer and continue cooking approximately 10 minutes.",
+ "Add frozen cheese tortellini and boil only as long as its package calls for, typically three minutes.",
+ "Turn off the heat, stir in heavy cream and fold in spinach until wilted. Season with salt and black pepper and serve."
+ ],"Soups"),
+97:R("Classic Creamy Potato Soup",B+"classic-potato-soup/","https://www.budgetbytes.com/wp-content/uploads/2026/09/1-Classic-Potato-Soup-Overhead-Wide-500x500.jpg",6,55,[
+ M("Yellow onion",1,"medium","Produce","diced"),M("Celery",2,"ribs","Produce","diced"),M("Garlic",2,"cloves","Produce","minced"),M("Chicken broth",4,"cups"),M("Whole milk",2,"cups","Dairy","room temperature"),M("Russet potatoes",3,"lb","Produce","peeled and cubed"),S("Salted butter",4,"tbsp"),S("All-purpose flour",3,"tbsp"),S("Kosher salt",1.5,"tsp"),S("Black pepper",0.5,"tsp")],[
+ "Dice onion and celery, mince garlic, and peel and cut russet potatoes into ½-inch cubes.",
+ "Melt butter in a heavy soup pot over medium heat. Soften onion, celery and garlic for about five minutes, without browning.",
+ "Add flour to the softened vegetables and stir continuously for about one minute.",
+ "Gradually whisk in chicken broth, then add potato cubes, salt and pepper.",
+ "Cover and gently simmer for 20–25 minutes, stirring occasionally, until potatoes are tender.",
+ "Mash some potatoes in the pot to thicken, leaving plenty of chunks. Turn heat low, stir in room-temperature milk, and simmer gently another five minutes without boiling."
+ ],"Soups")
+ });
+
 })();
