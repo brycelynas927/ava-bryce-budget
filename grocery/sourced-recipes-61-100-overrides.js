@@ -242,4 +242,40 @@
  ],"Slow Cooker","Spend With Pennies")
  });
 
+ Object.assign(window.publishedRecipes,{
+65:R("Poor Man's Burrito Bowls",B+"poor-mans-burrito-bowls/","https://www.budgetbytes.com/wp-content/uploads/2015/09/Poor-Mans-Burrito-Bowls-fork-lift.jpg",6,25,[
+ M("Dry long-grain white rice",2,"cups"),
+ M("Canned black beans",2,"15oz cans","Pantry","keep can liquid"),
+ M("Salsa",1,"16oz jar"),
+ M("Shredded cheese",6,"oz","Dairy"),
+ M("Green onions",1,"bunch","Produce","sliced"),
+ M("Jalapeño (optional)",1,"whole","Produce","sliced"),
+ S("Salt",0.5,"tsp"),S("Ground cumin",0.5,"tsp"),S("Garlic powder",0.25,"tsp")
+ ],[
+ "Rinse two cups of dry long-grain white rice. Combine it with three cups water and half a teaspoon of salt in a medium saucepan.",
+ "Bring the rice and water to a boil, cover, then reduce heat to low and gently cook about 15 minutes. Turn off heat and let stand covered another five minutes, then fluff.",
+ "While the rice cooks, pour the black beans and their can liquid into a separate small pot. Add cumin and garlic powder.",
+ "Warm the seasoned beans over medium heat, stirring often, until hot.",
+ "Slice green onions and optional jalapeño. Set out salsa and grated cheese.",
+ "Divide the rice between six bowls. Top each with warm black beans, salsa, cheese, green onions and a few jalapeño slices if desired."
+ ],"Rice & Bowls"),
+93:R("Egg and Potato Breakfast Tacos","https://www.foodnetwork.com/recipes/food-network-kitchen/egg-and-potato-breakfast-tacos-3363842","https://food.fnr.sndimg.com/content/dam/images/food/fullset/2014/8/27/1/FNM_100114-Mexican-Egg-Tacos-with-Potatoes-Recipe_s4x3.jpg.rend.hgtvcom.1280.960.suffix/1409241553491.webp",4,40,[
+ M("Eggs",8,"large","Dairy"),
+ M("Yukon gold potatoes",2,"whole","Produce","diced, about 1 lb"),
+ M("Yellow onion",1,"whole","Produce","diced"),
+ M("Poblano chile",1,"whole","Produce","thinly sliced"),
+ M("Plum tomatoes",3,"whole","Produce","diced"),
+ M("Fresh cilantro",0.5,"cup","Produce","chopped"),
+ M("White corn tortillas",12,"tortillas","Bakery"),
+ S("Chili powder",1,"tsp"),S("Salt",1,"tsp"),S("Cooking spray",1,"spray"),S("Jalapeño hot sauce",2,"tbsp"),S("Unsalted butter",1,"tbsp")
+ ],[
+ "Heat oven to 475°F (245°C). Separate one egg, reserving the yolk for the scrambled eggs. Whisk the egg white with chili powder and half a teaspoon of salt.",
+ "Toss diced potatoes, diced onion and sliced poblano in the spiced egg white. Coat a baking tray with cooking spray and spread vegetables into a single layer.",
+ "Roast 25–30 minutes, turning once, until potatoes and onions are lightly browned and tender.",
+ "Mix diced plum tomatoes with two tablespoons cilantro and one tablespoon jalapeño hot sauce; season to taste.",
+ "Whisk the saved egg yolk with the other seven eggs, about a quarter cup cilantro and salt. Melt butter in a skillet, then scramble the eggs gently over medium until just set.",
+ "Warm the corn tortillas. Fill with roasted potatoes, pepper and onion, then add scrambled egg. Serve alongside the fresh tomato salsa and remaining hot sauce."
+ ],"Quick & Breakfast","Food Network")
+ });
+
 })();
