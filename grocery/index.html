@@ -257,9 +257,17 @@ Object.values(publishedById).forEach(pub=>pub.items.forEach(it=>{
 let selected=loadJSON("ogp-selected",{}), checked=loadJSON("ogp-checked",{}), pantry=loadJSON("ogp-pantry",{}), favs=loadJSON("ogp-favs",{}), custom=loadJSON("ogp-custom",[]);
 let includeBasics=localStorage.getItem("ogp-basics")==="1", currentCat=new URLSearchParams(location.search).has("batch4")?"🆕 Batch 4 (61–100)":new URLSearchParams(location.search).has("batch3")?"🆕 Batch 3 (41–60)":new URLSearchParams(location.search).has("batch2")?"🆕 Batch 2 (21–40)":new URLSearchParams(location.search).has("published")?"📖 Real recipes":"All", currentSearch="", currentRecipe=null;
 function escapeHtml(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+const reviewKey="ogp-old-recipes-61-100-review-v1";
+let oldMealReview=loadJSON(reviewKey,{});
+if(localStorage.getItem(reviewKey)===null){
+ oldMealReview={};
+ Object.keys(selected).forEach(id=>{if(Number(id)>=61&&Number(id)<=100)oldMealReview[id]=true;});
+ localStorage.setItem(reviewKey,JSON.stringify(oldMealReview));
+}
+function reviewCount(){return Object.keys(oldMealReview).filter(id=>selected[id]).length;}
 
 function loadJSON(k,f){try{let v=localStorage.getItem(k);return v?JSON.parse(v):f}catch(e){return f}}
-function persist(){localStorage.setItem("ogp-selected",JSON.stringify(selected));localStorage.setItem("ogp-checked",JSON.stringify(checked));localStorage.setItem("ogp-pantry",JSON.stringify(pantry));localStorage.setItem("ogp-favs",JSON.stringify(favs));localStorage.setItem("ogp-custom",JSON.stringify(custom));localStorage.setItem("ogp-basics",includeBasics?"1":"0");updateStats()}
+function persist(){localStorage.setItem("ogp-selected",JSON.stringify(selected));localStorage.setItem("ogp-checked",JSON.stringify(checked));localStorage.setItem("ogp-pantry",JSON.stringify(pantry));localStorage.setItem("ogp-favs",JSON.stringify(favs));localStorage.setItem("ogp-custom",JSON.stringify(custom));localStorage.setItem("ogp-basics",includeBasics?"1":"0");localStorage.setItem(reviewKey,JSON.stringify(oldMealReview));updateStats()}
 function meta(k){return I[k]||[k.replaceAll("_"," "),1,"","Other",false]}
 function round(n){return Math.round(n*100)/100}
 function qty(q,u){
@@ -276,7 +284,7 @@ function timeText(n){return n==null||!Number.isFinite(Number(n))?"Time not liste
 function tierText(t){return t==null?"Cost varies":t===1?"$ very low-cost":"$ low-cost"}
 function needCount(r){return r.published?recipeItems(r).filter(it=>!it.seasoning&&!pantry[it.key]).length:r.keys.filter(k=>!pantry[k]&&!meta(k)[4]).length}
 function chosen(id){return Object.prototype.hasOwnProperty.call(selected,id)}
-function toggleMeal(id,servings){if(chosen(id))delete selected[id];else selected[id]=Number(servings||4);persist();renderAll()}
+function toggleMeal(id,servings){if(chosen(id)){delete selected[id];}else{selected[id]=Number(servings||4);}delete oldMealReview[id];persist();renderAll()}
 function toggleFav(id){favs[id]=!favs[id];persist();renderRecipes()}
 
 const seasoningKeys=new Set([
@@ -652,7 +660,7 @@ function stepsFor(r){
 function buildGrocery(){
  const map={};
  Object.keys(selected).forEach(id=>{
-   const r=recipes.find(x=>x.id===Number(id)); if(!r?.published)return;
+   const r=recipes.find(x=>x.id===Number(id)); if(!r?.published||oldMealReview[id])return;
    const scale=Number(selected[id]||4)/(r.published?r.published.servings:4);
    recipeItems(r).forEach(it=>{
      if(pantry[it.key])return;
@@ -714,7 +722,7 @@ function renderModalIngredients(){
  document.getElementById("modalSeasonings").innerHTML=items.filter(it=>it.seasoning).map(line).join("");
 }
 function updateModalButton(){if(!currentRecipe)return;document.getElementById("modalAdd").textContent=chosen(currentRecipe.id)?"Remove from My Meals":"Add to My Meals"}
-function renderMeals(){const ids=Object.keys(selected);document.getElementById("mealCountLabel").textContent=ids.length+" selected";const el=document.getElementById("mealList");el.innerHTML="";if(!ids.length){el.innerHTML='<div class="empty">Add recipes and they’ll show up here.</div>';return}ids.forEach(id=>{const r=recipes.find(x=>x.id===Number(id));if(!r)return;const row=document.createElement("div");row.className="row meal-row";row.innerHTML='<div><b>'+escapeHtml(r.published?r.name:"Recipe source loading")+'</b><small>'+(r.published?tierText(r.tier)+' • '+timeText(r.time)+(r.leftovers?" • good leftovers":""):"Original ingredients not available yet; excluded from grocery list")+'</small></div><div class="meal-actions"><select><option value="2">2 servings</option><option value="4">4 servings</option><option value="5">5 servings</option><option value="6">6 servings</option><option value="8">8 servings</option><option value="10">10 servings</option></select><button class="iconbtn">✕</button></div>';row.querySelector("select").value=selected[id];row.querySelector("select").onchange=e=>{selected[id]=Number(e.target.value);persist();renderGrocery()};row.querySelector("button").onclick=()=>{delete selected[id];persist();renderAll()};el.appendChild(row)})}
+function renderMeals(){const ids=Object.keys(selected);document.getElementById("mealCountLabel").textContent=ids.length+" selected";const el=document.getElementById("mealList");el.innerHTML="";if(!ids.length){el.innerHTML='<div class="empty">Add recipes and they’ll show up here.</div>';return}ids.forEach(id=>{const r=recipes.find(x=>x.id===Number(id));if(!r)return;const row=document.createElement("div");row.className="row meal-row";row.innerHTML='<div><b>'+escapeHtml(oldMealReview[id]?"Saved meal needs review":r.published?r.name:"Recipe source loading")+'</b><small>'+(oldMealReview[id]?"The original placeholder recipe changed. Remove this meal, review the new recipe and add it again; groceries are paused.":r.published?tierText(r.tier)+' • '+timeText(r.time)+(r.leftovers?" • good leftovers":""):"Original ingredients not available yet; excluded from grocery list")+'</small></div><div class="meal-actions"><select><option value="2">2 servings</option><option value="4">4 servings</option><option value="5">5 servings</option><option value="6">6 servings</option><option value="8">8 servings</option><option value="10">10 servings</option></select><button class="iconbtn">✕</button></div>';row.querySelector("select").value=selected[id];row.querySelector("select").onchange=e=>{selected[id]=Number(e.target.value);persist();renderGrocery()};row.querySelector("button").onclick=()=>{delete selected[id];persist();renderAll()};el.appendChild(row)})}
 function renderGrocery(){const items=buildGrocery();document.getElementById("groceryCountLabel").textContent=items.filter(x=>!checked[x.key]).length+" left";const el=document.getElementById("groceryList");el.innerHTML="";if(!items.length){el.innerHTML='<div class="empty">Choose some meals and your list will appear here.</div>';updateStats();return}let section="";items.forEach(it=>{if(it.section!==section){section=it.section;const h=document.createElement("div");h.className="grocery-head";h.textContent=section;el.appendChild(h)}const row=document.createElement("label");row.className="row grocery-row"+(checked[it.key]?" done":"");row.innerHTML='<input type="checkbox" '+(checked[it.key]?"checked":"")+'><div><div class="grocery-name">'+escapeHtml(it.name)+'</div><div class="grocery-qty">'+escapeHtml(it.custom?"custom item":groceryQty(it))+'</div></div>';row.querySelector("input").onchange=e=>{checked[it.key]=e.target.checked;persist();renderGrocery()};el.appendChild(row)});updateStats()}
 function renderPantry(){const q=(document.getElementById("pantrySearch").value||"").toLowerCase();const el=document.getElementById("pantryList");el.innerHTML="";let count=0;sectionOrder.forEach(sec=>{const keys=Object.keys(I).filter(k=>I[k][3]===sec&&I[k][0].toLowerCase().includes(q));if(!keys.length)return;const h=document.createElement("div");h.className="pantry-section";h.textContent=sec;el.appendChild(h);const g=document.createElement("div");g.className="pantry-grid";keys.forEach(k=>{const label=document.createElement("label");label.className="pantry-item";label.innerHTML='<input type="checkbox" '+(pantry[k]?"checked":"")+'><span>'+escapeHtml(I[k][0])+'</span>';label.querySelector("input").onchange=e=>{pantry[k]=e.target.checked;if(!pantry[k])delete pantry[k];persist();renderRecipes();renderGrocery();renderPantry()};g.appendChild(label);if(pantry[k])count++});el.appendChild(g)});document.getElementById("pantryCountLabel").textContent=count+" marked as have"}
 function renderAll(){renderRecipes();renderMeals();renderGrocery();renderPantry();updateStats()}
@@ -722,7 +730,7 @@ function switchView(v){["browse","meals","list","pantry"].forEach(x=>document.ge
 function listText(){let out=["OUR GROCERY LIST",""];let sec="";buildGrocery().filter(x=>!checked[x.key]).forEach(it=>{if(it.section!==sec){sec=it.section;out.push(sec.toUpperCase())}out.push("• "+it.name+(it.custom?"":" — "+groceryQty(it)))});return out.join("\n")}
 document.getElementById("search").oninput=e=>{currentSearch=e.target.value;renderRecipes()};document.getElementById("sort").onchange=renderRecipes;document.getElementById("favFilter").onchange=renderRecipes;document.getElementById("includePantryBasics").checked=includeBasics;document.getElementById("includePantryBasics").onchange=e=>{includeBasics=e.target.checked;persist();renderGrocery()};document.getElementById("pantrySearch").oninput=renderPantry;
 document.querySelectorAll(".navbtn").forEach(b=>b.onclick=()=>switchView(b.dataset.view));document.getElementById("closeModal").onclick=()=>document.getElementById("modal").classList.add("hidden");document.getElementById("modal").onclick=e=>{if(e.target.id==="modal")e.currentTarget.classList.add("hidden")};document.getElementById("modalServings").onchange=renderModalIngredients;document.getElementById("modalAdd").onclick=()=>{if(!currentRecipe)return;toggleMeal(currentRecipe.id,document.getElementById("modalServings").value);updateModalButton();renderModalIngredients()};
-document.getElementById("clearMeals").onclick=()=>{if(confirm("Clear all selected meals?")){selected={};checked={};persist();renderAll()}};
+document.getElementById("clearMeals").onclick=()=>{if(confirm("Clear all selected meals?")){selected={};oldMealReview={};checked={};persist();renderAll()}};
 document.getElementById("clearPantry").onclick=()=>{if(confirm("Clear everything marked as already have?")){pantry={};persist();renderAll()}};
 document.getElementById("addCustom").onclick=()=>{const el=document.getElementById("customItem"),v=el.value.trim();if(v){custom.push(v);el.value="";persist();renderGrocery()}};
 document.getElementById("customItem").onkeydown=e=>{if(e.key==="Enter")document.getElementById("addCustom").click()};
@@ -735,10 +743,11 @@ function updateRecipeStatus(done=false){
  const count=recipes.filter(r=>r.published).length;
  const box=document.getElementById("recipeSourceStatus");
  if(!box)return;
- if(count>=100){box.textContent="All 100 published recipes are available with original ingredient lists, directions and linked food photos.";return;}
- box.textContent=done?
-  count+" source-backed recipes ready. "+(100-count)+" additional recipes could not be loaded from the publisher. You can still use all available recipes; no placeholders are shown.":
-  count+" source-backed recipes ready. Loading additional original recipes and matching photos…";
+ const warning=reviewCount()?" "+reviewCount()+" previously saved meal(s) need review in My Meals because the original recipes were replaced.":"";
+ if(count>=100){box.textContent="All 100 sourced recipes are available with ingredient lists, directions and matching photo links."+warning;return;}
+ box.textContent=(done?
+  count+" source-backed recipes ready. "+(100-count)+" additional recipes could not be loaded from the publisher. No placeholders are shown.":
+  count+" source-backed recipes ready. Loading additional original recipes and matching photos…")+warning;
 }
 function addSourcedBatch(batch){
  for(const entry of batch){
