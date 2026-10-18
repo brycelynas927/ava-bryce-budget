@@ -183,4 +183,40 @@
  ],"Soups")
  });
 
+ Object.assign(window.publishedRecipes,{
+66:R("Sausage and Rice",B+"dsd-sausage-and-rice/","https://www.budgetbytes.com/wp-content/uploads/2022/10/DSD-Sausage-and-Rice-side.jpg",4,35,[
+ M("Smoked sausage",8,"oz","Meat","sliced into ½-inch rounds"),
+ M("Frozen seasoning vegetables (onion, celery, bell pepper, parsley)",10,"oz","Frozen"),
+ M("Uncooked long-grain white rice",1,"cup"),
+ M("Chicken broth",1.5,"cups"),
+ S("Cooking oil",2,"tbsp"),S("Creole seasoning",0.5,"tsp"),
+ S("Hot sauce to taste",1,"dash")
+ ],[
+ "Slice the smoked sausage into rounds roughly half an inch thick.",
+ "Heat cooking oil in a deep skillet over medium heat. Brown the sliced sausage for three to five minutes.",
+ "Add the frozen onion, celery, bell pepper and parsley mixture. Stir until the vegetables are warmed through.",
+ "Mix in the dry white rice, measured Creole seasoning and chicken broth.",
+ "Cover the skillet and bring the broth to a full boil, then turn heat to medium-low and gently simmer for 15 minutes without lifting the lid.",
+ "Turn off heat and let rest covered for five more minutes. Fluff with a fork and add hot sauce and more Creole seasoning only if needed."
+ ],"Rice & Bowls"),
+92:R("Fluffy Homemade Pancakes",B+"homemade-pancakes/","https://www.budgetbytes.com/wp-content/uploads/2025/06/1-Fluffy-Homemade-Pancakes-Front-Butter-and-Syrup-500x500.jpg",4,45,[
+ M("All-purpose flour",1,"cup"),
+ M("Baking powder",1.5,"tsp"),
+ M("Warm milk",0.75,"cup","Dairy"),
+ M("Large egg",1,"whole","Dairy"),
+ S("Salt",0.5,"tsp"),
+ S("Butter, melted",2,"tbsp"),
+ S("Granulated sugar",2,"tbsp"),
+ S("Vanilla extract",0.5,"tsp"),
+ S("Cooking oil for the griddle",4,"tsp")
+ ],[
+ "Combine flour, baking powder and salt in a large bowl and whisk to distribute evenly.",
+ "In a second bowl, whisk the warm milk with melted butter, egg, granulated sugar and vanilla.",
+ "Pour the wet mixture into the dry ingredients. Stir only until the flour is moistened; some small lumps are fine.",
+ "Rest batter for about 15 minutes to hydrate the flour and activate the baking powder.",
+ "Heat a greased griddle or large skillet over medium. Spoon ¼-cup portions of batter onto the hot surface and spread into rounds.",
+ "When bubbles rise and edges begin to dry, turn each pancake. Cook briefly on the other side until golden. Serve with toppings of your choice, which are not included in the source measurements."
+ ],"Quick & Breakfast")
+ });
+
 })();
