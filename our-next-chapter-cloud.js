@@ -9,7 +9,9 @@ if(!cfg.url||!cfg.key||!w.supabase||!w.supabase.createClient){
 }
 const db=w.supabase.createClient(cfg.url,cfg.key,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
 const api={configured:true,ready:false,household:null,status:'Sign in to sync',user:null,invite:null,conflict:false};
-let hooks=null,revision=0,channel=null,saveTimer=null,busy=false,queued=false,unsynced=false,pendingRemote=null;
+const metaKey='onc-cloud-sync-meta-v1';let meta={};try{meta=JSON.parse(w.localStorage.getItem(metaKey)||'{}')}catch(e){};
+let hooks=null,revision=Number(meta.revision||0),channel=null,saveTimer=null,busy=false,queued=false,unsynced=Boolean(meta.dirty),pendingRemote=null;
+const persistMeta=()=>{try{w.localStorage.setItem(metaKey,JSON.stringify({revision,dirty:unsynced,household:api.household}))}catch(e){}};
 const safeString=e=>e?.message||String(e||'Unknown error');
 const notify=msg=>{api.status=msg;hooks?.status?.(msg);};
 const paint=()=>hooks?.paint?.();
@@ -29,9 +31,9 @@ const pull=async({joining=false,force=false}={})=>{
  if(!api.household)return;
  const {data,error}=await db.from('onc_documents').select('content,revision').eq('household_id',api.household).single();
  if(error){notify('Sync read failed: '+safeString(error));return false}
- if(!force&&unsynced&&!joining){api.conflict=true;pendingRemote=data;notify('Your device has unsynced changes. Review before loading cloud data.');paint();return false}
+ if(!force&&unsynced&&!joining){api.ready=true;api.conflict=true;pendingRemote=data;notify('Your device has unsynced changes. Review before loading cloud data.');paint();return false}
  revision=Number(data.revision);
- api.ready=true; api.conflict=false;pendingRemote=null;queued=false;unsynced=false;
+ api.ready=true; api.conflict=false;pendingRemote=null;queued=false;unsynced=false;persistMeta();
  hooks?.receive?.(copyState(data.content));
  notify('Synced across both phones ✓');
  paint();return true;
@@ -60,14 +62,14 @@ const saveNow=async()=>{
   if(error)throw error;
   if(Number(data)===-1){api.conflict=true;unsynced=true;notify('Another device saved first — your changes were preserved locally. Resolve the conflict.');paint();return}
   revision=Number(data);
-  unsynced=queued;
+  unsynced=queued;persistMeta();
   notify(queued?'Finishing your changes…':'Synced across both phones ✓');
- }catch(e){unsynced=true;notify('Not synced yet: '+safeString(e)+'. Your changes are saved on this phone.');}
+ }catch(e){unsynced=true;persistMeta();notify('Not synced yet: '+safeString(e)+'. Your changes are saved on this phone.');}
  finally{busy=false;paint();if(queued&&!api.conflict){clearTimeout(saveTimer);saveTimer=setTimeout(saveNow,400)}}
 };
 api.changed=()=>{
  if(!api.ready||!api.household||api.conflict)return;
- unsynced=true;queued=true;notify('Saving to our shared budget…');
+ unsynced=true;queued=true;persistMeta();notify('Saving to our shared budget…');
  clearTimeout(saveTimer);saveTimer=setTimeout(saveNow,350);
 };
 api.init=async callbacks=>{
@@ -96,7 +98,7 @@ api.signOut=async()=>{
  if(unsynced&&!w.confirm('Unsynced changes are still on this phone. Sign out anyway?'))return;
  if(channel){await db.removeChannel(channel);channel=null}
  const {error}=await db.auth.signOut();if(error)throw error;
- api.user=null;api.ready=false;api.household=null;api.conflict=false;api.invite=null;unsynced=false;
+ api.user=null;api.ready=false;api.household=null;api.conflict=false;api.invite=null;unsynced=false;revision=0;persistMeta();
  notify('Signed out');paint();
 };
 api.create=async()=>{
@@ -106,7 +108,7 @@ api.create=async()=>{
  const invite=Array.from(buffer,x=>x.toString(16).padStart(2,'0')).join('');
  const {data,error}=await db.rpc('onc_create_household',{p_content:copyState(current()),p_invite:invite});
  if(error)throw error;
- api.invite=invite;api.household=data;revision=1;api.ready=true;unsynced=false;queued=false;
+ api.invite=invite;api.household=data;revision=1;api.ready=true;unsynced=false;queued=false;persistMeta();
  await listen();notify('Shared household created ✓ Copy the invitation to your partner.');paint();
 };
 api.join=async invite=>{
@@ -123,9 +125,9 @@ api.rotateInvite=async()=>{
  if(error)throw error;api.invite=data;notify('New invitation ready');paint();
 };
 api.pullLatest=async()=>{
- if(!api.ready)return;
+ if(!api.household)return;
  if(unsynced&&!w.confirm('Discard unsynced local edits and load the newest shared budget? Consider exporting a local backup first.'))return;
- unsynced=false;api.conflict=false;queued=false;await pull({force:true});
+ unsynced=false;api.conflict=false;queued=false;persistMeta();await pull({force:true});
 };
 api.retry=async()=>{if(api.conflict){notify('Resolve the conflict before saving again');return}queued=true;await saveNow()};
 api.close=async()=>{if(channel)await db.removeChannel(channel)};
