@@ -1,0 +1,272 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#07111d" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Our Budget" />
+  <link rel="manifest" href="manifest.webmanifest?v=23" />
+  <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png?v=23" />
+  <link rel="icon" href="./budget-icon.svg?v=23" type="image/svg+xml" />
+  <title>Ava & Bryce Budget</title>
+  <style>
+    :root{--panel:rgba(8,24,38,.76);--panel2:rgba(255,255,255,.10);--border:rgba(255,255,255,.22);--text:#fff;--muted:rgba(255,255,255,.78);--green:#95e5b8;--gold:#ffd978;--red:#ff9c9c;--blue:#9bd7ff}
+    *{box-sizing:border-box}html{background:#102536}body{margin:0;min-height:100%;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--text);padding:calc(14px + env(safe-area-inset-top)) 14px calc(28px + env(safe-area-inset-bottom));background:#102536;overflow-x:hidden}
+    .page-bg{position:fixed;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;z-index:0;pointer-events:none}
+    .shade{position:fixed;inset:0;background:linear-gradient(rgba(3,14,24,.18),rgba(3,14,24,.55));z-index:0;pointer-events:none}
+    .app{position:relative;z-index:1;max-width:760px;margin:0 auto;display:grid;gap:14px}
+    .card{background:var(--panel);border:1px solid var(--border);border-radius:22px;backdrop-filter:blur(11px);-webkit-backdrop-filter:blur(11px);box-shadow:0 18px 42px rgba(0,0,0,.24);padding:16px}
+    .hero h1{font-size:1.55rem;margin:0 0 5px}.hero p,.sub{margin:0;color:var(--muted);line-height:1.4;font-size:.92rem}
+    .input-wrap{display:flex;align-items:center;gap:8px;margin-top:12px;border:1px solid var(--border);background:rgba(255,255,255,.10);border-radius:16px;padding:0 13px}
+    .input-wrap input{width:100%;border:0;outline:none;background:transparent;color:#fff;font-size:1.25rem;font-weight:700;padding:14px 0}
+    .btn{width:100%;margin-top:10px;border:1px solid var(--border);background:rgba(255,255,255,.18);color:#fff;font:inherit;font-weight:800;border-radius:14px;padding:12px 14px;min-height:46px}
+    .summary{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.metric{background:rgba(7,24,38,.72);border:1px solid var(--border);border-radius:18px;padding:14px}.metric small{display:block;color:var(--muted);font-size:.72rem;text-transform:uppercase;letter-spacing:.04em}.metric strong{display:block;font-size:1.35rem;margin-top:5px}.metric.keep strong{color:var(--gold)}.metric.move strong{color:var(--blue)}.metric.save strong{color:var(--green)}
+    h2{margin:0 0 4px;font-size:1.08rem}.status{margin-top:12px;border:1px solid var(--border);background:rgba(255,255,255,.08);border-radius:14px;padding:12px;color:var(--muted);line-height:1.45;font-size:.9rem}
+    .list{display:grid;gap:9px;margin-top:12px}.row{background:var(--panel2);border:1px solid rgba(255,255,255,.13);border-radius:15px;padding:12px}.row-top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.row-title{font-weight:750}.row-note{font-size:.78rem;color:var(--muted);margin-top:2px}.amount{font-weight:800;white-space:nowrap;text-align:right}
+    .bar{height:8px;background:rgba(255,255,255,.12);border-radius:999px;overflow:hidden;margin-top:10px}.fill{height:100%;width:0;background:var(--green);border-radius:999px;transition:width .2s ease}
+    .tracker-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}.tracker-grid .input-wrap{margin-top:0}.tracker-grid .btn{margin-top:0}
+    .tiny{font-size:.76rem;color:var(--muted)}.good{color:var(--green)}.warn{color:var(--red)}.gold{color:var(--gold)}
+    .bill-edit{display:grid;grid-template-columns:1fr 96px 74px;gap:8px;align-items:center}.bill-edit input{width:100%;border:1px solid var(--border);background:rgba(255,255,255,.1);color:#fff;border-radius:10px;padding:9px;font:inherit}.bill-edit label{font-size:.7rem;color:var(--muted)}
+    @media(max-width:560px){.summary{grid-template-columns:1fr 1fr}.metric strong{font-size:1.2rem}.tracker-grid{grid-template-columns:1fr}.bill-edit{grid-template-columns:1fr 84px 66px}}
+  </style>
+</head>
+<body>
+<img class="page-bg" src="city-skyline.svg" alt="" aria-hidden="true">
+<div class="shade" aria-hidden="true"></div>
+<main class="app">
+  <section class="card hero">
+    <h1>Ava & Bryce Budget</h1>
+    <p>Enter your combined biweekly pay. The app budgets $100 each for Ava and Bryce, covers shared expenses, and shows what is left for credit cards.</p>
+    <div class="input-wrap"><span>$</span><input id="combinedPay" inputmode="decimal" type="number" min="0" step="0.01" placeholder="Combined take-home pay"></div>
+    <details style="margin-top:10px">
+      <summary class="tiny" style="cursor:pointer">Change pay date</summary>
+      <div class="input-wrap"><input id="payDate" type="date"></div>
+    </details>
+    <button id="calculateBtn" class="btn" type="button">Calculate plan</button>
+  </section>
+
+  <section class="summary">
+    <div class="metric keep"><small>Leave in joint</small><strong id="sumJoint">$0.00</strong></div>
+    <div class="metric move"><small>Free spend to personal</small><strong id="sumSpending">$0.00</strong></div>
+    <div class="metric move"><small>Move to Ava</small><strong id="sumAva">$0.00</strong></div>
+    <div class="metric move"><small>Move to Bryce</small><strong id="sumBryce">$0.00</strong></div>
+    <div class="metric"><small>Credit cards</small><strong id="sumDebt">$0.00</strong></div>
+  </section>
+
+  <section class="card">
+    <h2>How to split the bank accounts</h2>
+    <p class="sub">First withdraw $650 cash for rent. Bills and shared essentials stay in joint. Then move $100 each to your personal accounts whenever the pay allows. If money is short, the app shows what is available.</p>
+    <div class="status" id="bankSplitStatus">Enter your combined pay above.</div>
+  </section>
+
+  <section class="card">
+    <h2>What to do with this pay</h2>
+    <p class="sub">The budget amounts are suggestions only. Progress stays empty until you record money actually moved or paid.</p>
+    <div class="status" id="actionSummary">Enter your combined pay above.</div>
+    <div class="list" id="planList"></div>
+  </section>
+
+  <section class="card">
+    <h2>Money movement tracker</h2>
+    <p class="sub">Log money only when you actually move it, spend it, or a bill comes out. That is what fills the bars.</p>
+    <div class="list" id="trackerList"></div>
+    <div class="status" id="trackerStatus">Nothing logged yet.</div>
+  </section>
+
+  <section class="card">
+    <h2>Monthly bills & due dates</h2>
+    <p class="sub">The app checks the actual due day and only includes a bill in a pay cycle when it falls before the next pay. Melaleuca is treated as an end-of-month bill. You can edit any amount or due day.</p>
+    <div class="list" id="billSettings"></div>
+    <div class="status" id="billWindowStatus">Bills due this pay period will appear here.</div>
+    <p class="tiny" style="margin-top:10px">Rent is not counted as joint-account money. Withdraw $650 cash from every pay for rent.</p>
+  </section>
+</main>
+
+<script>
+(function(){
+  var input=document.getElementById('combinedPay'), payDateInput=document.getElementById('payDate');
+  var planList=document.getElementById('planList'), trackerList=document.getElementById('trackerList'), billSettings=document.getElementById('billSettings');
+
+  var essentialItems=[
+    {id:'groceries',name:'Groceries',target:175},
+    {id:'gas',name:'Gas',target:80},
+    {id:'cats',name:'Cats',target:55}
+  ];
+  var personalAllowance=100; // Each person per biweekly pay cycle
+  var billDefaults=[
+    {id:'insurance',name:'Car insurance',amount:461,due:11},
+    {id:'phone1',name:'Phone bill 1',amount:56.50,due:21},
+    {id:'phone2',name:'Phone bill 2',amount:115.62,due:28},
+    {id:'streaming',name:'Netflix + Disney+ + Spotify',amount:40,due:28},
+    {id:'melaleuca',name:'Melaleuca',amount:160,due:31},
+    {id:'chatgpt',name:'ChatGPT',amount:25,due:30}
+  ];
+  var rentSetAside=650, activeTrackerItems=[];
+  var categoryColors={
+    joint:'#ffd978', rent:'#ffd978',
+    insurance:'#ffd978', phone1:'#ffd978', phone2:'#ffd978', streaming:'#ffd978', melaleuca:'#ffd978', chatgpt:'#ffd978',
+    groceries:'#95e5b8', gas:'#9bd7ff', cats:'#c8a8ff', eating:'#ffb08a', other:'#c6ced8',
+    'ava-transfer':'#95e5b8', 'bryce-transfer':'#9bd7ff',
+    wisdom:'#83e6d2', debt:'#ff9c9c'
+  };
+  function categoryColor(id){
+    if(id&&id.indexOf('bill-')===0){
+      var parts=id.split('-');
+      return categoryColors[parts[1]]||categoryColors.joint;
+    }
+    return categoryColors[id]||'#ffffff';
+  }
+  function applyCategoryStyle(row,id){
+    var color=categoryColor(id);
+    row.style.borderColor=color;
+    row.style.boxShadow='inset 4px 0 0 '+color;
+    var title=row.querySelector('.row-title'), amount=row.querySelector('.amount');
+    if(title)title.style.color=color;
+    if(amount)amount.style.color=color;
+    row.querySelectorAll('.btn').forEach(function(btn){btn.style.borderColor=color});
+    return color;
+  }
+
+  function money(n){return '$'+(Math.max(0,Number(n)||0)).toLocaleString('en-CA',{minimumFractionDigits:2,maximumFractionDigits:2});}
+  function load(k,f){try{var v=localStorage.getItem(k);return v===null?f:v}catch(e){return f}}
+  function save(k,v){try{localStorage.setItem(k,String(v))}catch(e){}}
+  function localDateValue(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+  function parseLocalDate(s){if(!s)return null;var p=s.split('-').map(Number);return new Date(p[0],p[1]-1,p[2],12)}
+  function daysInMonth(y,m){return new Date(y,m+1,0).getDate()}
+  function billAmount(b){var v=parseFloat(load('ava-bill-amount-'+b.id,b.amount));return isFinite(v)&&v>=0?v:b.amount}
+  function billDue(b){var v=parseInt(load('ava-bill-due-'+b.id,b.due),10);return isFinite(v)&&v>=1&&v<=31?v:b.due}
+  function dueDateForMonth(b,y,m){return new Date(y,m,Math.min(billDue(b),daysInMonth(y,m)),12)}
+
+  function billsInWindow(start,end){
+    var found=[];
+    try{if(load('ava-bill-due-melaleuca','30')==='30')save('ava-bill-due-melaleuca',31)}catch(e){}
+
+  billDefaults.forEach(function(b){
+      for(var o=-1;o<=1;o++){
+        var ref=new Date(start.getFullYear(),start.getMonth()+o,1,12);
+        var due=dueDateForMonth(b,ref.getFullYear(),ref.getMonth());
+        if(due>=start&&due<end) found.push({bill:b,date:due,amount:billAmount(b)});
+      }
+    });
+    return found.sort(function(a,b){return a.date-b.date});
+  }
+
+  billDefaults.forEach(function(b){
+    var r=document.createElement('div');r.className='row';
+    r.innerHTML='<div class="bill-edit"><div><div class="row-title">'+b.name+'</div><div class="row-note">Joint account bill</div></div><div><label>Amount</label><input id="amt-'+b.id+'" type="number" min="0" step="0.01" value="'+billAmount(b)+'"></div><div><label>Due day</label><input id="due-'+b.id+'" type="number" min="1" max="31" value="'+billDue(b)+'"></div></div>';
+    applyCategoryStyle(r,b.id);
+    billSettings.appendChild(r);
+    r.querySelector('#amt-'+b.id).addEventListener('change',function(e){var v=parseFloat(e.target.value);if(isFinite(v)&&v>=0){save('ava-bill-amount-'+b.id,v);calculate()}});
+    r.querySelector('#due-'+b.id).addEventListener('change',function(e){var v=parseInt(e.target.value,10);if(isFinite(v)&&v>=1&&v<=31){save('ava-bill-due-'+b.id,v);calculate()}});
+  });
+
+  function cycleKey(){return payDateInput.value||localDateValue(new Date())}
+  function logged(id){var v=parseFloat(load('ava-log-'+cycleKey()+'-'+id,0));return isFinite(v)&&v>=0?v:0}
+  function setLogged(id,v){save('ava-log-'+cycleKey()+'-'+id,v)}
+
+  function renderPlan(rows){
+    planList.innerHTML='';
+    rows.forEach(function(x){
+      var r=document.createElement('div');r.className='row';
+      r.innerHTML='<div class="row-top"><div><div class="row-title">'+x.name+'</div><div class="row-note">'+x.note+'</div></div><div class="amount">'+money(x.amount)+'</div></div>';
+      applyCategoryStyle(r,x.id||'other');
+      planList.appendChild(r);
+    });
+  }
+
+  function renderTracker(items){
+    activeTrackerItems=items;
+    trackerList.innerHTML='';
+    items.forEach(function(it){
+      var r=document.createElement('div');r.className='row';r.id='track-'+it.id;
+      r.innerHTML='<div class="row-top"><div><div class="row-title">'+it.name+'</div>'+(it.note?'<div class="row-note">'+it.note+'</div>':'')+'<div class="row-note"><span id="logged-'+it.id+'">$0.00 logged</span> • <span id="left-'+it.id+'">'+money(it.target)+' left</span></div></div><div class="amount">'+money(it.target)+' budgeted</div></div><div class="bar"><div class="fill" id="bar-'+it.id+'" style="width:0%"></div></div><div class="tracker-grid"><div class="input-wrap"><span>$</span><input id="add-'+it.id+'" type="number" min="0" step="0.01" inputmode="decimal" placeholder="Add moved / spent"></div><button class="btn" id="addbtn-'+it.id+'" type="button">Add amount</button><div class="input-wrap"><span>$</span><input id="set-'+it.id+'" type="number" min="0" step="0.01" inputmode="decimal" placeholder="Correct total"></div><button class="btn" id="setbtn-'+it.id+'" type="button">Set total</button></div>';
+      var trackerColor=applyCategoryStyle(r,it.id);
+      r.setAttribute('data-category-color',trackerColor);
+      trackerList.appendChild(r);
+      r.querySelector('#addbtn-'+it.id).addEventListener('click',function(){var el=r.querySelector('#add-'+it.id),v=parseFloat(el.value);if(isFinite(v)&&v>0){setLogged(it.id,logged(it.id)+v);el.value='';updateTracker()}});
+      r.querySelector('#setbtn-'+it.id).addEventListener('click',function(){var el=r.querySelector('#set-'+it.id),v=parseFloat(el.value);if(isFinite(v)&&v>=0){setLogged(it.id,v);el.value='';updateTracker()}});
+    });
+    updateTracker();
+  }
+
+  function updateTracker(){
+    var total=0,target=0;
+    activeTrackerItems.forEach(function(it){
+      var v=logged(it.id), left=Math.max(0,it.target-v), pct=it.target>0?Math.min(100,v/it.target*100):0;
+      total+=v;target+=it.target;
+      var a=document.getElementById('logged-'+it.id),b=document.getElementById('left-'+it.id),bar=document.getElementById('bar-'+it.id);
+      if(a)a.textContent=money(v)+' logged';if(b)b.textContent=money(left)+' left';
+      if(bar){bar.style.width=pct+'%';bar.style.background=v>it.target?'var(--red)':categoryColor(it.id)}
+    });
+    var s=document.getElementById('trackerStatus');
+    s.innerHTML=total===0?'Nothing logged yet. Your bars will stay empty until you add an amount.':'<span class="good">'+money(total)+' logged</span> out of '+money(target)+' budgeted for this pay cycle.';
+  }
+
+  function calculate(){
+    var pay=parseFloat(input.value);if(!isFinite(pay)||pay<0)pay=0;
+    var start=parseLocalDate(payDateInput.value)||new Date(), end=new Date(start);end.setDate(end.getDate()+14);
+    var due=billsInWindow(start,end);
+    var billsTotal=due.reduce(function(s,x){return s+x.amount},0);
+    var essentialTarget=essentialItems.reduce(function(s,x){return s+x.target},0);
+    var jointTarget=billsTotal+essentialTarget;
+    var freeSpendTarget=personalAllowance*2;
+
+    var remaining=pay;
+    var rentCash=Math.min(rentSetAside,remaining);remaining-=rentCash;
+    var joint=Math.min(jointTarget,remaining);remaining-=joint;
+    var spending=Math.min(freeSpendTarget,remaining);remaining-=spending;
+    var allowanceShortfall=Math.max(0,freeSpendTarget-spending);
+    var debt=Math.max(0,remaining);
+    var avaSpending=Math.round((spending/2)*100)/100;
+    var bryceSpending=Math.round((spending-avaSpending)*100)/100;
+
+    document.getElementById('sumJoint').textContent=money(joint);
+    document.getElementById('sumSpending').textContent=money(spending);
+    document.getElementById('sumAva').textContent=money(avaSpending);
+    document.getElementById('sumBryce').textContent=money(bryceSpending);
+    document.getElementById('sumDebt').textContent=money(debt);
+
+    var summary=document.getElementById('actionSummary');
+    var splitStatus=document.getElementById('bankSplitStatus');
+    if(pay===0){
+      summary.textContent='Enter your combined pay above.';
+      splitStatus.textContent='Enter your combined pay above.';
+    } else {
+      summary.innerHTML='<span class="gold">Withdraw '+money(rentCash)+' cash for rent first.</span> Leave '+money(joint)+' in the joint account for bills, groceries, gas and cats. Then move <span class="good">'+money(avaSpending)+'</span> to Ava and <span class="good">'+money(bryceSpending)+'</span> to Bryce for personal spending (goal: $100 each). '+(allowanceShortfall>0?'<span class="warn">The combined personal allowance is short by '+money(allowanceShortfall)+' this pay.</span> ':'')+(debt>0?'After that, '+money(debt)+' is available for credit cards.':'There is no extra for credit cards in this pay cycle.');
+      splitStatus.innerHTML='<span class="gold">RENT: withdraw '+money(rentCash)+' cash from this pay.</span><br><span class="gold">JOINT: keep '+money(joint)+'</span> for bills, groceries, gas and cats.<br><span class="good">AVA PERSONAL: '+money(avaSpending)+' (goal $100)</span><br><span class="good">BRYCE PERSONAL: '+money(bryceSpending)+' (goal $100)</span>'+(allowanceShortfall>0?'<br><span class="warn">Not enough money for the full $100 each this pay.</span>':'')+'<br><span class="tiny">Rent is taken out separately, so the joint-account number is only money that actually stays in the bank. Record each personal transfer after you make it.</span>';
+    }
+
+    var jointWindow=start.toLocaleDateString('en-CA',{month:'short',day:'numeric'})+'–'+new Date(end.getTime()-86400000).toLocaleDateString('en-CA',{month:'short',day:'numeric'});
+    var rows=[{id:'rent',name:'Withdraw cash for rent',note:'Take this out every pay — do not leave it in the joint account',amount:rentCash},{id:'joint',name:'Joint account — keep here',note:'Bills due '+jointWindow+' + shared essentials',amount:joint}];
+    essentialItems.forEach(function(x){rows.push({id:x.id,name:x.name,note:'Shared essential — stays in joint account',amount:x.target})});
+    rows.push({id:'ava-transfer',name:'Transfer to Ava',note:'Personal spending allowance — $100 goal per pay',amount:avaSpending});
+    rows.push({id:'bryce-transfer',name:'Transfer to Bryce',note:'Personal spending allowance — $100 goal per pay',amount:bryceSpending});
+    rows.push({id:'debt',name:'Credit-card debt',note:'Everything left after priorities',amount:debt});
+    renderPlan(rows);
+
+    var tracker=[{id:'joint',name:'Joint account money kept',target:joint}];
+    due.forEach(function(x){tracker.push({id:'bill-'+x.bill.id+'-'+localDateValue(x.date),name:x.bill.name+' paid',target:Math.min(x.amount,joint),note:'Comes out '+x.date.toLocaleDateString('en-CA',{month:'short',day:'numeric'})});});
+    essentialItems.forEach(function(x){tracker.push({id:x.id,name:x.name,target:x.target,note:'Spent from joint account'})});
+    tracker.push({id:'ava-transfer',name:'Transfer to Ava completed',target:avaSpending,note:'Log only after transferring to Ava’s personal account'});
+    tracker.push({id:'bryce-transfer',name:'Transfer to Bryce completed',target:bryceSpending,note:'Log only after transferring to Bryce’s personal account'});
+    if(debt>0)tracker.push({id:'debt',name:'Credit-card payment',target:debt});
+    renderTracker(tracker.filter(function(x){return x.target>0}));
+
+    var billStatus=document.getElementById('billWindowStatus');
+    billStatus.innerHTML=due.length?'<span class="good">'+due.length+' bill'+(due.length===1?'':'s')+' due before the next pay.</span> '+due.map(function(x){return x.bill.name+' '+money(x.amount)+' ('+x.date.toLocaleDateString('en-CA',{month:'short',day:'numeric'})+')'}).join(' • '):'<span class="good">No listed monthly bills are due before the next pay.</span>';
+
+    save('ava-bryce-budget-pay',pay);save('ava-bryce-pay-date',payDateInput.value);
+  }
+
+  document.getElementById('calculateBtn').addEventListener('click',calculate);
+  input.addEventListener('input',calculate);payDateInput.addEventListener('change',calculate);
+  var savedPay=load('ava-bryce-budget-pay','');if(savedPay!=='')input.value=savedPay;
+  payDateInput.value=load('ava-bryce-pay-date',localDateValue(new Date()));
+  calculate();
+  if('serviceWorker' in navigator&&location.protocol==='https:')window.addEventListener('load',function(){navigator.serviceWorker.register('./sw.js').catch(function(){})});
+})();
+</script>
+</body>
+</html>
