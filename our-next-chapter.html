@@ -312,6 +312,15 @@ else if(modal==='jointbreakdown'){
  '<button type="button" class="outline full" style="margin-top:13px" data-action="editperiodplan">✎ Edit these allocations</button>';
  button='Close';action='jointbreakdown';
 }
+else if(modal==='editpaths'){
+ const x=pathSetup(),goals=state.goals.filter(g=>['nyc','travel'].includes(g.id));
+ title='Our two paths ♡';
+ html='<div class="help">How much can we genuinely put toward debt and travel each month after rent, bills, cars, school and dental needs? These are planning amounts, not transfers.</div>'+
+ field('Extra money per month after essentials ($)',input('monthlyAvailable',x.amount,'number','min="0" step="25" required'))+
+ field('Of that, put toward travel on Path A ($)',input('monthlyTravel',x.travel,'number','min="0" step="25" required'))+
+ field('Travel goal to track',sel('travelGoal',goals.map(g=>[g.id,g.name]),x.fund))+
+ '<div class="path-modal-tips">Path A sends the remainder toward debt. Path B puts all of the available money toward debt, with no new travel contributions for the eight months. Your actual payments and savings still come from your regular transaction entries.</div>';
+}
 else if(modal==='rentcash'){
  const c=getCycle(),v=periodFinances(c),already=rentWithdrawalFor(c.key);
  title='Rent cash withdrawal';
@@ -352,6 +361,13 @@ if(m==='jointbreakdown'){closeModal();return}
 if(m==='rentcash'){const c=getCycle();state.rentWithdrawals??=[];if(!rentWithdrawalFor(c.key)){if(!(amount>0)||!date){showToast('Enter the cash amount and date');return}state.rentWithdrawals.push({id:uid(),periodKey:c.key,date,amount});showToast('Cash withdrawal recorded ✓')}else showToast('Already recorded for this pay period');save();closeModal();render();return}
 if(m==='editcycle'){state.cycleAnchor=data.anchor;state.expectedIncome=Number(data.income);state.expectedEssentials=Number(data.essentials);cycleOffset=0;showToast('Pay period settings saved')}
 else if(m==='editreserves'){['savings','rent','cash','rrsp'].forEach(k=>state.reserves[k]=Number(data[k]));state.reserves.rentSeparateUnconfirmed=!f.elements.separate.checked;showToast('Snapshot updated')}
+else if(m==='editpaths'){
+ const monthly=Number(data.monthlyAvailable),travel=Number(data.monthlyTravel);
+ if(!Number.isFinite(monthly)||monthly<0||!Number.isFinite(travel)||travel<0||travel>monthly){showToast('Travel must be between $0 and the total available');return}
+ if(!['nyc','travel'].includes(data.travelGoal)){showToast('Choose a valid travel goal');return}
+ state.pathTracking??={};Object.assign(state.pathTracking,{monthlyAvailable:monthly,monthlyTravel:travel,travelGoal:data.travelGoal});
+ showToast('Both financial paths updated ✓')
+}
 else if(m==='editperiodplan'){const key=getCycle().key;state.periodConfigs??={};state.periodConfigs[key]={income:Number(data.income),rent:Number(data.rent),reserved:Number(data.reserved),groceries:Number(data.groceries),gas:Number(data.gas),cats:Number(data.cats),otherEssentials:Number(data.otherEssentials),personal:Number(data.personal),credit:Number(data.credit),cars:Number(data.cars)};const v=periodFinances(getCycle());showToast(v.left<0?'Saved · review your shortfall':'Two-week plan saved ✓')}
 else if(m==='addbill'){const name=data.name.trim();const duplicate=state.bills.find(b=>b.active&&b.name.trim().toLowerCase()===name.toLowerCase());if(duplicate){showToast('This bill already exists. Edit the existing one instead.');return}const preset=billPresets.find(x=>x.key===modalArgs.templateKey);state.bills.push({id:uid(),name,amount,day:Number(data.day),confirmed:!!f.elements.confirmed.checked,icon:preset?.icon||'🧾',active:true});showToast('Bill added · date can be edited later')}
 else if(m==='billdetail'){let b=state.bills.find(x=>x.id===modalArgs.id);b.name=data.name.trim();b.amount=amount;b.day=Number(data.day);b.confirmed=f.elements.confirmed.checked;showToast('Bill updated')}
@@ -374,6 +390,17 @@ if(node.dataset.day){selectedDate=node.dataset.day;calendarDate=parseDay(selecte
 if(node.dataset.billsfilter){billsFilter=node.dataset.billsfilter;render();return}
 if(node.dataset.task){const id=node.dataset.task;if(node.checked&&!state.completedTasks.includes(id))state.completedTasks.push(id);else if(!node.checked)state.completedTasks=state.completedTasks.filter(x=>x!==id);save();render();return}
 const a=node.dataset.action,id=node.dataset.id;if(!a)return;
+if(a==='choosepath'){
+ if(!['balanced','debt'].includes(id))return;
+ state.pathTracking??={};
+ const previous=state.pathTracking.active;
+ state.pathTracking.active=id;
+ if(!state.pathTracking.baseline){
+   state.pathTracking.baseline={date:today(),debt:sum(state.debts.map(debtBalance)),nyc:state.goals.find(g=>g.id==='nyc')?.saved||0,travel:state.goals.find(g=>g.id==='travel')?.saved||0};
+ }
+ save();render();showToast(previous===id?'You are already tracking this path':'Path saved ♡ No money has moved.');
+ return;
+}
 if(a==='undorentcash'){const c=getCycle();if(!confirm('Undo this recorded rent cash withdrawal?'))return;state.rentWithdrawals=(state.rentWithdrawals||[]).filter(w=>w.periodKey!==c.key);save();closeModal();render();showToast('Withdrawal entry undone');return}
 if(a==='closemodal'){closeModal();return}if(a==='closecelebration'){$('#toast-root').innerHTML='';celebration=false;return}
 if(a==='pickbill'){const preset=billPresets.find(p=>p.key===id);if(!preset)return;const b=state.bills.find(b=>b.active&&(b.id===id||b.name.toLowerCase()===preset.name.toLowerCase()));if(b){openModal('billdetail',{id:b.id});return}modalArgs={templateKey:preset.key};paintModal();return}
