@@ -1,4 +1,4 @@
-const CACHE='ava-bryce-budget-v25';
+const CACHE='ava-bryce-budget-v26';
 const ASSETS=['./','./index.html','./classic.html','./money-hq-v24.html','./manifest.webmanifest','./city-skyline.svg','./budget-icon.svg','./apple-touch-icon.png'];
 self.addEventListener('install',event=>{
   event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(ASSETS)).then(()=>self.skipWaiting()));
