@@ -70,7 +70,7 @@ details{border:1px solid #ffffff2c;background:#ffffff08;border-radius:12px;paddi
 <div class="panel">
 <div class="row"><h2>📊 Annual overview</h2><div class="field" style="min-width:100px"><label for="yearSelect">Year</label><select id="yearSelect"></select></div></div>
 <div class="grid2" id="yearStats" style="margin-top:9px"></div>
-<div id="monthChart" class="bars" aria-label="Monthly recorded spending chart"></div>
+<div id="monthChart" class="bars" aria-label="Monthly recorded spending chart"></div><details><summary>Where our spending went this year</summary><div id="categoryReport"></div></details>
 <p>Bars show actual spending logged each month (cash purchases and card charges, not credit-card repayments).</p>
 </div>
 <div class="panel">
@@ -170,7 +170,11 @@ return {b,debt,stage,stages:[
 {icon:"✈️",title:"6–12 months of travel",detail:money(b.travel)+"/"+money(travelNeed),pct:100*b.travel/Math.max(1,travelNeed),done:travelDone}
 ]}}
 function progress(p){return "<div class='progress'><i style='width:"+Math.max(0,Math.min(100,p))+"%'></i></div>"}
-function billPaid(b,year,month){return S.tx.some(t=>!t.voided&&["expense","charge"].includes(t.type)&&t.date.slice(0,7)===year+"-"+String(month).padStart(2,"0")&&t.billId===b.id)}
+function billPaid(b,year,month){
+const cycle=year+"-"+String(month).padStart(2,"0"),amount=safe((S.bills[b.id]||b).amount);
+return S.tx.some(t=>!t.voided&&["expense","charge"].includes(t.type)&&t.date.slice(0,7)===cycle&&(
+t.billId===b.id||(!t.billId&&t.cat===b.cat&&Math.abs(safe(t.amount)-amount)<0.01)
+))}
 function dueBills(from,len=14){const start=parsed(from)||parsed(today()),end=addDays(start,len),out=[];
 for(const bill of billBase){const settings=S.bills[bill.id]||bill;for(let x=-1;x<=1;x++){const month=new Date(start.getFullYear(),start.getMonth()+x,1,12),last=new Date(month.getFullYear(),month.getMonth()+1,0).getDate(),date=new Date(month.getFullYear(),month.getMonth(),Math.min(last,Math.max(1,Math.round(safe(settings.due)||bill.due))),12);
 if(date>=start&&date<end){const due=[date.getFullYear(),String(date.getMonth()+1).padStart(2,"0"),String(date.getDate()).padStart(2,"0")].join("-");
@@ -190,7 +194,7 @@ else{let r=extra;for(const [k,cap] of [["school",st.schoolTarget],["emergency",s
 return {pay,bills,split,short,extra,alloc}}
 function annual(year){const arr=S.tx.filter(x=>!x.voided&&x.date.slice(0,4)===String(year));const out={income:0,spent:0,debt:0,saved:0,months:Array(12).fill(0),count:arr.length};
 arr.forEach(t=>{const a=safe(t.amount),m=Number(t.date.slice(5,7))-1;if(t.type==="income")out.income+=a;if(t.type==="expense"||t.type==="charge"){out.spent+=a;if(m>=0&&m<12)out.months[m]+=a}if(t.type==="debt")out.debt+=a;if(t.type==="transfer"&&goalAccounts.includes(t.to)&&!goalAccounts.includes(t.from))out.saved+=a});
-for(const k of ["income","spent","debt","saved"])out[k]=cent(out[k]);return out}
+out.byCategory={};arr.forEach(t=>{if(["expense","charge"].includes(t.type)){const name=categories[t.cat]||"Other";out.byCategory[name]=cent((out.byCategory[name]||0)+safe(t.amount))}});for(const k of ["income","spent","debt","saved"])out[k]=cent(out[k]);return out}
 let activePage="today",historyLimit=20,editing=null;
 function navigate(page){activePage=page;document.querySelectorAll(".page").forEach(e=>e.classList.toggle("active",e.dataset.page===page));document.querySelectorAll(".tab").forEach(e=>e.setAttribute("aria-selected",String(e.dataset.tab===page)));window.scrollTo(0,0)}
 document.querySelectorAll("[data-tab]").forEach(b=>b.addEventListener("click",()=>navigate(b.dataset.tab)));document.querySelectorAll("[data-go]").forEach(b=>b.addEventListener("click",()=>navigate(b.dataset.go)));
@@ -217,6 +221,7 @@ $("payBills").querySelectorAll("[data-bill]").forEach(b=>b.addEventListener("cli
 $("pastPlans").innerHTML=S.plans.length?S.plans.slice().sort((a,b)=>b.date.localeCompare(a.date)).slice(0,20).map(p=>"<div class='line'><span>"+shortDate(p.date)+(p.imported?" · old saved plan":" · forecast")+"</span><b>"+money(p.income)+" expected</b></div>").join(""):"<p>No forecasts saved yet.</p>"}
 function renderHistory(){const year=Number($("yearSelect").value)||new Date().getFullYear(),v=annual(year),max=Math.max(1,...v.months);$("yearStats").innerHTML=[["Income",v.income],["Spending",v.spent],["Credit card payments",v.debt],["Added to goal savings",v.saved]].map(([name,val])=>"<div class='stat'><small>"+name+"</small><strong>"+money(val)+"</strong></div>").join("");
 $("monthChart").innerHTML=v.months.map((x,i)=>"<div><i style='height:"+Math.max(2,Math.round(x/max*69))+"px' title='"+money(x)+"'></i><span>"+["J","F","M","A","M","J","J","A","S","O","N","D"][i]+"</span></div>").join("");
+$("categoryReport").innerHTML=Object.entries(v.byCategory).sort((a,b)=>b[1]-a[1]).map(([name,amount])=>"<div class='line'><span>"+esc(name)+"</span><b>"+money(amount)+"</b></div>").join("")||"<p>No spending recorded for this year.</p>";
 const term=$("historySearch").value.trim().toLowerCase(),type=$("typeFilter").value;const filtered=S.tx.filter(t=>t.date.slice(0,4)===String(year)&&(type==="all"||t.type===type)&&(!term||(t.memo||"").toLowerCase().includes(term)||(categories[t.cat]||"").toLowerCase().includes(term)||(accountNames[t.from]||"").toLowerCase().includes(term))).sort((a,b)=>b.date.localeCompare(a.date)||String(b.id).localeCompare(String(a.id)));
 show("historyCount",filtered.length+" records");$("auditHistory").innerHTML=(S.audit||[]).length?(S.audit||[]).slice(-20).reverse().map(a=>"<div class='line'><span>"+esc(a.at.slice(0,10))+" · "+esc(a.action)+"</span><span>"+(a.before?money(a.before.amount):"")+" → "+(a.after?money(a.after.amount):"")+"</span></div>").join(""):"<p>No corrections or voids yet.</p>";$("moreContainer").style.display=filtered.length>historyLimit?"flex":"none";
 $("txHistory").innerHTML=filtered.length?filtered.slice(0,historyLimit).map(t=>{
