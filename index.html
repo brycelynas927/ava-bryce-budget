@@ -1,272 +1,274 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <meta name="theme-color" content="#07111d" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="apple-mobile-web-app-title" content="Our Budget" />
-  <link rel="manifest" href="manifest.webmanifest?v=23" />
-  <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png?v=23" />
-  <link rel="icon" href="./budget-icon.svg?v=23" type="image/svg+xml" />
-  <title>Ava & Bryce Budget</title>
-  <style>
-    :root{--panel:rgba(8,24,38,.76);--panel2:rgba(255,255,255,.10);--border:rgba(255,255,255,.22);--text:#fff;--muted:rgba(255,255,255,.78);--green:#95e5b8;--gold:#ffd978;--red:#ff9c9c;--blue:#9bd7ff}
-    *{box-sizing:border-box}html{background:#102536}body{margin:0;min-height:100%;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--text);padding:calc(14px + env(safe-area-inset-top)) 14px calc(28px + env(safe-area-inset-bottom));background:#102536;overflow-x:hidden}
-    .page-bg{position:fixed;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;z-index:0;pointer-events:none}
-    .shade{position:fixed;inset:0;background:linear-gradient(rgba(3,14,24,.18),rgba(3,14,24,.55));z-index:0;pointer-events:none}
-    .app{position:relative;z-index:1;max-width:760px;margin:0 auto;display:grid;gap:14px}
-    .card{background:var(--panel);border:1px solid var(--border);border-radius:22px;backdrop-filter:blur(11px);-webkit-backdrop-filter:blur(11px);box-shadow:0 18px 42px rgba(0,0,0,.24);padding:16px}
-    .hero h1{font-size:1.55rem;margin:0 0 5px}.hero p,.sub{margin:0;color:var(--muted);line-height:1.4;font-size:.92rem}
-    .input-wrap{display:flex;align-items:center;gap:8px;margin-top:12px;border:1px solid var(--border);background:rgba(255,255,255,.10);border-radius:16px;padding:0 13px}
-    .input-wrap input{width:100%;border:0;outline:none;background:transparent;color:#fff;font-size:1.25rem;font-weight:700;padding:14px 0}
-    .btn{width:100%;margin-top:10px;border:1px solid var(--border);background:rgba(255,255,255,.18);color:#fff;font:inherit;font-weight:800;border-radius:14px;padding:12px 14px;min-height:46px}
-    .summary{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.metric{background:rgba(7,24,38,.72);border:1px solid var(--border);border-radius:18px;padding:14px}.metric small{display:block;color:var(--muted);font-size:.72rem;text-transform:uppercase;letter-spacing:.04em}.metric strong{display:block;font-size:1.35rem;margin-top:5px}.metric.keep strong{color:var(--gold)}.metric.move strong{color:var(--blue)}.metric.save strong{color:var(--green)}
-    h2{margin:0 0 4px;font-size:1.08rem}.status{margin-top:12px;border:1px solid var(--border);background:rgba(255,255,255,.08);border-radius:14px;padding:12px;color:var(--muted);line-height:1.45;font-size:.9rem}
-    .list{display:grid;gap:9px;margin-top:12px}.row{background:var(--panel2);border:1px solid rgba(255,255,255,.13);border-radius:15px;padding:12px}.row-top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.row-title{font-weight:750}.row-note{font-size:.78rem;color:var(--muted);margin-top:2px}.amount{font-weight:800;white-space:nowrap;text-align:right}
-    .bar{height:8px;background:rgba(255,255,255,.12);border-radius:999px;overflow:hidden;margin-top:10px}.fill{height:100%;width:0;background:var(--green);border-radius:999px;transition:width .2s ease}
-    .tracker-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}.tracker-grid .input-wrap{margin-top:0}.tracker-grid .btn{margin-top:0}
-    .tiny{font-size:.76rem;color:var(--muted)}.good{color:var(--green)}.warn{color:var(--red)}.gold{color:var(--gold)}
-    .bill-edit{display:grid;grid-template-columns:1fr 96px 74px;gap:8px;align-items:center}.bill-edit input{width:100%;border:1px solid var(--border);background:rgba(255,255,255,.1);color:#fff;border-radius:10px;padding:9px;font:inherit}.bill-edit label{font-size:.7rem;color:var(--muted)}
-    @media(max-width:560px){.summary{grid-template-columns:1fr 1fr}.metric strong{font-size:1.2rem}.tracker-grid{grid-template-columns:1fr}.bill-edit{grid-template-columns:1fr 84px 66px}}
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#11182e">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Our Money HQ">
+<link rel="manifest" href="./manifest.webmanifest?v=24">
+<link rel="apple-touch-icon" href="./apple-touch-icon.png?v=24">
+<title>Our Money HQ · Ava & Bryce</title>
+<style>
+:root{--bg:#0f162d;--ink:#f8f7ff;--mut:#bcbfd4;--line:#ffffff24;--glass:#1e2745ed;--soft:#273353;--peach:#ffbd9e;--lilac:#c4b5fd;--mint:#a6edce;--gold:#ffe39c;--red:#ffa4ad}
+*{box-sizing:border-box}html{background:var(--bg)}body{margin:0;background:radial-gradient(ellipse at 85% 0%,#4c477e 0,transparent 36%),radial-gradient(ellipse at 10% 28%,#183c59 0,transparent 52%),var(--bg);color:var(--ink);font:15px/1.45 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;min-height:100%;padding:calc(12px + env(safe-area-inset-top)) 12px calc(25px + env(safe-area-inset-bottom))}
+button,input,select{font:inherit}button{cursor:pointer}button:disabled{cursor:not-allowed;opacity:.5}button:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible{outline:3px solid var(--gold);outline-offset:3px}
+.wrap{max-width:760px;margin:auto}.top{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:6px 5px 13px}.eyebrow{font-size:11px;text-transform:uppercase;letter-spacing:.18em;color:#c6c3e2;font-weight:800}.top h1{font-size:21px;letter-spacing:-.6px;margin:0}.top p{margin:0;color:var(--mut);font-size:12px}.top .logo{background:#fff2;border:1px solid #fff3;border-radius:18px;padding:10px;font-size:23px}
+.tabs{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:5px;padding:5px;background:#0b1228ce;border:1px solid #fff2;border-radius:17px;position:sticky;top:5px;z-index:6;backdrop-filter:blur(16px);margin-bottom:12px}
+.tab{color:#c5c6da;background:transparent;border:0;border-radius:13px;padding:10px 2px 8px;font-size:11px;font-weight:700;min-width:0}.tab .emoji{display:block;font-size:18px;margin-bottom:1px}.tab[aria-selected=true]{background:#ded5ff;color:#232248;box-shadow:0 2px 9px #0004}
+.page{display:none;animation:appear .15s ease}.page.active{display:block}@keyframes appear{from{opacity:.5;transform:translateY(3px)}to{opacity:1;transform:none}}
+.stack{display:grid;gap:11px}.card{background:var(--glass);border:1px solid var(--line);border-radius:20px;padding:15px;box-shadow:0 10px 20px #0002}.card h2{font-size:16px;margin:0 0 3px;letter-spacing:-.25px}.card p{margin:3px 0;color:var(--mut);font-size:13px}.hero{background:linear-gradient(118deg,#3f3b74,#234966 68%,#1e4962);position:relative;overflow:hidden;min-height:181px}.hero:after{content:"";position:absolute;right:-30px;bottom:-95px;width:230px;height:230px;border:2px solid #ffffff25;border-radius:50%;box-shadow:0 0 0 25px #ffffff09,0 0 0 52px #ffffff09;pointer-events:none}.hero h2{font-size:26px;max-width:360px;line-height:1.1;margin:6px 0}.hero .muted{color:#e5e6f6}.pill{display:inline-flex;align-items:center;gap:5px;font-size:11px;border:1px solid #fff4;border-radius:99px;padding:4px 9px;background:#0002;max-width:100%}.hero-stats{display:flex;align-items:center;gap:10px;position:relative;z-index:1;margin-top:17px}.hero-stat{border:1px solid #fff3;background:#09152b66;border-radius:13px;padding:8px 10px;min-width:0;flex:1}.hero-stat span{font-size:11px;color:#e3e1f3;display:block}.hero-stat strong{font-size:18px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}.minicard{padding:13px;border-radius:16px;border:1px solid #ffffff21;background:#ffffff0b;min-width:0}.minicard small{display:block;color:var(--mut);font-size:11px}.minicard b{font-size:19px;display:block;letter-spacing:-.5px;margin:3px 0}.minicard .subline{font-size:11px;color:var(--mut)}
+.row{display:flex;justify-content:space-between;align-items:center;gap:12px}.row>div{min-width:0}.muted{color:var(--mut)}.small{font-size:12px}.micro{font-size:11px}.big{font-size:24px;font-weight:850;letter-spacing:-.7px}.money{font-variant-numeric:tabular-nums}.section-head{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:9px}.section-head h2{margin:0}.tag{font-size:10px;text-transform:uppercase;letter-spacing:.08em;font-weight:800;color:var(--gold)}
+.progress{height:8px;background:#ffffff1d;border-radius:20px;overflow:hidden;margin:9px 0 5px}.progress>i{display:block;height:100%;background:linear-gradient(90deg,var(--lilac),var(--mint));width:0;border-radius:20px;transition:width .3s}.goal-list{display:grid;gap:8px}.goal-row{border:1px solid #fff2;background:#ffffff09;padding:11px 12px;border-radius:13px}.goal-row .icon{font-size:20px;margin-right:10px}.goal-row strong{font-size:13px}.goal-row .row .money{font-weight:800;font-size:13px}.goal-row .progress{height:6px;margin:6px 0 0}
+.btn{border:1px solid #ffffff3a;background:#ffffff18;color:var(--ink);padding:10px 12px;border-radius:12px;font-weight:800;min-height:43px}.btn.primary{background:#decfff;color:#252345;border-color:#decfff}.btn.mint{background:var(--mint);color:#153d35;border:0}.btn.smallbtn{font-size:12px;padding:8px 10px;min-height:36px}.btn.full{width:100%}.actions{display:flex;gap:8px;flex-wrap:wrap}.actions .btn{flex:1}
+h3{font-size:13px;margin:0 0 6px}.notice{font-size:12px;padding:10px 11px;border:1px solid #fce2a858;border-radius:12px;color:#fff0c1;background:#b7741323}.success{color:var(--mint)}.danger{color:var(--red)}.section-note{font-size:12px;color:var(--mut)}
+.field{display:flex;flex-direction:column;gap:5px;min-width:0}.field label{font-size:11px;color:var(--mut);font-weight:700}.field input,.field select{width:100%;border-radius:12px;border:1px solid #ffffff34;background:#0a1730;color:var(--ink);font-size:16px;min-height:43px;padding:9px 10px}.field select option{background:#0a1730}.field input[type=date]{min-width:0;color-scheme:dark}.formgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.field.wide{grid-column:span 2}
+.breakdown{display:grid;gap:2px}.breakline{display:flex;justify-content:space-between;gap:12px;padding:9px 1px;border-bottom:1px solid #ffffff16;font-size:13px}.breakline:last-child{border-bottom:0}.breakline span:last-child{font-weight:750;font-variant-numeric:tabular-nums;white-space:nowrap}.breakline .muted{font-size:11px;display:block}
+.rule{border:0;border-top:1px solid #ffffff26;margin:12px 0}.stage{display:flex;align-items:flex-start;gap:12px;padding:12px;border:1px solid #fff2;background:#ffffff09;border-radius:14px;margin:8px 0}.stage .dot{display:grid;place-items:center;border-radius:13px;background:#ffffff1b;width:39px;height:39px;flex:none;font-size:20px}.stage b{font-size:14px}.stage p{font-size:12px;margin:2px 0 0}.stage.current{border-color:#c5b5fd97;background:#9b80ed24}.stage.complete{border-color:#a6edce8f;background:#81dcb420}
+.bar-chart{display:flex;align-items:flex-end;gap:5px;height:45px}.bar-chart i{background:linear-gradient(0deg,#6bc8b1,#bdb3fd);border-radius:5px 5px 2px 2px;flex:1;min-height:4px}
+details{border:1px solid #ffffff26;border-radius:13px;padding:10px 12px;background:#ffffff08}details summary{cursor:pointer;font-weight:750;font-size:13px;list-style-position:outside}details[open] summary{margin-bottom:9px}details+details{margin-top:8px}
+.billentry{display:grid;grid-template-columns:minmax(0,1fr) 95px 76px;gap:8px;padding:8px 0;border-bottom:1px solid #ffffff22;align-items:end}.billentry:last-child{border:0}.billentry .field input{min-height:39px;padding:7px}.billentry .name{font-size:13px;font-weight:750;padding-bottom:7px}
+.toast{min-height:21px;color:var(--mint);font-size:12px;margin-top:8px}.footer{color:#a6a9c0;font-size:11px;text-align:center;margin:16px auto 0;max-width:640px}.hidden{display:none!important}
+@media(min-width:650px){.split{display:grid;grid-template-columns:1fr 1fr;gap:11px}.split>.card{min-width:0}.hero{min-height:210px}.hero h2{font-size:30px}}
+@media(max-width:365px){.card{padding:12px}.hero h2{font-size:23px}.hero-stat strong{font-size:15px}.tab{font-size:10px}.billentry{grid-template-columns:minmax(0,1fr) 77px 63px;gap:5px}.billentry .field input{font-size:14px}}
+</style>
 </head>
 <body>
-<img class="page-bg" src="city-skyline.svg" alt="" aria-hidden="true">
-<div class="shade" aria-hidden="true"></div>
-<main class="app">
-  <section class="card hero">
-    <h1>Ava & Bryce Budget</h1>
-    <p>Enter your combined biweekly pay. The app budgets $100 each for Ava and Bryce, covers shared expenses, and shows what is left for credit cards.</p>
-    <div class="input-wrap"><span>$</span><input id="combinedPay" inputmode="decimal" type="number" min="0" step="0.01" placeholder="Combined take-home pay"></div>
-    <details style="margin-top:10px">
-      <summary class="tiny" style="cursor:pointer">Change pay date</summary>
-      <div class="input-wrap"><input id="payDate" type="date"></div>
-    </details>
-    <button id="calculateBtn" class="btn" type="button">Calculate plan</button>
-  </section>
+<main class="wrap">
+<header class="top">
+<div><div class="eyebrow">THE ADVENTURE FUND ✦</div><h1>Our Money HQ <span aria-hidden="true">💫</span></h1><p>Ava + Bryce · one pay at a time</p></div>
+<div class="logo" aria-hidden="true">🏔️</div>
+</header>
+<nav class="tabs" aria-label="App sections">
+<button class="tab" data-tab="home" aria-selected="true"><span class="emoji">🏠</span>Today</button>
+<button class="tab" data-tab="payday" aria-selected="false"><span class="emoji">💸</span>Payday</button>
+<button class="tab" data-tab="goals" aria-selected="false"><span class="emoji">🎯</span>Goals</button>
+<button class="tab" data-tab="bills" aria-selected="false"><span class="emoji">📅</span>Bills</button>
+<button class="tab" data-tab="settings" aria-selected="false"><span class="emoji">⚙️</span>Setup</button>
+</nav>
 
-  <section class="summary">
-    <div class="metric keep"><small>Leave in joint</small><strong id="sumJoint">$0.00</strong></div>
-    <div class="metric move"><small>Free spend to personal</small><strong id="sumSpending">$0.00</strong></div>
-    <div class="metric move"><small>Move to Ava</small><strong id="sumAva">$0.00</strong></div>
-    <div class="metric move"><small>Move to Bryce</small><strong id="sumBryce">$0.00</strong></div>
-    <div class="metric"><small>Credit cards</small><strong id="sumDebt">$0.00</strong></div>
-  </section>
+<section class="page active stack" data-page="home" aria-label="Today">
+<div class="card hero">
+<div class="pill">✨ YOUR MONEY ADVENTURE</div>
+<h2>Big dreams.<br>Small wins.<br>Every paycheque.</h2>
+<div class="small muted">Your current chapter: <b id="chapterName">Credit cards + cars</b></div>
+<div class="hero-stats">
+<div class="hero-stat"><span>Credit card debt left</span><strong id="heroDebt" class="money">$5,000</strong></div>
+<div class="hero-stat"><span>Car repair fund</span><strong id="heroCars" class="money">$0 / $2,000</strong></div>
+</div>
+</div>
+<div class="grid2">
+<div class="minicard"><small>Planned this pay</small><b id="homeIncome" class="money">—</b><div class="subline" id="homePayDate">Add a paycheque</div></div>
+<div class="minicard"><small>Available for goals</small><b id="homeExtra" class="money">—</b><div class="subline">After estimated bills + essentials</div></div>
+</div>
+<div class="card">
+<div class="section-head"><h2>🚀 Next money move</h2><span class="tag" id="focusTag">MISSION 01</span></div>
+<div id="homeAdvice" class="section-note">Enter your pay in Payday to see your personal plan.</div>
+<div class="actions" style="margin-top:12px"><button class="btn primary" type="button" data-goto="payday">Plan this pay →</button><button class="btn" type="button" data-goto="goals">See goals</button></div>
+</div>
+<div class="card">
+<div class="section-head"><h2>Our journey</h2><span class="small muted" id="journeyCounter">Chapter 1 of 4</span></div>
+<div id="homeJourney" class="goal-list"></div>
+</div>
+</section>
 
-  <section class="card">
-    <h2>How to split the bank accounts</h2>
-    <p class="sub">First withdraw $650 cash for rent. Bills and shared essentials stay in joint. Then move $100 each to your personal accounts whenever the pay allows. If money is short, the app shows what is available.</p>
-    <div class="status" id="bankSplitStatus">Enter your combined pay above.</div>
-  </section>
+<section class="page stack" data-page="payday" aria-label="Payday">
+<div class="card">
+<div class="section-head"><h2>💸 Plan a paycheque</h2><span class="pill">Every 2 weeks</span></div>
+<p>Combine your Thursday + Friday pay. Nothing here is marked paid until you record it.</p>
+<div class="formgrid" style="margin-top:12px">
+<div class="field"><label for="payDate">Pay period starting</label><input id="payDate" type="date"></div>
+<div class="field"><label for="payAmount">Combined take-home pay ($)</label><input id="payAmount" type="number" min="0" step=".01" inputmode="decimal" placeholder="Enter actual amount"></div>
+</div>
+<div class="notice" id="payWarning" style="margin-top:10px"></div>
+</div>
+<div class="card">
+<div class="row"><div><div class="eyebrow">AVAILABLE FOR GOALS</div><div class="big money" id="payExtra">$0</div></div><div style="font-size:36px" aria-hidden="true">✨</div></div>
+<p id="paySplitHint">Credit cards and cars are your first priority.</p>
+<div class="grid2" style="margin-top:11px">
+<div class="minicard"><small>Suggested credit card extra</small><b id="payDebt" class="money">$0</b><div class="subline">Highest interest first</div></div>
+<div class="minicard"><small>Suggested car fund</small><b id="payCars" class="money">$0</b><div class="subline">Save for repairs</div></div>
+</div>
+<button class="btn primary full" type="button" id="savePlanBtn" style="margin-top:11px">Save this payday plan</button>
+<div class="toast" id="savePlanMsg" role="status"></div>
+</div>
+<div class="card">
+<details>
+<summary>See exactly where this paycheque goes</summary>
+<div id="payBreakdown" class="breakdown"></div>
+</details>
+<details style="margin-top:8px">
+<summary>Saved payday plans <span id="historyCount" class="muted"></span></summary>
+<div id="payHistory" class="breakdown"></div>
+</details>
+</div>
+</section>
 
-  <section class="card">
-    <h2>What to do with this pay</h2>
-    <p class="sub">The budget amounts are suggestions only. Progress stays empty until you record money actually moved or paid.</p>
-    <div class="status" id="actionSummary">Enter your combined pay above.</div>
-    <div class="list" id="planList"></div>
-  </section>
+<section class="page stack" data-page="goals" aria-label="Goals">
+<div class="card">
+<div class="row"><div><div class="eyebrow">OUR 4-CHAPTER PLAN</div><h2 id="goalChapterTitle">01 · Get debt-free and fix our cars</h2></div><div style="font-size:30px" aria-hidden="true">🏆</div></div>
+<p>Finish each chapter to unlock the next priority. You can still save toward any goal.</p>
+<div id="stageList"></div>
+</div>
+<div class="card">
+<div class="section-head"><h2>📈 Record actual progress</h2><span class="tag">REAL MONEY ONLY</span></div>
+<p>Recommendations don't change balances. Record a real debt payment or savings transfer here.</p>
+<div class="formgrid" style="margin-top:11px">
+<div class="field wide"><label for="goalKind">Where did the money go?</label><select id="goalKind"><option value="card1">Credit card 1 (24% APR)</option><option value="card2">Credit card 2 (18% APR)</option><option value="cars">Car repair fund</option><option value="school">School fund</option><option value="emergency">Emergency fund</option><option value="travel">Travel fund</option></select></div>
+<div class="field"><label for="goalValue">Amount actually paid/saved ($)</label><input id="goalValue" type="number" min=".01" step=".01" inputmode="decimal" placeholder="0.00"></div>
+<div class="field" style="justify-content:flex-end"><button id="recordGoal" type="button" class="btn mint">Record progress</button></div>
+</div>
+<div class="toast" id="goalMsg" role="status"></div>
+<details style="margin-top:8px">
+<summary>Recent wins <span id="winCount" class="muted"></span></summary>
+<div id="winHistory" class="breakdown"></div>
+<button id="undoWin" class="btn smallbtn" type="button">Undo latest entry</button>
+</details>
+</div>
+</section>
 
-  <section class="card">
-    <h2>Money movement tracker</h2>
-    <p class="sub">Log money only when you actually move it, spend it, or a bill comes out. That is what fills the bars.</p>
-    <div class="list" id="trackerList"></div>
-    <div class="status" id="trackerStatus">Nothing logged yet.</div>
-  </section>
+<section class="page stack" data-page="bills" aria-label="Bills">
+<div class="card">
+<div class="section-head"><h2>🗓️ Coming up this pay</h2><span class="tag" id="billRange">Next 14 days</span></div>
+<p>Your rent is reserved $650 each pay. Due dates are editable below.</p>
+<div id="dueList" class="breakdown" style="margin-top:7px"></div>
+</div>
+<div class="card">
+<details>
+<summary>Edit monthly bills and due dates</summary>
+<p class="section-note">Days are calendar days of the month. A bill on day 31 falls on the month's last day.</p>
+<div id="billEditor"></div>
+</details>
+<details style="margin-top:8px">
+<summary>Biweekly living costs</summary>
+<div id="livingEditor" class="formgrid" style="margin-top:11px"></div>
+</details>
+</div>
+</section>
 
-  <section class="card">
-    <h2>Monthly bills & due dates</h2>
-    <p class="sub">The app checks the actual due day and only includes a bill in a pay cycle when it falls before the next pay. Melaleuca is treated as an end-of-month bill. You can edit any amount or due day.</p>
-    <div class="list" id="billSettings"></div>
-    <div class="status" id="billWindowStatus">Bills due this pay period will appear here.</div>
-    <p class="tiny" style="margin-top:10px">Rent is not counted as joint-account money. Withdraw $650 cash from every pay for rent.</p>
-  </section>
+<section class="page stack" data-page="settings" aria-label="Setup">
+<div class="card">
+<div class="section-head"><h2>⚙️ Personalize the plan</h2><span class="pill">No subscriptions</span></div>
+<p>Edit the estimates so the app makes realistic recommendations. All values are Canadian dollars.</p>
+<details open style="margin-top:10px">
+<summary>Priorities + safety cushion</summary>
+<div class="formgrid" id="priorityEditor"></div>
+</details>
+<details style="margin-top:8px"><summary>Credit card balances and minimum payments</summary><div class="formgrid" id="cardEditor"></div></details>
+<details style="margin-top:8px"><summary>Car repairs + school targets</summary><div class="formgrid" id="shortEditor"></div></details>
+<details style="margin-top:8px"><summary>Emergency savings + future travel</summary><div class="formgrid" id="longEditor"></div></details>
+</div>
+<div class="card">
+<h2>🔒 Your data</h2>
+<p>Saved on this device only. It does <b>not</b> automatically sync between your phones. Export a backup before switching devices or clearing your browser.</p>
+<div class="actions" style="margin-top:11px"><button id="exportBtn" class="btn" type="button">Export backup</button><label for="importFile" class="btn" style="text-align:center;display:grid;place-items:center">Import backup</label><input id="importFile" class="hidden" type="file" accept=".json,application/json"></div>
+<div class="toast" id="dataMsg" role="status"></div>
+<a href="./classic.html" style="display:inline-block;color:#ddd2ff;font-size:12px;margin-top:6px">Open your previous version ↗</a>
+</div>
+</section>
+<div class="footer">Little wins add up ✦ Recommended amounts are a plan, not confirmed account balances or automatic transfers.</div>
 </main>
-
 <script>
 (function(){
-  var input=document.getElementById('combinedPay'), payDateInput=document.getElementById('payDate');
-  var planList=document.getElementById('planList'), trackerList=document.getElementById('trackerList'), billSettings=document.getElementById('billSettings');
-
-  var essentialItems=[
-    {id:'groceries',name:'Groceries',target:175},
-    {id:'gas',name:'Gas',target:80},
-    {id:'cats',name:'Cats',target:55}
-  ];
-  var personalAllowance=100; // Each person per biweekly pay cycle
-  var billDefaults=[
-    {id:'insurance',name:'Car insurance',amount:461,due:11},
-    {id:'phone1',name:'Phone bill 1',amount:56.50,due:21},
-    {id:'phone2',name:'Phone bill 2',amount:115.62,due:28},
-    {id:'streaming',name:'Netflix + Disney+ + Spotify',amount:40,due:28},
-    {id:'melaleuca',name:'Melaleuca',amount:160,due:31},
-    {id:'chatgpt',name:'ChatGPT',amount:25,due:30}
-  ];
-  var rentSetAside=650, activeTrackerItems=[];
-  var categoryColors={
-    joint:'#ffd978', rent:'#ffd978',
-    insurance:'#ffd978', phone1:'#ffd978', phone2:'#ffd978', streaming:'#ffd978', melaleuca:'#ffd978', chatgpt:'#ffd978',
-    groceries:'#95e5b8', gas:'#9bd7ff', cats:'#c8a8ff', eating:'#ffb08a', other:'#c6ced8',
-    'ava-transfer':'#95e5b8', 'bryce-transfer':'#9bd7ff',
-    wisdom:'#83e6d2', debt:'#ff9c9c'
-  };
-  function categoryColor(id){
-    if(id&&id.indexOf('bill-')===0){
-      var parts=id.split('-');
-      return categoryColors[parts[1]]||categoryColors.joint;
-    }
-    return categoryColors[id]||'#ffffff';
-  }
-  function applyCategoryStyle(row,id){
-    var color=categoryColor(id);
-    row.style.borderColor=color;
-    row.style.boxShadow='inset 4px 0 0 '+color;
-    var title=row.querySelector('.row-title'), amount=row.querySelector('.amount');
-    if(title)title.style.color=color;
-    if(amount)amount.style.color=color;
-    row.querySelectorAll('.btn').forEach(function(btn){btn.style.borderColor=color});
-    return color;
-  }
-
-  function money(n){return '$'+(Math.max(0,Number(n)||0)).toLocaleString('en-CA',{minimumFractionDigits:2,maximumFractionDigits:2});}
-  function load(k,f){try{var v=localStorage.getItem(k);return v===null?f:v}catch(e){return f}}
-  function save(k,v){try{localStorage.setItem(k,String(v))}catch(e){}}
-  function localDateValue(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
-  function parseLocalDate(s){if(!s)return null;var p=s.split('-').map(Number);return new Date(p[0],p[1]-1,p[2],12)}
-  function daysInMonth(y,m){return new Date(y,m+1,0).getDate()}
-  function billAmount(b){var v=parseFloat(load('ava-bill-amount-'+b.id,b.amount));return isFinite(v)&&v>=0?v:b.amount}
-  function billDue(b){var v=parseInt(load('ava-bill-due-'+b.id,b.due),10);return isFinite(v)&&v>=1&&v<=31?v:b.due}
-  function dueDateForMonth(b,y,m){return new Date(y,m,Math.min(billDue(b),daysInMonth(y,m)),12)}
-
-  function billsInWindow(start,end){
-    var found=[];
-    try{if(load('ava-bill-due-melaleuca','30')==='30')save('ava-bill-due-melaleuca',31)}catch(e){}
-
-  billDefaults.forEach(function(b){
-      for(var o=-1;o<=1;o++){
-        var ref=new Date(start.getFullYear(),start.getMonth()+o,1,12);
-        var due=dueDateForMonth(b,ref.getFullYear(),ref.getMonth());
-        if(due>=start&&due<end) found.push({bill:b,date:due,amount:billAmount(b)});
-      }
-    });
-    return found.sort(function(a,b){return a.date-b.date});
-  }
-
-  billDefaults.forEach(function(b){
-    var r=document.createElement('div');r.className='row';
-    r.innerHTML='<div class="bill-edit"><div><div class="row-title">'+b.name+'</div><div class="row-note">Joint account bill</div></div><div><label>Amount</label><input id="amt-'+b.id+'" type="number" min="0" step="0.01" value="'+billAmount(b)+'"></div><div><label>Due day</label><input id="due-'+b.id+'" type="number" min="1" max="31" value="'+billDue(b)+'"></div></div>';
-    applyCategoryStyle(r,b.id);
-    billSettings.appendChild(r);
-    r.querySelector('#amt-'+b.id).addEventListener('change',function(e){var v=parseFloat(e.target.value);if(isFinite(v)&&v>=0){save('ava-bill-amount-'+b.id,v);calculate()}});
-    r.querySelector('#due-'+b.id).addEventListener('change',function(e){var v=parseInt(e.target.value,10);if(isFinite(v)&&v>=1&&v<=31){save('ava-bill-due-'+b.id,v);calculate()}});
-  });
-
-  function cycleKey(){return payDateInput.value||localDateValue(new Date())}
-  function logged(id){var v=parseFloat(load('ava-log-'+cycleKey()+'-'+id,0));return isFinite(v)&&v>=0?v:0}
-  function setLogged(id,v){save('ava-log-'+cycleKey()+'-'+id,v)}
-
-  function renderPlan(rows){
-    planList.innerHTML='';
-    rows.forEach(function(x){
-      var r=document.createElement('div');r.className='row';
-      r.innerHTML='<div class="row-top"><div><div class="row-title">'+x.name+'</div><div class="row-note">'+x.note+'</div></div><div class="amount">'+money(x.amount)+'</div></div>';
-      applyCategoryStyle(r,x.id||'other');
-      planList.appendChild(r);
-    });
-  }
-
-  function renderTracker(items){
-    activeTrackerItems=items;
-    trackerList.innerHTML='';
-    items.forEach(function(it){
-      var r=document.createElement('div');r.className='row';r.id='track-'+it.id;
-      r.innerHTML='<div class="row-top"><div><div class="row-title">'+it.name+'</div>'+(it.note?'<div class="row-note">'+it.note+'</div>':'')+'<div class="row-note"><span id="logged-'+it.id+'">$0.00 logged</span> • <span id="left-'+it.id+'">'+money(it.target)+' left</span></div></div><div class="amount">'+money(it.target)+' budgeted</div></div><div class="bar"><div class="fill" id="bar-'+it.id+'" style="width:0%"></div></div><div class="tracker-grid"><div class="input-wrap"><span>$</span><input id="add-'+it.id+'" type="number" min="0" step="0.01" inputmode="decimal" placeholder="Add moved / spent"></div><button class="btn" id="addbtn-'+it.id+'" type="button">Add amount</button><div class="input-wrap"><span>$</span><input id="set-'+it.id+'" type="number" min="0" step="0.01" inputmode="decimal" placeholder="Correct total"></div><button class="btn" id="setbtn-'+it.id+'" type="button">Set total</button></div>';
-      var trackerColor=applyCategoryStyle(r,it.id);
-      r.setAttribute('data-category-color',trackerColor);
-      trackerList.appendChild(r);
-      r.querySelector('#addbtn-'+it.id).addEventListener('click',function(){var el=r.querySelector('#add-'+it.id),v=parseFloat(el.value);if(isFinite(v)&&v>0){setLogged(it.id,logged(it.id)+v);el.value='';updateTracker()}});
-      r.querySelector('#setbtn-'+it.id).addEventListener('click',function(){var el=r.querySelector('#set-'+it.id),v=parseFloat(el.value);if(isFinite(v)&&v>=0){setLogged(it.id,v);el.value='';updateTracker()}});
-    });
-    updateTracker();
-  }
-
-  function updateTracker(){
-    var total=0,target=0;
-    activeTrackerItems.forEach(function(it){
-      var v=logged(it.id), left=Math.max(0,it.target-v), pct=it.target>0?Math.min(100,v/it.target*100):0;
-      total+=v;target+=it.target;
-      var a=document.getElementById('logged-'+it.id),b=document.getElementById('left-'+it.id),bar=document.getElementById('bar-'+it.id);
-      if(a)a.textContent=money(v)+' logged';if(b)b.textContent=money(left)+' left';
-      if(bar){bar.style.width=pct+'%';bar.style.background=v>it.target?'var(--red)':categoryColor(it.id)}
-    });
-    var s=document.getElementById('trackerStatus');
-    s.innerHTML=total===0?'Nothing logged yet. Your bars will stay empty until you add an amount.':'<span class="good">'+money(total)+' logged</span> out of '+money(target)+' budgeted for this pay cycle.';
-  }
-
-  function calculate(){
-    var pay=parseFloat(input.value);if(!isFinite(pay)||pay<0)pay=0;
-    var start=parseLocalDate(payDateInput.value)||new Date(), end=new Date(start);end.setDate(end.getDate()+14);
-    var due=billsInWindow(start,end);
-    var billsTotal=due.reduce(function(s,x){return s+x.amount},0);
-    var essentialTarget=essentialItems.reduce(function(s,x){return s+x.target},0);
-    var jointTarget=billsTotal+essentialTarget;
-    var freeSpendTarget=personalAllowance*2;
-
-    var remaining=pay;
-    var rentCash=Math.min(rentSetAside,remaining);remaining-=rentCash;
-    var joint=Math.min(jointTarget,remaining);remaining-=joint;
-    var spending=Math.min(freeSpendTarget,remaining);remaining-=spending;
-    var allowanceShortfall=Math.max(0,freeSpendTarget-spending);
-    var debt=Math.max(0,remaining);
-    var avaSpending=Math.round((spending/2)*100)/100;
-    var bryceSpending=Math.round((spending-avaSpending)*100)/100;
-
-    document.getElementById('sumJoint').textContent=money(joint);
-    document.getElementById('sumSpending').textContent=money(spending);
-    document.getElementById('sumAva').textContent=money(avaSpending);
-    document.getElementById('sumBryce').textContent=money(bryceSpending);
-    document.getElementById('sumDebt').textContent=money(debt);
-
-    var summary=document.getElementById('actionSummary');
-    var splitStatus=document.getElementById('bankSplitStatus');
-    if(pay===0){
-      summary.textContent='Enter your combined pay above.';
-      splitStatus.textContent='Enter your combined pay above.';
-    } else {
-      summary.innerHTML='<span class="gold">Withdraw '+money(rentCash)+' cash for rent first.</span> Leave '+money(joint)+' in the joint account for bills, groceries, gas and cats. Then move <span class="good">'+money(avaSpending)+'</span> to Ava and <span class="good">'+money(bryceSpending)+'</span> to Bryce for personal spending (goal: $100 each). '+(allowanceShortfall>0?'<span class="warn">The combined personal allowance is short by '+money(allowanceShortfall)+' this pay.</span> ':'')+(debt>0?'After that, '+money(debt)+' is available for credit cards.':'There is no extra for credit cards in this pay cycle.');
-      splitStatus.innerHTML='<span class="gold">RENT: withdraw '+money(rentCash)+' cash from this pay.</span><br><span class="gold">JOINT: keep '+money(joint)+'</span> for bills, groceries, gas and cats.<br><span class="good">AVA PERSONAL: '+money(avaSpending)+' (goal $100)</span><br><span class="good">BRYCE PERSONAL: '+money(bryceSpending)+' (goal $100)</span>'+(allowanceShortfall>0?'<br><span class="warn">Not enough money for the full $100 each this pay.</span>':'')+'<br><span class="tiny">Rent is taken out separately, so the joint-account number is only money that actually stays in the bank. Record each personal transfer after you make it.</span>';
-    }
-
-    var jointWindow=start.toLocaleDateString('en-CA',{month:'short',day:'numeric'})+'–'+new Date(end.getTime()-86400000).toLocaleDateString('en-CA',{month:'short',day:'numeric'});
-    var rows=[{id:'rent',name:'Withdraw cash for rent',note:'Take this out every pay — do not leave it in the joint account',amount:rentCash},{id:'joint',name:'Joint account — keep here',note:'Bills due '+jointWindow+' + shared essentials',amount:joint}];
-    essentialItems.forEach(function(x){rows.push({id:x.id,name:x.name,note:'Shared essential — stays in joint account',amount:x.target})});
-    rows.push({id:'ava-transfer',name:'Transfer to Ava',note:'Personal spending allowance — $100 goal per pay',amount:avaSpending});
-    rows.push({id:'bryce-transfer',name:'Transfer to Bryce',note:'Personal spending allowance — $100 goal per pay',amount:bryceSpending});
-    rows.push({id:'debt',name:'Credit-card debt',note:'Everything left after priorities',amount:debt});
-    renderPlan(rows);
-
-    var tracker=[{id:'joint',name:'Joint account money kept',target:joint}];
-    due.forEach(function(x){tracker.push({id:'bill-'+x.bill.id+'-'+localDateValue(x.date),name:x.bill.name+' paid',target:Math.min(x.amount,joint),note:'Comes out '+x.date.toLocaleDateString('en-CA',{month:'short',day:'numeric'})});});
-    essentialItems.forEach(function(x){tracker.push({id:x.id,name:x.name,target:x.target,note:'Spent from joint account'})});
-    tracker.push({id:'ava-transfer',name:'Transfer to Ava completed',target:avaSpending,note:'Log only after transferring to Ava’s personal account'});
-    tracker.push({id:'bryce-transfer',name:'Transfer to Bryce completed',target:bryceSpending,note:'Log only after transferring to Bryce’s personal account'});
-    if(debt>0)tracker.push({id:'debt',name:'Credit-card payment',target:debt});
-    renderTracker(tracker.filter(function(x){return x.target>0}));
-
-    var billStatus=document.getElementById('billWindowStatus');
-    billStatus.innerHTML=due.length?'<span class="good">'+due.length+' bill'+(due.length===1?'':'s')+' due before the next pay.</span> '+due.map(function(x){return x.bill.name+' '+money(x.amount)+' ('+x.date.toLocaleDateString('en-CA',{month:'short',day:'numeric'})+')'}).join(' • '):'<span class="good">No listed monthly bills are due before the next pay.</span>';
-
-    save('ava-bryce-budget-pay',pay);save('ava-bryce-pay-date',payDateInput.value);
-  }
-
-  document.getElementById('calculateBtn').addEventListener('click',calculate);
-  input.addEventListener('input',calculate);payDateInput.addEventListener('change',calculate);
-  var savedPay=load('ava-bryce-budget-pay','');if(savedPay!=='')input.value=savedPay;
-  payDateInput.value=load('ava-bryce-pay-date',localDateValue(new Date()));
-  calculate();
-  if('serviceWorker' in navigator&&location.protocol==='https:')window.addEventListener('load',function(){navigator.serviceWorker.register('./sw.js').catch(function(){})});
+"use strict";
+var key="ava-bryce-hq-v24";
+var billsBase=[
+{id:"insurance",name:"Car insurance",amount:461,due:11},
+{id:"phone1",name:"Phone bill 1",amount:56.50,due:21},
+{id:"phone2",name:"Phone bill 2",amount:115.62,due:28},
+{id:"streaming",name:"Netflix + Disney + Spotify",amount:40,due:28},
+{id:"melaleuca",name:"Melaleuca",amount:160,due:31},
+{id:"chatgpt",name:"ChatGPT",amount:25,due:30}];
+var defaults={
+payDate:"",payAmount:0,rent:650,groceries:175,gas:80,cats:55,personal:100,buffer:150,
+card1:3000,card2:2000,cardMin1:0,cardMin2:0,cardDay1:15,cardDay2:15,splitDebt:70,
+cars:0,carsTarget:2000,school:0,schoolTarget:4000,emergency:0,emergencyMonthly:2800,emergencyMonths:3,travel:0,travelMonthly:3000,travelMonths:6,
+bills:{},history:{},wins:[]};
+function safeRead(k){try{return localStorage.getItem(k)}catch(e){return null}}
+function safeWrite(k,v){try{localStorage.setItem(k,v)}catch(e){show("dataMsg","Storage unavailable — back up your values.");}}
+function num(v){var n=Number(v);return Number.isFinite(n)&&n>=0?Math.min(n,10000000):0}
+function dollars(n){return "$"+num(n).toLocaleString("en-CA",{minimumFractionDigits:0,maximumFractionDigits:2})}
+function esc(s){return String(s).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})}
+function fix(n){return Math.round((Number(n)||0)*100)/100}
+function formatDate(d){return [d.getFullYear(),String(d.getMonth()+1).padStart(2,"0"),String(d.getDate()).padStart(2,"0")].join("-")}
+function dateOf(s){if(!/^\d{4}-\d{2}-\d{2}$/.test(s||""))return null;var p=s.split("-").map(Number),d=new Date(p[0],p[1]-1,p[2],12);return d.getFullYear()===p[0]&&d.getMonth()===p[1]-1&&d.getDate()===p[2]?d:null}
+function prettyDate(d){return d.toLocaleDateString("en-CA",{month:"short",day:"numeric"})}
+function interval(){var start=dateOf(S.payDate)||new Date();start.setHours(12,0,0,0);var end=new Date(start);end.setDate(end.getDate()+14);return {start:start,end:end}}
+function billSetup(){var out={};billsBase.forEach(function(b){var a=safeRead("ava-bill-amount-"+b.id),d=safeRead("ava-bill-due-"+b.id);out[b.id]={amount:a===null?b.amount:num(a),due:d===null?b.due:(Number(d)>=1&&Number(d)<=31?Number(d):b.due)}});return out}
+function initial(){var out=JSON.parse(JSON.stringify(defaults));out.bills=billSetup();var legacy=safeRead("ava-bryce-budget-pay");out.payAmount=legacy!==null?num(legacy):0;out.payDate=safeRead("ava-bryce-pay-date")||formatDate(new Date());return out}
+var S=initial();try{var saved=JSON.parse(safeRead(key)||"null");if(saved&&typeof saved==="object"){S=Object.assign(S,saved);S.bills=Object.assign(billSetup(),saved.bills||{});S.history=saved.history&&typeof saved.history==="object"?saved.history:{};S.wins=Array.isArray(saved.wins)?saved.wins:[]}}catch(e){}
+function persist(){safeWrite(key,JSON.stringify(S))}
+function el(id){return document.getElementById(id)}
+function show(id,msg){var e=el(id);if(e)e.textContent=msg}
+function clampValue(name,value){var n=num(value);if(["cardDay1","cardDay2"].indexOf(name)>=0)return Math.min(31,Math.max(1,Math.round(n)));if(["emergencyMonths","travelMonths"].indexOf(name)>=0)return n===6||n===12?12:n===3?3:6;if(name==="splitDebt")return Math.min(100,Math.round(n));return fix(n)}
+function getDueBills(){var p=interval(),due=[];billsBase.forEach(function(b){var data=S.bills[b.id]||b;for(var offset=-1;offset<=1;offset++){var month=new Date(p.start.getFullYear(),p.start.getMonth()+offset,1,12),day=Math.max(1,Math.min(31,Math.round(num(data.due)||b.due)));var last=new Date(month.getFullYear(),month.getMonth()+1,0).getDate();var d=new Date(month.getFullYear(),month.getMonth(),Math.min(day,last),12);if(d>=p.start&&d<p.end)due.push({name:b.name,amount:num(data.amount),date:d})}});
+[{name:"Card 1 minimum",amount:S.cardMin1,due:S.cardDay1},{name:"Card 2 minimum",amount:S.cardMin2,due:S.cardDay2}].forEach(function(b){var day=Math.max(1,Math.min(31,Math.round(num(b.due)||15)));for(var offset=-1;offset<=1;offset++){var month=new Date(p.start.getFullYear(),p.start.getMonth()+offset,1,12),last=new Date(month.getFullYear(),month.getMonth()+1,0).getDate(),d=new Date(month.getFullYear(),month.getMonth(),Math.min(day,last),12);if(d>=p.start&&d<p.end&&num(b.amount)>0)due.push({name:b.name,amount:num(b.amount),date:d})}});return due.sort(function(a,b){return a.date-b.date})}
+function missions(){var debt=num(S.card1)+num(S.card2);var cardsDone=debt<=.005,carsDone=S.cars>=S.carsTarget&&S.carsTarget>0,schoolDone=S.school>=S.schoolTarget&&S.schoolTarget>0,emDone=S.emergency>=S.emergencyMonthly*S.emergencyMonths&&S.emergencyMonthly>0;return {debt:debt,stage:(!cardsDone||!carsDone)?0:!schoolDone?1:!emDone?2:3,complete:[cardsDone&&carsDone,schoolDone,emDone,S.travel>=S.travelMonthly*S.travelMonths&&S.travelMonthly>0]}}
+function allocate(amount){var m=missions(),a=num(amount),out={card:0,cars:0,school:0,emergency:0,travel:0};if(m.stage===0){var cardPart=m.debt>0?fix(a*S.splitDebt/100):0;var repairPart=fix(a-cardPart);var room=Math.max(0,S.carsTarget-S.cars);out.card=Math.min(m.debt,cardPart);out.cars=Math.min(room,repairPart);var leftover=fix(a-out.card-out.cars);if(leftover>0){var d=Math.min(Math.max(0,m.debt-out.card),leftover);out.card+=d;leftover-=d;var c=Math.min(Math.max(0,room-out.cars),leftover);out.cars+=c;leftover-=c;out.school=fix(Math.min(Math.max(0,S.schoolTarget-S.school),leftover));} }
+else{var keys=["school","emergency","travel"],targets=[S.schoolTarget,S.emergencyMonthly*S.emergencyMonths,S.travelMonthly*S.travelMonths];var rem=a;for(var i=0;i<keys.length;i++){var k=keys[i],need=Math.max(0,targets[i]-S[k]);if(i>=m.stage-1){out[k]=fix(Math.min(need,rem));rem-=out[k]}}}
+return out}
+function plan(){var pay=num(S.payAmount),bills=getDueBills(),billCost=fix(bills.reduce(function(s,b){return s+b.amount},0));
+var rows=[{name:"🏠 Rent envelope",note:"Put aside every paycheque",need:S.rent},{name:"📅 Bills due before next pay",note:bills.length+" scheduled payments",need:billCost},{name:"🛒 Groceries",need:S.groceries},{name:"⛽ Gas",need:S.gas},{name:"🐈 Cats",need:S.cats},{name:"🧯 Chequing buffer",need:S.buffer},{name:"☕ Personal spending · $"+dollars(S.personal)+" each",need:S.personal*2}];
+var remaining=pay,short=0;rows.forEach(function(r){r.need=num(r.need);r.fund=fix(Math.min(remaining,r.need));remaining=fix(Math.max(0,remaining-r.fund));short+=r.need-r.fund});var extra=fix(remaining),alloc=allocate(extra);return {pay:pay,rows:rows,short:fix(short),extra:extra,alloc:alloc,bills:bills}}
+function pct(current,target){return target>0?Math.max(0,Math.min(100,100*num(current)/num(target))):0}
+function progress(current,target){return "<div class='progress'><i style='width:"+pct(current,target)+"%'></i></div>"}
+function stageData(){var m=missions();return [
+{name:"Credit cards + car repairs",emoji:"💳",detail:dollars(m.debt)+" debt left · "+dollars(S.cars)+" / "+dollars(S.carsTarget)+" cars",curr:Math.max(0,5000-m.debt)+S.cars,target:5000+S.carsTarget,done:m.complete[0]},
+{name:"School savings",emoji:"🎓",detail:dollars(S.school)+" / "+dollars(S.schoolTarget),curr:S.school,target:S.schoolTarget,done:m.complete[1]},
+{name:"3–6 month emergency fund",emoji:"🛟",detail:dollars(S.emergency)+" / "+dollars(S.emergencyMonthly*S.emergencyMonths),curr:S.emergency,target:S.emergencyMonthly*S.emergencyMonths,done:m.complete[2]},
+{name:"6–12 months of travel",emoji:"✈️",detail:dollars(S.travel)+" / "+dollars(S.travelMonthly*S.travelMonths),curr:S.travel,target:S.travelMonthly*S.travelMonths,done:m.complete[3]}]}
+function displayStage(){var m=missions(),st=stageData(),names=["Cards + car repairs","School savings","Emergency cushion","Travel the world"];show("chapterName",names[m.stage]);show("goalChapterTitle",String(m.stage+1).padStart(2,"0")+" · "+st[m.stage].name);show("journeyCounter","Chapter "+(m.stage+1)+" of 4");show("focusTag","MISSION "+String(m.stage+1).padStart(2,"0"));show("heroDebt",dollars(m.debt));show("heroCars",dollars(S.cars)+" / "+dollars(S.carsTarget));
+el("stageList").innerHTML=st.map(function(s,i){return "<div class='stage "+(s.done?"complete":i===m.stage?"current":"") +"'><div class='dot'>"+(s.done?"✅":s.emoji)+"</div><div style='flex:1;min-width:0'><b>"+String(i+1).padStart(2,"0")+" · "+s.name+"</b><div class='small muted'>"+s.detail+"</div>"+progress(s.curr,s.target)+"<div class='micro muted'>"+(s.done?"Completed!":i===m.stage?"Current mission":i<m.stage?"Ready to complete":"Coming up next")+"</div></div></div>"}).join("");
+el("homeJourney").innerHTML=st.map(function(s,i){return "<div class='goal-row'><div class='row'><div><span class='icon'>"+(s.done?"✅":s.emoji)+"</span><strong>"+s.name+"</strong></div><span class='money'>"+Math.round(pct(s.curr,s.target))+"%</span></div>"+progress(s.curr,s.target)+"</div>"}).join("")}
+function render(){var p=plan(),m=missions(),s=stageData();displayStage();show("homeIncome",p.pay>0?dollars(p.pay):"—");show("homeExtra",p.pay>0?dollars(p.extra):"—");show("homePayDate",prettyDate(interval().start)+" pay period");show("payExtra",dollars(p.extra));show("payDebt",dollars(p.alloc.card));show("payCars",dollars(p.alloc.cars));var warning=[];
+if(!S.cardMin1||!S.cardMin2)warning.push("Add actual credit-card minimums in Setup before relying on the plan.");
+if(p.short>0)warning.push("This pay is short "+dollars(p.short)+" on essentials. No extra money should go to goals.");
+if(p.pay<=0)warning.push("Enter a real combined pay amount to calculate allocations.");
+show("payWarning",warning.length?warning.join(" "):"✓ Your entered pay covers your budget categories.");
+var advice="";
+if(p.pay<=0)advice="Enter your combined income in Payday to see a plan for your next 14 days.";
+else if(p.short>0)advice="⚠️ First cover your "+dollars(p.short)+" budget gap. Consider adjusting spending and making sure minimum payments are covered.";
+else if(p.extra<=0)advice="✅ Your pay is fully assigned to bills, everyday needs and your buffer. Stay consistent!";
+else if(m.stage===0)advice="Suggested from this pay: "+dollars(p.alloc.card)+" extra to high-interest cards + "+dollars(p.alloc.cars)+" to car repairs. Record only money you actually move.";
+else advice="Suggested "+dollars(p.extra)+" toward "+s[m.stage].name.toLowerCase()+". Progress is only updated when you record a real transfer.";
+show("homeAdvice",advice);
+var lines=p.rows.map(function(r){return "<div class='breakline'><span>"+r.name+(r.note?"<span class='muted'>"+r.note+"</span>":"")+"</span><span>"+dollars(r.fund)+(r.fund+0.001<r.need?" <span class='danger'>/ "+dollars(r.need)+"</span>":"")+"</span></div>"}).join("");
+lines+="<div class='breakline'><strong>🎯 Unassigned to goals</strong><strong>"+dollars(p.extra)+"</strong></div>";
+show("paySplitHint",m.stage===0?"Suggested split: "+S.splitDebt+"% cards / "+(100-S.splitDebt)+"% cars, until both targets are reached.":"Current priority: "+s[m.stage].name);
+el("payBreakdown").innerHTML=lines;var window=interval();show("billRange",prettyDate(window.start)+"–"+prettyDate(new Date(window.end.getTime()-86400000)));
+el("dueList").innerHTML=p.bills.length?p.bills.map(function(b){return "<div class='breakline'><span><b>"+prettyDate(b.date)+"</b> · "+esc(b.name)+"</span><span>"+dollars(b.amount)+"</span></div>"}).join(""):"<p>None of your entered monthly bills are due in this 14-day window.</p>";
+var history=Object.entries(S.history).sort(function(a,b){return b[0].localeCompare(a[0])}).slice(0,15);
+show("historyCount","("+Object.keys(S.history).length+")");
+el("payHistory").innerHTML=history.length?history.map(function(x){return "<div class='breakline'><span>"+esc(x[0])+"</span><span>"+dollars(x[1].income)+" in · "+dollars(x[1].extra)+" goals</span></div>"}).join(""):"<p>No saved plans yet.</p>";
+var wins=S.wins.slice(-10).reverse();show("winCount","("+S.wins.length+")");
+el("winHistory").innerHTML=wins.length?wins.map(function(w){return "<div class='breakline'><span>"+esc(w.day)+" · "+esc(w.name)+"</span><span class='success'>+"+dollars(w.amount)+"</span></div>"}).join(""):"<p>No entries yet. Your first win is waiting!</p>";
+el("undoWin").disabled=!S.wins.length}
+function nav(id){document.querySelectorAll(".page").forEach(function(n){n.classList.toggle("active",n.dataset.page===id)});document.querySelectorAll(".tab").forEach(function(n){n.setAttribute("aria-selected",String(n.dataset.tab===id))});window.scrollTo({top:0,behavior:"instant"})}
+document.querySelectorAll("[data-tab]").forEach(function(b){b.addEventListener("click",function(){nav(b.dataset.tab)})});
+document.querySelectorAll("[data-goto]").forEach(function(b){b.addEventListener("click",function(){nav(b.dataset.goto)})});
+function addNumberField(parent,field,label,hint,step){var wrap=document.createElement("div");wrap.className="field";var l=document.createElement("label"),id="setting-"+field;l.htmlFor=id;l.textContent=label;var inp=document.createElement("input");inp.id=id;inp.type="number";inp.min="0";inp.max="10000000";inp.step=step||"0.01";inp.inputMode="decimal";inp.value=S[field];if(hint)inp.title=hint;inp.addEventListener("change",function(){S[field]=clampValue(field,inp.value);inp.value=S[field];persist();render()});wrap.append(l,inp);el(parent).appendChild(wrap)}
+function addSelect(parent,field,label,options){var wrap=document.createElement("div");wrap.className="field";var l=document.createElement("label");l.htmlFor="setting-"+field;l.textContent=label;var select=document.createElement("select");select.id="setting-"+field;options.forEach(function(o){var op=document.createElement("option");op.value=o[0];op.textContent=o[1];select.appendChild(op)});select.value=String(S[field]);select.addEventListener("change",function(){S[field]=Number(select.value);persist();render()});wrap.append(l,select);el(parent).appendChild(wrap)}
+function setupFields(){
+[["priorityEditor","rent","Rent per paycheque"],["priorityEditor","buffer","Buffer per paycheque"],["priorityEditor","personal","Personal spending each"],["cardEditor","card1","Card 1 current balance (24%)"],["cardEditor","card2","Card 2 current balance (18%)"],["cardEditor","cardMin1","Card 1 monthly minimum"],["cardEditor","cardMin2","Card 2 monthly minimum"],["cardEditor","cardDay1","Card 1 minimum due day","",1],["cardEditor","cardDay2","Card 2 minimum due day","",1],["shortEditor","carsTarget","Car repair fund target"],["shortEditor","cars","Already saved for cars"],["shortEditor","schoolTarget","School savings target"],["shortEditor","school","Already saved for school"],["longEditor","emergencyMonthly","Essential monthly expenses (estimate)"],["longEditor","emergency","Already saved for emergencies"],["longEditor","travelMonthly","Estimated spending/month travelling"],["longEditor","travel","Already saved for travel"]].forEach(function(r){addNumberField(r[0],r[1],r[2],r[3],r[4])});
+addSelect("priorityEditor","splitDebt","Extra split during mission 1",[[100,"100% cards, 0% car repairs"],[80,"80% cards / 20% cars"],[70,"70% cards / 30% cars"],[60,"60% cards / 40% cars"],[50,"50% cards / 50% cars"],[30,"30% cards / 70% cars"]]);
+addSelect("longEditor","emergencyMonths","Emergency fund size",[[3,"3 months"],[6,"6 months"]]);
+addSelect("longEditor","travelMonths","Travel duration",[[6,"6 months"],[12,"12 months"]]);
+[["groceries","Groceries"],["gas","Gas"],["cats","Cats"]].forEach(function(r){addNumberField("livingEditor",r[0],r[1]+" / 2 weeks")});
+billsBase.forEach(function(b){var row=document.createElement("div");row.className="billentry";var name=document.createElement("div");name.className="name";name.textContent=b.name;row.appendChild(name);
+[["amount","Amount ($)",0,10000000],["due","Day",1,31]].forEach(function(spec){var w=document.createElement("div");w.className="field";var id="bill-"+b.id+"-"+spec[0],lab=document.createElement("label");lab.htmlFor=id;lab.textContent=spec[1];var inp=document.createElement("input");inp.id=id;inp.type="number";inp.min=String(spec[2]);inp.max=String(spec[3]);inp.step=spec[0]==="due"?"1":".01";inp.value=S.bills[b.id][spec[0]];inp.addEventListener("change",function(){var n=Number(inp.value);if(!Number.isFinite(n)||n<spec[2]||n>spec[3]){inp.value=S.bills[b.id][spec[0]];return}S.bills[b.id][spec[0]]=spec[0]==="due"?Math.round(n):fix(n);inp.value=S.bills[b.id][spec[0]];persist();render()});w.append(lab,inp);row.appendChild(w)});el("billEditor").appendChild(row)})}
+el("payDate").value=S.payDate;
+el("payAmount").value=S.payAmount||"";
+el("payDate").addEventListener("change",function(){if(!dateOf(this.value)){this.value=S.payDate;return}S.payDate=this.value;persist();render()});
+el("payAmount").addEventListener("input",function(){S.payAmount=num(this.value);persist();render()});
+el("savePlanBtn").addEventListener("click",function(){var p=plan();if(p.pay<=0){show("savePlanMsg","Enter a pay amount first.");return}S.history[S.payDate]={income:p.pay,extra:p.extra,planned:p.alloc,savedAt:new Date().toISOString()};persist();render();show("savePlanMsg","✓ Saved as a plan — not marked as paid. Great work!")});
+el("recordGoal").addEventListener("click",function(){var kind=el("goalKind").value,amount=fix(num(el("goalValue").value)),names={card1:"Credit card 1",card2:"Credit card 2",cars:"Car repairs",school:"School",emergency:"Emergency",travel:"Travel"};if(amount<=0){show("goalMsg","Enter an actual amount greater than $0.");return}if(kind==="card1"||kind==="card2"){if(amount>S[kind]){show("goalMsg","Payment cannot exceed the balance shown. Correct the balance in Setup first.");return}S[kind]=fix(S[kind]-amount)}else S[kind]=fix(num(S[kind])+amount);
+S.wins.push({kind:kind,amount:amount,name:names[kind],day:formatDate(new Date())});if(S.wins.length>300)S.wins=S.wins.slice(-300);persist();el("goalValue").value="";show("goalMsg","🎉 Win recorded! Your progress has been updated.");render()});
+el("undoWin").addEventListener("click",function(){var w=S.wins.pop();if(!w)return;if(w.kind==="card1"||w.kind==="card2")S[w.kind]=fix(S[w.kind]+w.amount);else S[w.kind]=fix(Math.max(0,S[w.kind]-w.amount));persist();render();show("goalMsg","Latest progress entry undone.")});
+el("exportBtn").addEventListener("click",function(){try{var a=document.createElement("a"),blob=new Blob([JSON.stringify({format:"ava-bryce-hq-v24",data:S},null,2)],{type:"application/json"}),url=URL.createObjectURL(blob);a.href=url;a.download="our-money-hq-backup-"+formatDate(new Date())+".json";document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(url)},1000);show("dataMsg","Backup exported — keep it somewhere safe.")}catch(e){show("dataMsg","Export failed. Please try again.")}});
+el("importFile").addEventListener("change",function(e){var file=e.target.files&&e.target.files[0];if(!file)return;var r=new FileReader();r.onload=function(){try{var obj=JSON.parse(r.result);if(obj.format!=="ava-bryce-hq-v24"||!obj.data||typeof obj.data!=="object"||!Array.isArray(obj.data.wins))throw Error("Invalid backup");if(!confirm("Replace current budget data on this device with the imported backup?"))return;var next=Object.assign(initial(),obj.data);next.bills=Object.assign(billSetup(),obj.data.bills||{});next.history=obj.data.history&&typeof obj.data.history==="object"?obj.data.history:{};next.wins=obj.data.wins;S=next;persist();location.reload()}catch(err){show("dataMsg","Could not read that backup file.")}};r.readAsText(file)});
+setupFields();render();
+if("serviceWorker" in navigator&&location.protocol==="https:")window.addEventListener("load",function(){navigator.serviceWorker.register("./sw.js").catch(function(){})});
 })();
 </script>
-</body>
-</html>
+</body></html>
