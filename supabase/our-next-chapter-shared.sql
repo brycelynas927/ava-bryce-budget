@@ -110,7 +110,7 @@ begin
  if hid is null then raise exception 'Only owner can invite' using errcode='42501';end if;
  if (select count(*) from public.onc_members where household_id=hid)>=2 then
    raise exception 'Household already has two members' using errcode='22023';end if;
- invite:=encode(gen_random_bytes(24),'hex');
+ invite:=substr(replace(gen_random_uuid()::text,'-','')||replace(gen_random_uuid()::text,'-',''),1,48);
  update public.onc_households set invite_hash=encode(sha256(convert_to(invite,'UTF8')),'hex'),invite_expires_at=now()+interval '14 days' where id=hid;
  return invite;
 end;$$;
