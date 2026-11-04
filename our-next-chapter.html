@@ -92,6 +92,34 @@ body{background:#ebe4d9}.app{background:linear-gradient(180deg,#f8f3ec,#fbf7f0 6
 
 .cloud-setup{padding:15px}.cloud-setup>strong{font-size:14px}.cloud-setup p{font-size:11px;color:#727d73;line-height:1.5}.cloud-status{background:#eaf3e9;border:1px solid #d8e8d8;padding:11px;border-radius:10px;font-size:12px;color:#436e58;font-weight:750;margin-bottom:12px}.cloud-form{display:grid;gap:11px;margin:10px 0}.cloud-form .field label{display:block;font-size:11px;margin-bottom:4px}.cloud-form .field input{width:100%}.cloud-choice{display:grid;gap:6px;margin:13px 0}.cloud-choice small{color:#859286;font-size:10px}.cloud-signup{margin-top:12px;border-top:1px solid #ebe7df;padding-top:12px}.cloud-signup summary{font-size:12px;cursor:pointer;color:#607b6b}.cloud-invite{padding:12px;border:1px solid #d8e8dd;background:#f5faf4;border-radius:11px;margin:12px 0}.cloud-invite strong{font-size:12px}.cloud-invite code{display:block;overflow-wrap:anywhere;padding:9px;margin:7px 0;color:#26573e;background:#e7f0e7;font-size:11px;border-radius:7px}.cloud-invite button{font-size:11px}
 
+
+/* Ramsey-inspired path towards long-form travel */
+.roadmap-light{margin-top:18px;display:grid;gap:10px}
+.roadmap-title{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.roadmap-title h2{font:italic 22px Georgia,serif;color:#3e5545;margin:4px 0}
+.roadmap-photo{height:152px;border-radius:17px;background:linear-gradient(90deg,#253e3fc9,#31544766),url('https://images.unsplash.com/photo-1500534623283-312aade485b7?w=1000&q=85') center/cover;display:flex;align-items:center;padding:17px;overflow:hidden;color:white}
+.roadmap-copy{max-width:285px;display:grid;gap:6px}.roadmap-copy span{font-size:9px;font-weight:800;letter-spacing:1.15px;color:#f7e9d3}
+.roadmap-copy strong{font:italic 22px Georgia,serif;line-height:1.15}.roadmap-copy small{font-size:11px;color:#fff4e8;line-height:1.4}
+.roadmap-stages{background:#fffdfa;border:1px solid #ebe5de;border-radius:16px;padding:4px 10px}
+.roadmap-stage{display:grid;grid-template-columns:30px 1fr 24px;gap:9px;align-items:center;padding:11px 3px;border-bottom:1px solid #f0ede6}
+.roadmap-stage:last-child{border:0}.roadmap-stage.current{background:#f4f7f1;border-radius:9px}
+.stage-number{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:#e8ede5;color:#6d8872;font-size:11px;font-weight:800}.roadmap-stage.current .stage-number{background:#5e9274;color:white}
+.roadmap-stage.done .stage-number{background:#bdd5bc;color:#356045}
+.roadmap-stage strong{display:block;font-size:12px}.roadmap-stage small{display:block;color:#858c83;font-size:10px;margin-top:4px;line-height:1.4}
+.stage-mark{color:#86a38b;font-weight:800}.roadmap-split{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.roadmap-split>div{background:#eaf1e8;border-radius:13px;padding:12px}
+.roadmap-split>div:nth-child(2){background:#f5ece6}.roadmap-split small{display:block;font-size:10px;color:#718276}
+.roadmap-split strong{display:block;font-size:17px;margin-top:4px;color:#385a47}.roadmap-split span{display:block;font-size:10px;color:#8a8e83;margin-top:4px}
+.roadmap-note{border-radius:14px;background:#fffdfa;border:1px solid #eae4da;padding:13px;color:#5f6e63}
+.roadmap-note strong{font-size:13px}.roadmap-note p{font-size:11px;line-height:1.55;margin:8px 0 0}
+.roadmap-detail,.goal-compare{border-radius:14px;border:1px solid #eae5dc;background:#fffdfa;overflow:hidden}
+.roadmap-detail summary,.goal-compare>summary{padding:14px;font-size:12px;font-weight:780;cursor:pointer;list-style:none;color:#4b6f58}
+.roadmap-detail summary::-webkit-details-marker,.goal-compare>summary::-webkit-details-marker{display:none}
+.roadmap-detail summary span,.goal-compare>summary span{float:right}.roadmap-detail-inner{padding:4px 12px 14px}.roadmap-detail-inner p{font-size:10px;line-height:1.5;color:#858b81}
+.roadmap-debt-row{display:flex;justify-content:space-between;gap:8px;padding:9px 0;border-bottom:1px solid #eee9e1;font-size:11px}
+.roadmap-footnote{font-size:10px;color:#8b8e86;line-height:1.5;padding:0 2px}
+.goal-compare{margin-top:13px}.goal-compare .paths-section{padding:10px;margin:0}.goal-compare>summary{background:#f0f5eb}
+
 </style></head><body><div id="app" class="app"></div><div id="modal-root"></div><div id="toast-root"></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.118.0"></script>
 <script src="./our-next-chapter-cloud-config.js"></script>
@@ -325,9 +353,47 @@ function financialPaths(){
  '</section>';
 }
 
+
+function moneyRoadmap(){
+ const p=state.roadmapPrefs||{},expenses=Number(p.monthlyEssentials||3200),months=Number(p.tripStartMonths||48);
+ const tripLength=Number(p.tripLength||6)===12?12:6;
+ const target=Number(p.tripBudget||(tripLength===12?65000:35000));
+ const totalDebt=sum(state.debts.map(debtBalance));
+ const emergency=state.goals.find(g=>g.id==='emergency');
+ const currentEmergency=Number(emergency?.saved||0);
+ const starterGoal=1000,starterRemaining=Math.max(0,starterGoal-currentEmergency);
+ const fullEmergency=Math.max(0,3*expenses-currentEmergency);
+ const travelGoal=state.goals.find(g=>g.id==='travel');
+ const travelSaved=Number(travelGoal?.saved||0);
+ const cashFund=Number(p.monthlyAfterDebt||1500);
+ const debtDuration=cashFund>0?Math.ceil(totalDebt/cashFund):Infinity;
+ const emergencyDuration=cashFund>0?Math.ceil(fullEmergency/cashFund):Infinity;
+ const readyMonth=debtDuration+emergencyDuration;
+ const tripWindow=Math.max(0,months-readyMonth);
+ const monthlyNeeded=tripWindow?Math.max(0,(target-travelSaved)/tripWindow):null;
+ const phase=totalDebt>0?'debt':currentEmergency<3*expenses?'emergency':'travel';
+ const currentPhase=totalDebt>0?'2':currentEmergency<3*expenses?'3':'4';
+ const debtOrder=state.debts.slice().sort((a,b)=>debtBalance(a)-debtBalance(b));
+ const displayMonths=m=>Number.isFinite(m)?m+' mo':'—';
+ return '<section class="roadmap-light">'+
+ '<div class="roadmap-title"><div><span class="eyebrow">OUR MONEY ROADMAP</span><h2>Debt-free, then the world. ♡</h2></div><button data-action="editroadmap" class="text-btn">Adjust ›</button></div>'+
+ '<div class="roadmap-photo"><div class="roadmap-copy"><span>THE BIG ADVENTURE</span><strong>6–12 months of freedom</strong><small>Build the financial foundation, then pack our bags.</small></div></div>'+
+ '<div class="roadmap-stages">'+
+ '<div class="roadmap-stage '+(starterRemaining===0?'done':'')+'"><span class="stage-number">1</span><div><strong>Starter emergency fund</strong><small>'+money(currentEmergency)+' recorded of '+money(starterGoal)+' starter target</small></div><span class="stage-mark">'+(starterRemaining===0?'✓':'→')+'</span></div>'+
+ '<div class="roadmap-stage '+(phase==='debt'?'current':totalDebt===0?'done':'')+'"><span class="stage-number">2</span><div><strong>Debt snowball</strong><small>'+money(totalDebt)+' left · smallest balance first</small></div><span class="stage-mark">'+(totalDebt===0?'✓':'→')+'</span></div>'+
+ '<div class="roadmap-stage '+(phase==='emergency'?'current':phase==='travel'?'done':'')+'"><span class="stage-number">3</span><div><strong>3–6 months of emergency savings</strong><small>3-month starting target '+money(3*expenses)+' · adjustable</small></div><span class="stage-mark">'+(phase==='travel'?'✓':'→')+'</span></div>'+
+ '<div class="roadmap-stage '+(phase==='travel'?'current':'')+'"><span class="stage-number">4</span><div><strong>Our '+tripLength+'-month dream trip</strong><small>'+money(travelSaved)+' saved toward '+money(target)+'</small></div><span class="stage-mark">✈</span></div></div>'+
+ '<div class="roadmap-split"><div><small>Trip target</small><strong>'+money(target)+'</strong><span>'+tripLength+' months abroad</span></div><div><small>Dream departure</small><strong>In '+months+' months</strong><span>Flexible, not a booked date</span></div></div>'+
+ '<div class="roadmap-note"><strong>What will it take?</strong><p>'+(monthlyNeeded===null?'With your current illustrative monthly surplus, the debt and starter full emergency fund would take longer than your trip horizon. You can adjust the surplus, trip timing or target.':'If you put '+money(cashFund)+'/month toward debt and then emergency savings, the simplified forecast leaves '+tripWindow+' months to fund the trip. You would then need about <b>'+money(monthlyNeeded)+'/month</b> toward travel.')+'</p>'+
+ '<p>Debt-free estimate: '+displayMonths(debtDuration)+' · emergency buffer: '+displayMonths(emergencyDuration)+'. No interest, new debt or income changes are assumed.</p></div>'+
+ '<details class="roadmap-detail"><summary>Our debt snowball order & savings rules <span>⌄</span></summary><div class="roadmap-detail-inner">'+debtOrder.map((d,i)=>'<div class="roadmap-debt-row"><span>'+ (i+1)+'. '+esc(d.name)+'</span><strong>'+money(debtBalance(d))+'</strong></div>').join('')+'<p>Keep minimum debt payments current. The interest-free student loan is shown, but you can prioritize cards and urgent car/dental costs where necessary. The baby steps are a guide, not a rule that hides your travel dreams.</p></div></details>'+
+ '<div class="roadmap-footnote">The recorded emergency fund only reflects transfers logged in the Goals tab; your older cash savings snapshot may be separate. Confirm actual balances before using these forecasts.</div></section>';
+}
+
 function goalsScreen(){const gs=state.goals.filter(g=>g.active),world=state.goals.find(g=>g.id==='travel'),nyc=state.goals.find(g=>g.id==='nyc');return `<div class="content"><div class="screen-heading"><div><h1>Our goals ♡</h1><p>Big dreams, brighter days</p></div><button class="icon-button" data-action="addgoal" aria-label="Add savings goal">+</button></div>
- <div class="photo-banner" style="height:155px"><h3>Collect moments, not things.</h3><p>Big adventures, a home someday and one step at a time.</p></div>
- ${financialPaths()}
+ <div class="photo-banner" style="height:126px"><h3>Collect moments, not things.</h3><p>Build security first. Then go explore the world.</p></div>
+ ${moneyRoadmap()}
+ <details class="goal-compare"><summary>Compare the two debt-payoff paths <span>⌄</span></summary>${financialPaths()}</details>
  <div class="sectionhead" style="margin-top:19px"><h2>Our goal trackers</h2><span class="small muted">Tap any to update</span></div>
  <div class="goal-list">${gs.map(g=>{const art=goalArtwork(g);const pct=percent(g.saved,g.target);return `<button class="goal-list-item" data-action="goaldetail" data-id="${g.id}"><span class="goal-list-pic" style="${art?'background-image:url('+art+');background-size:cover;background-position:center':'background:#f3e5dd'}">${art?'':esc(g.icon)}</span><span class="goal-list-main"><strong>${esc(g.name)}</strong><small>${money(g.saved)} ${g.target?'of '+money(g.target):'saved'}</small><span class="meter"><span style="width:${pct}%"></span></span></span><span class="goal-list-pct">${pct}%<small>›</small></span></button>`}).join('')}</div>
  <div class="info-card">Your FHSA stays for your future house. A goal's balance changes only when you record a savings transfer or correction.</div>
@@ -426,6 +492,17 @@ else if(modal==='jointbreakdown'){
  '<button type="button" class="outline full" style="margin-top:13px" data-action="editperiodplan">✎ Edit these allocations</button>';
  button='Close';action='jointbreakdown';
 }
+else if(modal==='editroadmap'){
+ const p=state.roadmapPrefs||{},length=Number(p.tripLength||6),budget=Number(p.tripBudget||(length===12?65000:35000));
+ title='Plan our future trip ♡';
+ html='<div class="help">These are future targets, not money already saved. The trip comes after debt payoff and your emergency fund in the Ramsey-inspired plan.</div>'+
+ field('Dream trip duration',sel('tripLength',[[6,'6 months'],[12,'12 months']],length))+
+ field('Target travel fund (CAD)',input('tripBudget',budget,'number','min="1000" step="500" required'))+
+ field('Months until we hope to leave',input('tripStartMonths',Number(p.tripStartMonths||48),'number','min="12" max="120" required'))+
+ field('Core living expenses / month',input('monthlyEssentials',Number(p.monthlyEssentials||3200),'number','min="1" required'))+
+ field('Possible monthly money to debt, then savings',input('monthlyAfterDebt',Number(p.monthlyAfterDebt||1500),'number','min="0" step="50" required'))+
+ '<div class="help">The payoff timeline is illustrative. It assumes the monthly amount is extra money available after minimum obligations and essentials. It excludes interest, earnings changes and spending abroad.</div>';
+}
 else if(modal==='editpaths'){
  const x=pathSetup(),goals=state.goals.filter(g=>['nyc','travel'].includes(g.id));
  title='Our two paths ♡';
@@ -475,6 +552,11 @@ if(m==='jointbreakdown'){closeModal();return}
 if(m==='rentcash'){const c=getCycle();state.rentWithdrawals??=[];if(!rentWithdrawalFor(c.key)){if(!(amount>0)||!date){showToast('Enter the cash amount and date');return}state.rentWithdrawals.push({id:uid(),periodKey:c.key,date,amount});showToast('Cash withdrawal recorded ✓')}else showToast('Already recorded for this pay period');save();closeModal();render();return}
 if(m==='editcycle'){state.cycleAnchor=data.anchor;state.expectedIncome=Number(data.income);state.expectedEssentials=Number(data.essentials);cycleOffset=0;showToast('Pay period settings saved')}
 else if(m==='editreserves'){['savings','rent','cash','rrsp'].forEach(k=>state.reserves[k]=Number(data[k]));state.reserves.rentSeparateUnconfirmed=!f.elements.separate.checked;showToast('Snapshot updated')}
+else if(m==='editroadmap'){
+ const months=Number(data.tripStartMonths),tripLength=Number(data.tripLength),budget=Number(data.tripBudget),essential=Number(data.monthlyEssentials),extra=Number(data.monthlyAfterDebt);
+ if(![months,tripLength,budget,essential,extra].every(Number.isFinite)||months<12||months>120||![6,12].includes(tripLength)||budget<1000||essential<=0||extra<0){showToast('Please enter realistic positive targets');return}
+ state.roadmapPrefs={tripStartMonths:months,tripLength,tripBudget:budget,monthlyEssentials:essential,monthlyAfterDebt:extra};showToast('Our dream trip plan updated ♡')
+}
 else if(m==='editpaths'){
  const monthly=Number(data.monthlyAvailable),travel=Number(data.monthlyTravel);
  if(!Number.isFinite(monthly)||monthly<0||!Number.isFinite(travel)||travel<0||travel>monthly){showToast('Travel must be between $0 and the total available');return}
