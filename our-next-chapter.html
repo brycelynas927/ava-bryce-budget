@@ -179,6 +179,7 @@ body{background:#ebe4d9}.app{background:linear-gradient(180deg,#f8f3ec,#fbf7f0 6
 .new-detail-row{padding:10px 0;display:flex;justify-content:space-between;gap:10px;border-bottom:1px solid #f0ece8;font-size:11px}.new-detail-row:last-child{border:0}
 @media(max-width:360px){.new-home-hero h1{font-size:25px}.new-pay-total{font-size:32px}.new-money-row{gap:6px;padding:10px}.new-money-row>b{font-size:12px}.new-quick-grid button{font-size:10px}}
 
+.roadmap-next-steps{background:#eaf1e8;padding:13px;border-radius:13px;color:#52715b}.roadmap-next-steps strong{font-size:12px;display:block}.roadmap-next-steps small{font-size:10px;line-height:1.5;display:block;margin-top:5px}
 </style></head><body><div id="app" class="app"></div><div id="modal-root"></div><div id="toast-root"></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.118.0"></script>
 <script src="./our-next-chapter-cloud-config.js"></script>
@@ -408,23 +409,23 @@ function financialPaths(){
 
 
 function moneyRoadmap(){
- const p=state.roadmapPrefs||{},expenses=Number(p.monthlyEssentials||3200),months=Number(p.tripStartMonths||48);
+ const p=state.roadmapPrefs||{},expenses=Number(p.monthlyEssentials??3200),months=Number(p.tripStartMonths??48),bufferMonths=Number(p.emergencyMonths)===6?6:3;
  const tripLength=Number(p.tripLength||6)===12?12:6;
  const target=Number(p.tripBudget||(tripLength===12?65000:35000));
  const totalDebt=sum(state.debts.map(debtBalance));
  const emergency=state.goals.find(g=>g.id==='emergency');
  const currentEmergency=Number(emergency?.saved||0);
  const starterGoal=1000,starterRemaining=Math.max(0,starterGoal-currentEmergency);
- const fullEmergency=Math.max(0,3*expenses-currentEmergency);
+ const fullEmergency=Math.max(0,bufferMonths*expenses-currentEmergency);
  const travelGoal=state.goals.find(g=>g.id==='travel');
  const travelSaved=Number(travelGoal?.saved||0);
- const cashFund=Number(p.monthlyAfterDebt||1500);
+ const cashFund=Number(p.monthlyAfterDebt??1500);
  const debtDuration=cashFund>0?Math.ceil(totalDebt/cashFund):Infinity;
  const emergencyDuration=cashFund>0?Math.ceil(fullEmergency/cashFund):Infinity;
  const readyMonth=debtDuration+emergencyDuration;
  const tripWindow=Math.max(0,months-readyMonth);
  const monthlyNeeded=tripWindow?Math.max(0,(target-travelSaved)/tripWindow):null;
- const phase=totalDebt>0?'debt':currentEmergency<3*expenses?'emergency':'travel';
+ const phase=totalDebt>0?'debt':currentEmergency<bufferMonths*expenses?'emergency':'travel';
  const currentPhase=totalDebt>0?'2':currentEmergency<3*expenses?'3':'4';
  const debtOrder=state.debts.slice().sort((a,b)=>debtBalance(a)-debtBalance(b));
  const displayMonths=m=>Number.isFinite(m)?m+' mo':'—';
@@ -434,9 +435,9 @@ function moneyRoadmap(){
  '<div class="roadmap-stages">'+
  '<div class="roadmap-stage '+(starterRemaining===0?'done':'')+'"><span class="stage-number">1</span><div><strong>Starter emergency fund</strong><small>'+money(currentEmergency)+' recorded of '+money(starterGoal)+' starter target</small></div><span class="stage-mark">'+(starterRemaining===0?'✓':'→')+'</span></div>'+
  '<div class="roadmap-stage '+(phase==='debt'?'current':totalDebt===0?'done':'')+'"><span class="stage-number">2</span><div><strong>Debt snowball</strong><small>'+money(totalDebt)+' left · smallest balance first</small></div><span class="stage-mark">'+(totalDebt===0?'✓':'→')+'</span></div>'+
- '<div class="roadmap-stage '+(phase==='emergency'?'current':phase==='travel'?'done':'')+'"><span class="stage-number">3</span><div><strong>3–6 months of emergency savings</strong><small>3-month starting target '+money(3*expenses)+' · adjustable</small></div><span class="stage-mark">'+(phase==='travel'?'✓':'→')+'</span></div>'+
+ '<div class="roadmap-stage '+(phase==='emergency'?'current':phase==='travel'?'done':'')+'"><span class="stage-number">3</span><div><strong>3–6 months of emergency savings</strong><small>Selected '+bufferMonths+'-month buffer target '+money(bufferMonths*expenses)+'</small></div><span class="stage-mark">'+(phase==='travel'?'✓':'→')+'</span></div>'+
  '<div class="roadmap-stage '+(phase==='travel'?'current':'')+'"><span class="stage-number">4</span><div><strong>Our '+tripLength+'-month dream trip</strong><small>'+money(travelSaved)+' saved toward '+money(target)+'</small></div><span class="stage-mark">✈</span></div></div>'+
- '<div class="roadmap-split"><div><small>Trip target</small><strong>'+money(target)+'</strong><span>'+tripLength+' months abroad</span></div><div><small>Dream departure</small><strong>In '+months+' months</strong><span>Flexible, not a booked date</span></div></div>'+
+ '<div class="roadmap-next-steps"><strong>After the safety net</strong><small>Keep building retirement savings and your FHSA while planning travel. Ramsey’s later steps include investing toward retirement and saving for a home, so the trip should have its own dedicated fund.</small></div>'+ '<div class="roadmap-split"><div><small>Trip target</small><strong>'+money(target)+'</strong><span>'+tripLength+' months abroad</span></div><div><small>Dream departure</small><strong>In '+months+' months</strong><span>Flexible, not a booked date</span></div></div>'+
  '<div class="roadmap-note"><strong>What will it take?</strong><p>'+(monthlyNeeded===null?'With your current illustrative monthly surplus, the debt and starter full emergency fund would take longer than your trip horizon. You can adjust the surplus, trip timing or target.':'If you put '+money(cashFund)+'/month toward debt and then emergency savings, the simplified forecast leaves '+tripWindow+' months to fund the trip. You would then need about <b>'+money(monthlyNeeded)+'/month</b> toward travel.')+'</p>'+
  '<p>Debt-free estimate: '+displayMonths(debtDuration)+' · emergency buffer: '+displayMonths(emergencyDuration)+'. No interest, new debt or income changes are assumed.</p></div>'+
  '<details class="roadmap-detail"><summary>Our debt snowball order & savings rules <span>⌄</span></summary><div class="roadmap-detail-inner">'+debtOrder.map((d,i)=>'<div class="roadmap-debt-row"><span>'+ (i+1)+'. '+esc(d.name)+'</span><strong>'+money(debtBalance(d))+'</strong></div>').join('')+'<p>Keep minimum debt payments current. The interest-free student loan is shown, but you can prioritize cards and urgent car/dental costs where necessary. The baby steps are a guide, not a rule that hides your travel dreams.</p></div></details>'+
@@ -560,8 +561,9 @@ else if(modal==='editroadmap'){
  field('Dream trip duration',sel('tripLength',[[6,'6 months'],[12,'12 months']],length))+
  field('Target travel fund (CAD)',input('tripBudget',budget,'number','min="1000" step="500" required'))+
  field('Months until we hope to leave',input('tripStartMonths',Number(p.tripStartMonths||48),'number','min="12" max="120" required'))+
- field('Core living expenses / month',input('monthlyEssentials',Number(p.monthlyEssentials||3200),'number','min="1" required'))+
- field('Possible monthly money to debt, then savings',input('monthlyAfterDebt',Number(p.monthlyAfterDebt||1500),'number','min="0" step="50" required'))+
+ field('Core living expenses / month',input('monthlyEssentials',Number(p.monthlyEssentials??3200),'number','min="1" required'))+
+ field('Emergency fund target',sel('emergencyMonths',[[3,'3 months of expenses'],[6,'6 months of expenses']],Number(p.emergencyMonths)===6?6:3))+
+ field('Possible monthly money to debt, then savings',input('monthlyAfterDebt',Number(p.monthlyAfterDebt??1500),'number','min="0" step="50" required'))+
  '<div class="help">The payoff timeline is illustrative. It assumes the monthly amount is extra money available after minimum obligations and essentials. It excludes interest, earnings changes and spending abroad.</div>';
 }
 else if(modal==='editpaths'){
@@ -614,9 +616,9 @@ if(m==='rentcash'){const c=getCycle();state.rentWithdrawals??=[];if(!rentWithdra
 if(m==='editcycle'){state.cycleAnchor=data.anchor;state.expectedIncome=Number(data.income);state.expectedEssentials=Number(data.essentials);cycleOffset=0;showToast('Pay period settings saved')}
 else if(m==='editreserves'){['savings','rent','cash','rrsp'].forEach(k=>state.reserves[k]=Number(data[k]));state.reserves.rentSeparateUnconfirmed=!f.elements.separate.checked;showToast('Snapshot updated')}
 else if(m==='editroadmap'){
- const months=Number(data.tripStartMonths),tripLength=Number(data.tripLength),budget=Number(data.tripBudget),essential=Number(data.monthlyEssentials),extra=Number(data.monthlyAfterDebt);
- if(![months,tripLength,budget,essential,extra].every(Number.isFinite)||months<12||months>120||![6,12].includes(tripLength)||budget<1000||essential<=0||extra<0){showToast('Please enter realistic positive targets');return}
- state.roadmapPrefs={tripStartMonths:months,tripLength,tripBudget:budget,monthlyEssentials:essential,monthlyAfterDebt:extra};showToast('Our dream trip plan updated ♡')
+ const months=Number(data.tripStartMonths),tripLength=Number(data.tripLength),budget=Number(data.tripBudget),essential=Number(data.monthlyEssentials),extra=Number(data.monthlyAfterDebt),emergencyMonths=Number(data.emergencyMonths);
+ if(![months,tripLength,budget,essential,extra,emergencyMonths].every(Number.isFinite)||months<12||months>120||![6,12].includes(tripLength)||![3,6].includes(emergencyMonths)||budget<1000||essential<=0||extra<0){showToast('Please enter realistic positive targets');return}
+ state.roadmapPrefs={tripStartMonths:months,tripLength,tripBudget:budget,monthlyEssentials:essential,monthlyAfterDebt:extra,emergencyMonths};showToast('Our dream trip plan updated ♡')
 }
 else if(m==='editpaths'){
  const monthly=Number(data.monthlyAvailable),travel=Number(data.monthlyTravel);
