@@ -5,8 +5,8 @@
   "start_url": "./our-next-chapter.html",
   "scope": "./",
   "display": "standalone",
-  "background_color": "#faf7f2",
-  "theme_color": "#f7f1e9",
+  "background_color": "#fff8f8",
+  "theme_color": "#fff8f8",
   "icons": [
     {
       "src": "./budget-icon.svg",
