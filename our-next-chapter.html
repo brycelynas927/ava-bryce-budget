@@ -374,6 +374,16 @@ html[data-theme] select:focus-visible{outline:2px solid var(--tone-accent);outli
 .passport-stamp strong{font-size:11px;line-height:1.2}.passport-stamp small{font-size:9px;line-height:1.4;color:#89727a}
 .passport-actions{display:flex;gap:8px;padding:2px 12px 10px}.passport-actions button{flex:1;font-size:10px;padding:10px 5px}
 .passport-foot{font-size:10px;color:var(--muted);margin:0;padding:0 12px 13px;line-height:1.5}
+
+.snowball-widget{margin:15px 0;padding:14px;background:var(--theme-paper);border:1px solid var(--theme-border);border-radius:16px}
+.snowball-head{display:flex;justify-content:space-between;gap:8px;align-items:center;margin-bottom:10px}.snowball-head span{display:block;font-size:9px;letter-spacing:.7px;color:var(--tone-strong);font-weight:750}.snowball-head strong{display:block;font:italic 19px Georgia,serif;margin-top:4px}
+.snowball-head button{border:0;background:none;color:var(--tone-strong);font-weight:700;font-size:12px}
+.snowball-debt{width:100%;display:flex;align-items:center;gap:9px;background:none;border:0;border-bottom:1px solid var(--theme-border);padding:12px 0;text-align:left;color:var(--ink)}
+.snowball-order{height:27px;width:27px;flex:0 0 27px;display:grid;place-items:center;border-radius:50%;background:var(--tone-soft);font-size:12px;font-weight:700;color:var(--tone-strong)}
+.snowball-debt>span:nth-child(2){flex:1;min-width:0}.snowball-debt strong{display:block;font-size:12px}.snowball-debt small{display:block;font-size:10px;color:var(--muted);margin-top:3px}
+.snowball-debt b{font-size:12px;white-space:nowrap}.snowball-warning{background:#fff0e8;color:#945a4b;padding:11px;border-radius:9px;font-size:11px}
+.snowball-forecast{background:var(--tone-soft);padding:12px;border-radius:10px;margin-top:10px}.snowball-forecast strong{font-size:13px;display:block}.snowball-forecast small{font-size:10px;color:var(--muted);display:block;margin-top:4px}
+.snowball-foot{font-size:10px;color:var(--muted);margin-top:11px;line-height:1.5}
 </style></head><body><div id="app" class="app"></div><div id="modal-root"></div><div id="toast-root"></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.118.0"></script>
 <script src="./our-next-chapter-cloud-config.js"></script>
@@ -796,6 +806,7 @@ function adventurePassport(){
 function goalsScreen(){const gs=state.goals.filter(g=>g.active),world=state.goals.find(g=>g.id==='travel'),nyc=state.goals.find(g=>g.id==='nyc');return `<div class="content"><div class="screen-heading"><div><h1>Our goals ♡</h1><p>Big dreams, brighter days</p></div><button class="icon-button" data-action="addgoal" aria-label="Add savings goal">+</button></div>
  <div class="photo-banner" style="height:126px"><h3>Collect moments, not things.</h3><p>Build security first. Then go explore the world.</p></div>
  ${moneyRoadmap()}
+ <button class="outline full" data-nav="debt" style="margin-top:10px">💳 View our live debt snowball ›</button>
  ${adventurePassport()}
  <details class="goal-compare"><summary>Compare the two debt-payoff paths <span>⌄</span></summary>${financialPaths()}</details>
  <div class="sectionhead" style="margin-top:19px"><h2>Our goal trackers</h2><span class="small muted">Tap any to update</span></div>
@@ -804,10 +815,42 @@ function goalsScreen(){const gs=state.goals.filter(g=>g.active),world=state.goal
  <div class="home-photo-banner" style="margin:16px 0 3px"><div><strong>The world is waiting ♡</strong><small>We'll build our travel fund without going back into debt.</small></div></div>
  </div>`}
 
+
+function snowballForecast(){
+ const active=state.debts.filter(d=>debtBalance(d)>.009),budget=state.snowballMonthlyBudget;
+ if(!active.length)return {done:true,months:0,interest:0};
+ if(!(budget>0))return {reason:'Set the monthly amount available for all debt payments.'};
+ if(active.some(d=>d.apr===undefined||d.apr===null||d.minimum===undefined||d.minimum===null))return {reason:'Enter the APR and minimum payment from each statement to see a projected payoff.'};
+ const minTotal=sum(active.map(d=>d.minimum));
+ if(minTotal>budget+.01)return {reason:'Your debt-payment budget is less than your combined minimum payments.'};
+ const balances=active.map(d=>({id:d.id,name:d.name,balance:debtBalance(d),apr:Number(d.apr),minimum:Number(d.minimum)}));
+ let months=0,interest=0;
+ while(months<600 && balances.some(b=>b.balance>.009)){
+  months++;
+  for(const d of balances){if(d.balance>.009){const accrued=d.balance*d.apr/1200;d.balance+=accrued;interest+=accrued;}}
+  let available=budget;
+  for(const d of balances){const due=Math.min(d.balance,d.minimum);d.balance-=due;available-=due}
+  if(available<-.001)return {reason:'Minimum payments exceed this month’s budget after balances changed.'};
+  for(const d of balances.slice().sort((a,b)=>a.balance-b.balance)){
+   if(available<=.009)break;const paid=Math.min(available,d.balance);d.balance-=paid;available-=paid;
+  }
+ }
+ if(balances.some(d=>d.balance>.009))return {reason:'At this amount, the plan does not fully repay debt within 50 years. Review minimums, rates and budget.'};
+ return {done:true,months,interest};
+}
+function snowballWidget(){
+ const debts=state.debts.filter(d=>debtBalance(d)>.009).sort((a,b)=>debtBalance(a)-debtBalance(b)),p=snowballForecast();
+ return '<div class="snowball-widget"><div class="snowball-head"><div><span>💳 OUR DEBT SNOWBALL</span><strong>Smallest balance first</strong></div><button data-action="snowballbudget">Adjust ›</button></div>'+
+ (debts.length?debts.map((d,i)=>'<button class="snowball-debt" data-action="debtdetail" data-id="'+esc(d.id)+'"><span class="snowball-order">'+(i+1)+'</span><span><strong>'+esc(d.name)+'</strong><small>'+(d.minimum===undefined?'Minimum unknown':money(d.minimum)+' min / month')+' · '+(d.apr===undefined?'APR unknown':Number(d.apr).toFixed(2)+'% APR')+'</small></span><b>'+money(debtBalance(d))+'</b></button>').join(''):'<div class="smartcomplete">All recorded debts are paid off! ♡</div>')+
+ (p.done?'<div class="snowball-forecast"><strong>'+(p.months?'Projected payoff in '+p.months+' months':'Debt-free!')+'</strong><small>'+ (p.months?'Estimated interest '+money(p.interest)+' · based on rates, minimums and monthly budget entered.':'')+'</small></div>':
+ '<p class="snowball-warning">⚠ '+esc(p.reason)+'</p>')+
+ '<div class="snowball-foot">Pay minimums on all debts, then direct the extra toward the smallest remaining balance. Interest is estimated monthly; check statements because real billing and interest vary. These projections do not pay your debts.</div></div>';
+}
+
 function debtScreen(){const balances=state.debts.map(debtBalance),total=sum(balances),card=state.debts.find(d=>d.id==='cards'),cardpct=card?percent(debtPaid(card.id),card.base):0;
  return `<div class="content"><div class="screen-heading"><div><h1>Debt freedom ♡</h1><p>Every payment deserves a little celebration</p></div><button class="icon-button" data-action="addpayment">+</button></div>
  <div class="debt-photo-feature"><div class="eyebrow" style="color:#fff9ec">ONE STEP CLOSER</div><h2>Freedom looks good on us ♡</h2><div class="debt-total-chip"><span>Total debt remaining</span><strong>${money(total)}</strong><small>Based on the balances and payments you've recorded</small></div></div>
- <div class="sectionhead" style="margin-top:17px"><h2>Our debt trackers</h2><button data-action="addpayment">+ Log payment</button></div>
+ ${snowballWidget()}<div class="sectionhead" style="margin-top:17px"><h2>Our debt trackers</h2><button data-action="addpayment">+ Log payment</button></div>
  ${state.debts.map(d=>`<div class="card debt-card refined-debt"><div class="headline"><span class="debt-symbol">${d.icon}</span><div style="flex:1"><h3>${esc(d.name)}</h3><small>Remaining balance</small><div class="balance">${money(debtBalance(d))}</div></div><button class="icon-button" data-action="debtdetail" data-id="${d.id}" aria-label="Edit debt balance">›</button></div><div class="meter"><span style="width:${percent(debtPaid(d.id),d.base)}%"></span></div><div class="spaced"><small>${percent(debtPaid(d.id),d.base)}% paid since tracking began</small><small>${money(debtPaid(d.id))} logged</small></div><button class="ghost full" style="margin-top:12px" data-action="addpayment" data-id="${d.id}">Record a payment</button></div>`).join('')}
  <div class="info-card">The optional extra $4,000 apprentice loan is not in your balance unless you actually borrow it. Your history is preserved as you log payments.</div>
  </div>`}
@@ -998,7 +1041,21 @@ else if(modal==='addbill'){const preset=billPresets.find(x=>x.key===modalArgs.te
 else if(['addincome','addexpense','addpayment','addsaving'].includes(modal)){title=({addincome:'Record income',addexpense:'Record an expense',addpayment:'Log a debt payment',addsaving:'Move money to a goal'})[modal];const options=modal==='addpayment'?state.debts.map(d=>[d.id,`${d.name} · ${money(debtBalance(d))} left`]):state.goals.map(g=>[g.id,g.name]);html=`${modal==='addpayment'||modal==='addsaving'?field(modal==='addpayment'?'Debt account':'Savings goal',sel('ref',options,modalArgs.id||'')):field('Description',input('name',modal==='addincome'?'Paycheque':modal==='addexpense'?'Purchase':'','text','required'))}${field('Amount ($)',input('amount','','number','min="0.01" step="0.01" required'))}${modal==='addincome'?field('Income source',sel('source',[['paycheck','Paycheque'],['uber','Uber / deliveries'],['resell','Online reselling'],['side','Other side jobs'],['other','Other']])):modal==='addexpense'?field('Expense category',sel('source',[['living','Regular living expenses'],['uber','Uber / delivery costs'],['resell','Reselling inventory or fees'],['other','Other']])):''}${field('Date',input('date',today(),'date','required'))}${modal==='addsaving'?field('Direction',sel('direction',[['goal','Add savings'],['withdraw','Use/withdraw goal money']])):''}${field('Optional note',input('note','','text','placeholder="What was this for?"'))}<div class="help">Only record a real transaction. Plans live separately in Pay Period Planner.</div>`;button='Record'}
 else if(modal==='addallocation'){title='Assign money for this period';html=`${field('Plan this money for',sel('ref',[...state.goals.map(g=>[g.id,'Goal · '+g.name]),...state.debts.map(d=>[d.id,'Debt · '+d.name])]))}${field('Amount ($)',input('amount','','number','min="0.01" step="0.01" required'))}<div class="help">This is a plan only; it doesn't change balances until you record a real payment.</div>`;button='Assign money'}
 else if(modal==='goaldetail'){const g=state.goals.find(x=>x.id===modalArgs.id);if(!g)return;title=g.name;html=`<div class="info-card">${esc(g.icon)} Saved so far: <strong>${money(g.saved)}</strong>${g.target?' of '+money(g.target):''}</div>${field('Goal name',input('name',g.name,'text','required'))}${field('Target amount ($)',input('target',g.target,'number','min="0" step="1" required'))}${field('Target date (optional)',input('deadline',g.deadline||'','date'))}<div class="mini-actions" style="margin:12px 0"><button type="button" class="solid" data-action="addsaving" data-id="${g.id}">+ Add or use savings</button></div>`}
-else if(modal==='debtdetail'){const d=getDebt(modalArgs.id);if(!d)return;title=d.name;html=`<div class="info-card">Current recorded balance: <strong>${money(debtBalance(d))}</strong><br>Payments since tracking began: ${money(debtPaid(d.id))}</div>${field('Correct current balance to match statement ($)',input('balance',debtBalance(d),'number','min="0" step="0.01" required'))}<div class="help">Use this if your statement includes interest, fees or earlier payments. Payments you've recorded stay in history.</div><button type="button" class="outline full" data-action="addpayment" data-id="${d.id}">Log a payment instead</button>`}
+else if(modal==='debtdetail'){
+ const d=getDebt(modalArgs.id);if(!d)return;title=d.name;
+ html='<div class="info-card">Current recorded balance: <b>'+money(debtBalance(d))+'</b> · Payments logged: '+money(debtPaid(d.id))+'</div>'+
+ field('Correct balance from statement ($)',input('balance',debtBalance(d),'number','min="0" step="0.01" required'))+
+ '<div class="field-inline">'+field('APR — annual interest rate (%)',input('apr',d.apr??'','number','min="0" max="99" step="0.01" placeholder="Enter actual APR"'))+
+ field('Minimum payment per month ($)',input('minimum',d.minimum??'','number','min="0" step="0.01" placeholder="Statement minimum"'))+'</div>'+
+ '<div class="help">Enter your actual APR and monthly minimum from a statement. Use 0% for loans with confirmed no interest. These values are only for estimating payoff; they do not add interest automatically to your recorded balance.</div>'+
+ '<button type="button" class="outline full" data-action="addpayment" data-id="'+esc(d.id)+'">Record a payment instead</button>';
+}
+else if(modal==='snowballbudget'){
+ title='Monthly debt snowball budget';
+ html='<div class="help">How much can you actually put toward all debt payments every month, including every minimum? After rent, bills and essentials.</div>'+
+ field('Total monthly amount for debt payments ($)',input('debtBudget',state.snowballMonthlyBudget??'','number','min="0.01" step="0.01" placeholder="Enter the real amount" required'))+
+ '<div class="help">This amount is for your forecast only. Each debt also needs its interest rate and minimum payment entered.</div>';
+}
 else if(modal==='addevent'||modal==='editevent'){
  const item=modal==='editevent'?state.events.find(e=>e.id===modalArgs.id):null;
  if(modal==='editevent'&&!item)return;
@@ -1054,7 +1111,12 @@ else if(['addincome','addexpense','addpayment','addsaving'].includes(m)){if(!amo
 const name=data.name|| (type==='debt'?getDebt(ref).name:state.goals.find(g=>g.id===ref)?.name)||'Transaction';state.transactions.push({id:uid(),type,ref,amount,date,name,note:data.note||'',source:data.source||''});showToast('Recorded successfully ✓');if(type==='debt')maybeCelebrate(getDebt(ref));if(type==='goal'){const g=state.goals.find(x=>x.id===ref);state.goalCelebrated??={};if(g.target&&g.saved>=g.target&&!state.goalCelebrated[ref]){state.goalCelebrated[ref]=true;pendingCelebration=['A goal reached!','You saved enough for '+g.name+' 🎉','🌴']}}}
 else if(m==='addallocation'){if(amount<=0){showToast('Enter an amount above zero');return}const key=getCycle().key,ref=data.ref,fromGoal=state.goals.find(g=>g.id===ref),fromDebt=getDebt(ref);state.plan[key]??=[];state.plan[key].push({id:uid(),ref,name:fromGoal?.name||fromDebt?.name||'Goal',amount,type:fromGoal?'goal':'debt'});showToast('Assigned in your plan—not yet spent')}
 else if(m==='goaldetail'){let g=state.goals.find(x=>x.id===modalArgs.id);g.name=data.name.trim();g.target=Number(data.target);g.deadline=data.deadline||'';showToast('Goal updated')}
-else if(m==='debtdetail'){const d=getDebt(modalArgs.id);d.base=Number(data.balance)+debtPaid(d.id);showToast('Balance reconciled to your statement')}
+else if(m==='snowballbudget'){const budget=Number(data.debtBudget);if(!(budget>0)){showToast('Enter a monthly debt budget above zero');return}state.snowballMonthlyBudget=budget;showToast('Debt snowball amount saved ✓')}
+else if(m==='debtdetail'){const d=getDebt(modalArgs.id),balance=Number(data.balance);if(!Number.isFinite(balance)||balance<0){showToast('Enter a valid balance');return}
+ const apr=data.apr===''?undefined:Number(data.apr),minimum=data.minimum===''?undefined:Number(data.minimum);
+ if((apr!==undefined&&(!Number.isFinite(apr)||apr<0||apr>99))||(minimum!==undefined&&(!Number.isFinite(minimum)||minimum<0))){showToast('Check your APR and minimum payment');return}
+ d.base=balance+debtPaid(d.id);if(apr===undefined)delete d.apr;else d.apr=apr;if(minimum===undefined)delete d.minimum;else d.minimum=minimum;
+ showToast('Debt details saved')}
 else if(m==='addevent'||m==='editevent'){
  const name=String(data.name||'').trim(),kind=['appointment','reminder','personal','finance'].includes(data.kind)?data.kind:'personal';
  if(!name||!/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/.test(date)){showToast('Enter an event name and valid date');return}
