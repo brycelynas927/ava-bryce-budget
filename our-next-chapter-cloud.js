@@ -47,7 +47,8 @@ const listen=async()=>{
   if(!api.ready)return;
   const newRevision=Number(payload.new?.revision);
   if(!Number.isFinite(newRevision)||newRevision<=revision)return;
-  if(busy||queued||unsynced){api.conflict=true;pendingRemote=payload.new;notify('A second phone saved while your changes were pending. Review changes.');paint();return}
+  if(busy){pendingRemote=payload.new;return}
+  if(queued||unsynced){api.conflict=true;pendingRemote=payload.new;notify('A second phone saved while your changes were pending. Review changes.');paint();return}
   // Always fetch the latest authorized document rather than trusting a websocket payload.
   await pull();
  }).subscribe(status=>{if(status==='CHANNEL_ERROR'||status==='TIMED_OUT'){notify('Live updates disconnected — refresh to catch up')}})
@@ -65,7 +66,7 @@ const saveNow=async()=>{
   unsynced=queued;persistMeta();
   notify(queued?'Finishing your changes…':'Synced across both phones ✓');
  }catch(e){unsynced=true;persistMeta();notify('Not synced yet: '+safeString(e)+'. Your changes are saved on this phone.');}
- finally{busy=false;paint();if(queued&&!api.conflict){clearTimeout(saveTimer);saveTimer=setTimeout(saveNow,400)}}
+ finally{busy=false;if(pendingRemote&&Number(pendingRemote.revision)>revision){if(unsynced){api.conflict=true;notify('Both phones changed the budget. Local edits are preserved — review before refreshing.')}else{pendingRemote=null;await pull()}}else if(pendingRemote){pendingRemote=null}paint();if(queued&&!api.conflict){clearTimeout(saveTimer);saveTimer=setTimeout(saveNow,400)}}
 };
 api.changed=()=>{
  if(!api.ready||!api.household||api.conflict)return;
@@ -87,7 +88,7 @@ api.init=async callbacks=>{
 api.signUp=async(email,password)=>{
  const {data,error}=await db.auth.signUp({email:email.trim(),password,options:{emailRedirectTo:w.location.origin+w.location.pathname}});
  if(error)throw error;
- notify(data.session?'Signed in — create your household.':'Check your email to confirm your account, then sign in.');
+ notify(data.session?'Signed in — create your household.':'Confirm the email, then return to this app and sign in. If the confirmation opens a blank page, return here manually.');
  if(data.session)await loading();
  paint();
 };
@@ -127,9 +128,11 @@ api.rotateInvite=async()=>{
 api.pullLatest=async()=>{
  if(!api.household)return;
  if(unsynced&&!w.confirm('Discard unsynced local edits and load the newest shared budget? Consider exporting a local backup first.'))return;
- unsynced=false;api.conflict=false;queued=false;persistMeta();await pull({force:true});
+ if(busy){notify('A save is in progress. Try refreshing in a moment.');return}
+ await pull({force:true});
 };
-api.retry=async()=>{if(api.conflict){notify('Resolve the conflict before saving again');return}queued=true;await saveNow()};
+api.retry=async()=>{if(!api.ready||!api.household){notify('Sign in and connect your household first');return}if(api.conflict){notify('Resolve the conflict before saving again');return}queued=true;await saveNow()};
 api.close=async()=>{if(channel)await db.removeChannel(channel)};
 w.ONC_CLOUD=api;
 })(window);
+
