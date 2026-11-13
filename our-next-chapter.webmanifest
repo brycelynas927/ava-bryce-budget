@@ -1,7 +1,7 @@
 {
   "name": "Our Next Chapter — Money & Life",
   "short_name": "Next Chapter",
-  "description": "Our cozy two-week budget, bills, goals and life planner",
+  "description": "Our Next Chapter: payday, debt, savings and travel goals",
   "start_url": "./our-next-chapter.html",
   "scope": "./",
   "display": "standalone",
@@ -9,9 +9,9 @@
   "theme_color": "#fff8f8",
   "icons": [
     {
-      "src": "./budget-icon.svg",
-      "sizes": "any",
-      "type": "image/svg+xml",
+      "src": "./our-next-chapter-icon-v2.png",
+      "sizes": "180x180",
+      "type": "image/png",
       "purpose": "any"
     }
   ]
