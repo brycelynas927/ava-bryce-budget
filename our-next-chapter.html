@@ -875,7 +875,21 @@ function showToast(str){const r=$('#toast-root');r.innerHTML=`<div class="toast"
 function openModal(name,args={}){modal=name;modalArgs=args;paintModal()};function closeModal(){modal='';$('#modal-root').innerHTML=''};
 function field(label,input){return `<div class="field"><label>${label}</label>${input}</div>`}function input(name,val,type='text',attrs=''){return `<input name="${name}" type="${type}" value="${esc(val)}" ${attrs}>`};function sel(name,options,selected=''){return `<select name="${name}">${options.map(([id,l])=>`<option value="${esc(id)}" ${String(id)===String(selected)?'selected':''}>${esc(l)}</option>`).join('')}</select>`};
 function paintModal(){if(!modal)return;let title='',html='',button='Save',action=modal;
-if(modal==='editcycle'){title='Edit pay period';html=`<div class="help">Enter your actual two-week income and spending budget. We'll use the start date to place future 14-day periods.</div>${field('First date of a real pay period',input('anchor',state.cycleAnchor,'date','required'))}${field('Expected combined income every 2 weeks ($)',input('income',state.expectedIncome,'number','min="0" step="1" required'))}${field('Living expenses every 2 weeks ($)',input('essentials',state.expectedEssentials,'number','min="0" step="1" required'))}<div class="tiny muted">This expense allowance includes rent, insurance and other regular bills.</div>`}
+if(modal==='smartpayday'){
+ const c=getCycle(),mode=modalArgs.mode||'balanced',p=paydaySuggestion(c,mode);
+ title='✨ Your payday assistant';
+ html=paydayPreview(c,mode);
+ button=p.bad?'Review your budget first':'Apply suggestions to this period';action='smartpayday';
+}
+else if(modal==='weeklyreview'){
+ const w=checkinWeek();title='Our weekly money check-in ♡';
+ html='<div class="small muted">Week of '+fmtDate(parseDay(w.week))+'. Review only recorded activity, then save your note.</div>'+
+ '<div class="weekstats" style="margin:12px 0">'+[['Income logged',w.income],['Outgo logged',w.spent],['Debt paid',w.debt],['Net savings',w.saved]].map(x=>'<div><small>'+x[0]+'</small><strong>'+money(x[1])+'</strong></div>').join('')+'</div>'+
+ field('Our reflection (optional)',input('note',w.review?.note||'','text','maxlength="240" placeholder="What went well? What needs changing?"'))+
+ '<div class="small muted">You can review together. Your note stays in this device until private syncing is available.</div>';
+ button=w.review?'Update check-in':'Mark this week reviewed';
+}
+else if(modal==='editcycle'){title='Edit pay period';html=`<div class="help">Enter your actual two-week income and spending budget. We'll use the start date to place future 14-day periods.</div>${field('First date of a real pay period',input('anchor',state.cycleAnchor,'date','required'))}${field('Expected combined income every 2 weeks ($)',input('income',state.expectedIncome,'number','min="0" step="1" required'))}${field('Living expenses every 2 weeks ($)',input('essentials',state.expectedEssentials,'number','min="0" step="1" required'))}<div class="tiny muted">This expense allowance includes rent, insurance and other regular bills.</div>`}
 else if(modal==='editreserves'){title='Starting cash snapshot';html=`${field('Savings ($)',input('savings',state.reserves.savings,'number','min="0"'))}${field('Extra rent reserve ($)',input('rent',state.reserves.rent,'number','min="0"'))}${field('Cash at home ($)',input('cash',state.reserves.cash,'number','min="0"'))}${field('Work RRSP ($)',input('rrsp',state.reserves.rrsp,'number','min="0"'))}<label class="switchline">I confirm the $800 rent reserve is separate from the $2,350 savings <input type="checkbox" name="separate" ${state.reserves.rentSeparateUnconfirmed?'':'checked'}></label><div class="tiny muted">Uncheck if you're still unsure. This snapshot isn't used to manufacture income transactions.</div>`}
 else if(modal==='billdetail'){const b=state.bills.find(x=>x.id===modalArgs.id);if(!b)return;const d=modalArgs.date?parseDay(modalArgs.date):new Date();const billMonth=fmtMonth(d);title=b.name+' · '+billMonth;const paid=billPaid(b,d.getFullYear(),d.getMonth());html=`<div class="info-card">Monthly amount: <strong>${money(b.amount)}</strong>. Due on day ${b.day} · ${b.confirmed?'confirmed':'estimated'}. ${paid?'Marked paid for '+billMonth+' ✓':'Not marked paid for '+billMonth}</div>${field('Bill name',input('name',b.name,'text','required'))}<div class="field-inline">${field('Monthly amount',input('amount',b.amount,'number','min="0" step="0.01" required'))}${field('Due day of month',input('day',b.day,'number','min="1" max="31" required'))}</div><label class="switchline">I have confirmed this bill date <input type="checkbox" name="confirmed" ${b.confirmed?'checked':''}></label><div class="mini-actions" style="margin:14px 0"><button type="button" class="ghost" data-action="togglebillpaid" data-id="${b.id}" data-date="${billDue(b,d.getFullYear(),d.getMonth())}">${paid?'↩ Undo paid for '+billMonth:'✓ Mark '+billMonth+' paid'}</button><button type="button" class="outline" data-action="deactivatebill" data-id="${b.id}">Remove bill</button></div>`}
 else if(modal==='jointbreakdown'){
@@ -963,6 +977,21 @@ else{return}
 $('#modal-root').innerHTML=`<div class="overlay" data-close-overlay="1"><div class="sheet"><div class="sheethead"><h2>${esc(title)}</h2><button type="button" data-action="closemodal">×</button></div><form id="modalform" data-form="${action}">${html}<button type="submit" class="solid full" style="margin-top:16px">${button}</button></form></div></div>`;
 }
 function onSubmit(e){e.preventDefault();let f=e.target,m=f.dataset.form,data=Object.fromEntries(new FormData(f).entries()),amount=Number(data.amount||0),date=data.date||today();
+if(m==='smartpayday'){
+ const c=getCycle(),p=paydaySuggestion(c,modalArgs.mode||'balanced');
+ if(p.bad){showToast('Please fix the shortfall before applying');return}
+ state.periodConfigs??={};const cfg=state.periodConfigs[c.key]||{};
+ state.periodConfigs[c.key]={...cfg,credit:p.credit,cars:p.car};
+ save();closeModal();render();showToast('Suggested allocations applied to this pay period ✓');
+ return;
+}
+if(m==='weeklyreview'){
+ const w=checkinWeek();state.weeklyReviews??=[];
+ const existing=state.weeklyReviews.find(x=>x.week===w.week);
+ if(existing){existing.note=String(data.note||'').slice(0,240);existing.recordedAt=today()}
+ else state.weeklyReviews.push({id:uid(),week:w.week,note:String(data.note||'').slice(0,240),recordedAt:today()});
+ save();closeModal();render();showToast('Weekly review saved ♡');return;
+}
 if(m==='jointbreakdown'){closeModal();return}
 if(m==='rentcash'){const c=getCycle();state.rentWithdrawals??=[];if(!rentWithdrawalFor(c.key)){if(!(amount>0)||!date){showToast('Enter the cash amount and date');return}state.rentWithdrawals.push({id:uid(),periodKey:c.key,date,amount});showToast('Cash withdrawal recorded ✓')}else showToast('Already recorded for this pay period');save();closeModal();render();return}
 if(m==='editcycle'){state.cycleAnchor=data.anchor;state.expectedIncome=Number(data.income);state.expectedEssentials=Number(data.essentials);cycleOffset=0;showToast('Pay period settings saved')}
@@ -1010,6 +1039,10 @@ if(node.dataset.day){selectedDate=node.dataset.day;calendarDate=parseDay(selecte
 if(node.dataset.billsfilter){billsFilter=node.dataset.billsfilter;render();return}
 if(node.dataset.task){const id=node.dataset.task;if(node.checked&&!state.completedTasks.includes(id))state.completedTasks.push(id);else if(!node.checked)state.completedTasks=state.completedTasks.filter(x=>x!==id);save();render();return}
 const a=node.dataset.action,id=node.dataset.id;if(!a)return;
+if(a==='splitmode'){
+ if(!['balanced','debt','cars'].includes(id))return;
+ modalArgs.mode=id;paintModal();return;
+}
 if(a==='setcolour'){
  if(!uiThemes.some(t=>t.id===id))return;
  colourTheme=id;
