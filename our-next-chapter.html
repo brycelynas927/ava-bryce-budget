@@ -359,6 +359,21 @@ html[data-theme] select:focus-visible{outline:2px solid var(--tone-accent);outli
 .smartmodes{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:12px 0}.smartmodes button{border:1px solid var(--theme-border);background:var(--theme-paper);border-radius:10px;padding:9px 2px;font-size:11px;color:var(--tone-strong)}
 .smartmodes button.chosen{background:var(--tone-strong);color:white}.smartline{display:flex;justify-content:space-between;gap:8px;border-bottom:1px solid var(--theme-border);padding:10px 0;font-size:12px}.smartbalance{display:flex;justify-content:space-between;align-items:center;padding:12px;border-radius:11px;background:var(--tone-soft);margin-top:12px}
 .helper-warning{padding:9px;background:#fff1e8;color:#9d5845;border-radius:9px;font-size:11px}.smartcomplete{padding:9px;border-radius:10px;background:var(--tone-soft);font-size:11px;color:var(--tone-strong)}
+
+.passport-wrap{background:var(--theme-paper);border:1px solid var(--theme-border);border-radius:17px;margin-top:15px;overflow:hidden}
+.passport-wrap>summary{list-style:none;cursor:pointer;padding:16px;display:flex;flex-direction:column;gap:4px}
+.passport-wrap>summary::-webkit-details-marker{display:none}.passport-wrap summary span{font:italic 19px Georgia,serif;color:var(--tone-strong);font-weight:bold}
+.passport-wrap summary small{font-size:11px;color:var(--muted)}
+.passport-photo{height:104px;background:linear-gradient(110deg,var(--theme-hero),rgba(75,39,65,.20)),url("https://images.unsplash.com/photo-1516483638261-f4dbaf036963?w=800&q=75") center/cover;display:flex;flex-direction:column;justify-content:center;gap:4px;padding:15px;color:#fff}
+.passport-photo strong{font:italic 19px Georgia,serif}.passport-photo small{font-size:11px}
+.passport-stamps{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;padding:12px}
+.passport-stamp{padding:13px 9px;border-radius:14px;background:#f6f1f1;text-align:center;border:1px dashed #dac1ca;min-height:125px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px}
+.passport-stamp.earned{background:#fff5ed;border:1px solid #e5c4ad}.passport-stamp.locked{opacity:.65;filter:saturate(.6)}
+.passport-stamp-circle{width:45px;height:45px;border:2px solid #d8bdc5;border-radius:50%;display:grid;place-items:center;font-size:24px;position:relative}.earned .passport-stamp-circle{border-color:#b28288}
+.passport-tick{position:absolute;right:-6px;top:-5px;background:#9d667b;color:#fff;font-size:10px;border-radius:50%;height:17px;width:17px;display:grid;place-items:center}
+.passport-stamp strong{font-size:11px;line-height:1.2}.passport-stamp small{font-size:9px;line-height:1.4;color:#89727a}
+.passport-actions{display:flex;gap:8px;padding:2px 12px 10px}.passport-actions button{flex:1;font-size:10px;padding:10px 5px}
+.passport-foot{font-size:10px;color:var(--muted);margin:0;padding:0 12px 13px;line-height:1.5}
 </style></head><body><div id="app" class="app"></div><div id="modal-root"></div><div id="toast-root"></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.118.0"></script>
 <script src="./our-next-chapter-cloud-config.js"></script>
@@ -755,9 +770,33 @@ function moneyRoadmap(){
  '<div class="roadmap-footnote">The recorded emergency fund only reflects transfers logged in the Goals tab; your older cash savings snapshot may be separate. Confirm actual balances before using these forecasts.</div></section>';
 }
 
+
+function adventurePassport(){
+ const g=id=>state.goals.find(x=>x.id===id),paid=id=>{const d=getDebt(id);return d?debtPaid(id):0},cards=getDebt('cards'),cardOriginal=Number(cards?.original||cards?.base||0);
+ const progress=cardOriginal?Math.min(1,paid('cards')/cardOriginal):0;
+ const emergency=Number(g('emergency')?.saved||0),travel=Number(g('travel')?.saved||0),travelTarget=Number(g('travel')?.target||35000);
+ const stamps=[
+  {icon:'💳',title:'First debt payment',done:state.transactions.some(t=>t.type==='debt'),note:'Record a real debt payment'},
+  {icon:'🌷',title:'25% of credit cards',done:progress>=.25,note:money(cardOriginal*.25)+' in payments logged'},
+  {icon:'⭐',title:'Halfway to card freedom',done:progress>=.5,note:'50% of your starting card balance paid'},
+  {icon:'🕊️',title:'Credit cards cleared',done:cards&&debtBalance(cards)===0,note:'One big step toward debt freedom'},
+  {icon:'🧸',title:'Emergency cushion',done:emergency>=1000,note:'$1,000 recorded in emergency savings'},
+  {icon:'🌎',title:'Trip fund started',done:state.transactions.some(t=>t.type==='goal'&&t.ref==='travel'),note:'Start your world travel fund'},
+  {icon:'✈️',title:'25% of the adventure',done:travelTarget>0&&travel>=travelTarget*.25,note:'A quarter of the travel target saved'},
+  {icon:'♡',title:'Our first money check-in',done:(state.weeklyReviews||[]).length>0,note:'Reflect on money together'}
+ ];
+ const achieved=stamps.filter(x=>x.done).length;
+ return '<details class="passport-wrap"><summary><span>🧳 Our Adventure Passport</span><small>'+achieved+' of '+stamps.length+' stamps collected · tap to explore</small></summary>'+
+ '<div class="passport-photo"><strong>Every little step earns a stamp ♡</strong><small>Debt-free today, exploring tomorrow.</small></div>'+
+ '<div class="passport-stamps">'+stamps.map(x=>'<div class="passport-stamp '+(x.done?'earned':'locked')+'"><div class="passport-stamp-circle">'+x.icon+(x.done?'<span class="passport-tick">✓</span>':'')+'</div><strong>'+x.title+'</strong><small>'+(x.done?'Earned ♡':x.note)+'</small></div>').join('')+'</div>'+
+ '<div class="passport-actions"><button class="outline" data-action="addpayment">💳 Pay debt</button><button class="outline" data-action="addsaving" data-id="travel">✈️ Save for travel</button></div>'+
+ '<p class="passport-foot">Stamps reflect amounts you actually record. They do not automatically transfer money or guarantee the trip is funded.</p></details>';
+}
+
 function goalsScreen(){const gs=state.goals.filter(g=>g.active),world=state.goals.find(g=>g.id==='travel'),nyc=state.goals.find(g=>g.id==='nyc');return `<div class="content"><div class="screen-heading"><div><h1>Our goals ♡</h1><p>Big dreams, brighter days</p></div><button class="icon-button" data-action="addgoal" aria-label="Add savings goal">+</button></div>
  <div class="photo-banner" style="height:126px"><h3>Collect moments, not things.</h3><p>Build security first. Then go explore the world.</p></div>
  ${moneyRoadmap()}
+ ${adventurePassport()}
  <details class="goal-compare"><summary>Compare the two debt-payoff paths <span>⌄</span></summary>${financialPaths()}</details>
  <div class="sectionhead" style="margin-top:19px"><h2>Our goal trackers</h2><span class="small muted">Tap any to update</span></div>
  <div class="goal-list">${gs.map(g=>{const art=goalArtwork(g);const pct=percent(g.saved,g.target);return `<button class="goal-list-item" data-action="goaldetail" data-id="${g.id}"><span class="goal-list-pic" style="${art?'background-image:url('+art+');background-size:cover;background-position:center':'background:#f3e5dd'}">${art?'':esc(g.icon)}</span><span class="goal-list-main"><strong>${esc(g.name)}</strong><small>${money(g.saved)} ${g.target?'of '+money(g.target):'saved'}</small><span class="meter"><span style="width:${pct}%"></span></span></span><span class="goal-list-pct">${pct}%<small>›</small></span></button>`}).join('')}</div>
