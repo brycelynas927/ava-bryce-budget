@@ -470,11 +470,13 @@ function paydayPreview(c,mode){
  '<div class="smartbalance"><span>'+(p.bad?'⚠ Plan exceeds pay':'Still unassigned')+'</span><strong>'+(p.bad?'−':'')+money(Math.abs(p.left))+'</strong></div>'+
  (v.jointBills.some(x=>!x.bill.confirmed)?'<p class="helper-warning">Some bill dates are estimates; confirm before transferring.</p>':'')+
  (v.cfg.income===undefined?'<p class="helper-warning">Income is an estimate until entered.</p>':'')+
+ ((state.goals.find(g=>g.id==='emergency')?.saved||0)<1000?'<p class="small muted">Ramsey-inspired reminder: your tracked starter emergency fund is below $1,000. Confirm any cash saved elsewhere before directing extra money to debt.</p>':'')+
  '<p class="small muted">Credit card minimum payments and interest are not yet verified. Rent cash is separate from joint.</p>';
 }
 function lookAhead(){
- const c=getCycle(),periods=[0,1,2].map(i=>{const start=addDays(c.start,14*i);return {start,end:addDays(start,13),key:iso(start)}}).filter(p=>p.end>=parseDay(today()));
- return '<details class="helperfold"><summary>🔮 Peek at upcoming paycheques <span>⌄</span></summary><div class="helperfoldbody">'+periods.map(p=>{const v=periodFinances(p);
+ const c=getCycle(),day=parseDay(today()),yr=day.getFullYear(),mo=day.getMonth();let paydaysInMonth=0;for(let d=1;d<=new Date(yr,mo+1,0).getDate();d++)if(isCalPayday(iso(new Date(yr,mo,d))))paydaysInMonth++;
+ const periods=[0,1,2].map(i=>{const start=addDays(c.start,14*i);return {start,end:addDays(start,13),key:iso(start)}}).filter(p=>p.end>=parseDay(today()));
+ return '<details class="helperfold"><summary>🔮 Peek at upcoming paycheques <span>⌄</span></summary><div class="helperfoldbody">'+(paydaysInMonth===3?'<div class="smartcomplete">✨ Three real paydays fall in this calendar month! Consider putting the extra breathing room toward emergency savings or debt.</div>':'')+periods.map(p=>{const v=periodFinances(p);
  return '<div class="helperforecast"><div><strong>'+fmtDate(p.start)+' – '+fmtDate(p.end)+'</strong><small>Cash rent '+money(v.rent)+' · joint bills '+money(v.jointFunding)+(v.jointBills.some(x=>!x.bill.confirmed)?' · dates estimated':'')+'</small></div><b class="'+(v.left<0?'negative':'positive')+'">'+(v.left<0?'−':'')+money(Math.abs(v.left))+'<small>'+(v.left<0?'shortfall':'unassigned')+'</small></b></div>'}).join('')+
  '<p class="small muted">These are estimates, not your account balance. An extra biweekly payday can help fund emergencies or debt.</p></div></details>';
 }
