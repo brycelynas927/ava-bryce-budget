@@ -98,6 +98,7 @@ api.signIn=async(email,password)=>{
 api.signOut=async()=>{
  if(unsynced&&!w.confirm('Unsynced changes are still on this phone. Sign out anyway?'))return;
  if(channel){await db.removeChannel(channel);channel=null}
+ try{await w.ONC_PUSH?.disable?.()}catch(_e){}
  const {error}=await db.auth.signOut();if(error)throw error;
  api.user=null;api.ready=false;api.household=null;api.conflict=false;api.invite=null;unsynced=false;revision=0;persistMeta();
  notify('Signed out');paint();
@@ -132,6 +133,13 @@ api.pullLatest=async()=>{
  await pull({force:true});
 };
 api.retry=async()=>{if(!api.ready||!api.household){notify('Sign in and connect your household first');return}if(api.conflict){notify('Resolve the conflict before saving again');return}queued=true;await saveNow()};
+api.savePush=async values=>{
+ if(!api.user||!api.household||!api.ready)throw Error('Connect your shared budget first');
+ const {data,error}=await db.from('onc_push_subscriptions').upsert({...values,user_id:api.user.id,household_id:api.household},{onConflict:'endpoint'}).select().single();if(error)throw error;return data;
+};
+api.getPush=async endpoint=>{const {data,error}=await db.from('onc_push_subscriptions').select('*').eq('endpoint',endpoint).eq('user_id',api.user.id).maybeSingle();if(error)throw error;return data};
+api.removePush=async endpoint=>{if(!api.user)return;const {error}=await db.from('onc_push_subscriptions').delete().eq('endpoint',endpoint).eq('user_id',api.user.id);if(error)throw error};
+api.testPush=async id=>{const {data,error}=await db.functions.invoke('onc-notifications',{body:{action:'test',id}});if(error||data?.failed||!data?.sent)throw Error(data?.error||'Could not deliver the test. Try again in a minute.');return data};
 api.close=async()=>{if(channel)await db.removeChannel(channel)};
 w.ONC_CLOUD=api;
 })(window);

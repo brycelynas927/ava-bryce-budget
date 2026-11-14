@@ -1,0 +1,13 @@
+import assert from 'node:assert/strict';
+import {occurs,localClock,plannedItems,dueNotifications,allowedEndpoint} from './supabase/functions/onc-notifications/reminders.mjs';
+const state={cycleAnchor:'2026-11-12',bills:[{id:'b',name:'Bill',active:true,day:14,confirmed:false}],transactions:[],goals:[],events:[{id:'d',name:'Daily thing',date:'2026-11-13',repeat:'daily',person:'joint',time:'09:00',notifyMinutes:10},{id:'w',name:'Weekly thing',date:'2026-11-14',repeat:'weekly',person:'ava'},{id:'bryce',name:'Bryce thing',date:'2026-11-14',person:'bryce'}]};
+const sub={person:'ava',daily_time:'08:00',daily_enabled:true,show_details:false};
+assert.equal(occurs(state.events[0],'2026-11-12'),false);assert.equal(occurs(state.events[0],'2026-11-20'),true);assert.equal(occurs(state.events[1],'2026-11-21'),true);assert.equal(occurs(state.events[1],'2026-11-22'),false);
+assert.deepEqual(localClock(new Date('2026-11-14T13:00:00Z')),{date:'2026-11-14',minute:480});assert.equal(localClock(new Date('2026-07-14T12:00:00Z')).minute,480);
+const daily=dueNotifications(state,sub,new Date('2026-11-14T13:00:00Z'));assert.equal(daily.length,1);assert.match(daily[0].body,/1 bill/);assert.doesNotMatch(daily[0].body,/Daily thing|Weekly thing|Bryce/);
+assert.equal(dueNotifications(state,sub,new Date('2026-11-14T12:59:00Z')).length,0);
+let timed=dueNotifications(state,sub,new Date('2026-11-14T13:50:00Z'));assert.ok(timed.some(n=>n.key.startsWith('event:d:')));
+state.reminderDone={'d|2026-11-14':true};assert.ok(!plannedItems(state,'2026-11-14','ava').some(i=>i.id==='d'));assert.ok(plannedItems(state,'2026-11-15','ava').some(i=>i.id==='d'));
+state.transactions.push({type:'bill',ref:'b',date:'2026-11-14'});assert.ok(!plannedItems(state,'2026-11-14','ava').some(i=>i.kind==='bill'));
+assert.ok(allowedEndpoint('https://web.push.apple.com/push/test'));assert.ok(allowedEndpoint('https://fcm.googleapis.com/x'));assert.ok(!allowedEndpoint('https://localhost/x'));assert.ok(!allowedEndpoint('https://web.push.apple.com.evil.test/x'));assert.ok(!allowedEndpoint('https://web.push.apple.com:8080/x'));assert.ok(!allowedEndpoint('http://127.0.0.1'));
+console.log('PASS: daily/weekly recurrence, future dates, Toronto DST, summary privacy, timed alerts, completion by date, paid bills excluded, endpoint restrictions');
